@@ -1,0 +1,39 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "extends": ["ultracite"],
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "single"
+    }
+  },
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noChildrenProp": "off"
+      },
+      "style": {
+        "noHeadElement": "off",
+        "noNestedTernary": "off",
+        "useBlockStatements": "off",
+        "noMagicNumbers": "off",
+        "useNamingConvention": "off"
+      }
+    }
+  },
+  "files": {
+    "includes": ["**/*", "!**/*.gen.ts"]
+  },
+  "overrides": [
+    {
+      "includes": ["**/$.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
+}

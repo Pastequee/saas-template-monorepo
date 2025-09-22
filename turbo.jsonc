@@ -1,0 +1,30 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "push"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "push": {
+      "env": ["DATABASE_URL"],
+      "inputs": ["schemas/*"]
+    },
+    "studio": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

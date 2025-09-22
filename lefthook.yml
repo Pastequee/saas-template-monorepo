@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+
+  jobs:
+    - name: Check lockfile
+      run: pnpm install --frozen-lockfile --silent
+
+    - name: Lint & Format
+      run: pnpm format
+      stage_fixed: true
+
+    - name: Typecheck
+      run: pnpm typecheck
+
