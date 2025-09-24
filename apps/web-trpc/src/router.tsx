@@ -58,7 +58,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
   queryClient,
 })
 
-export function createRouter() {
+export function getRouter() {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: 'intent',
@@ -82,6 +82,6 @@ export function createRouter() {
 declare module '@tanstack/react-router' {
   // biome-ignore lint/nursery/useConsistentTypeDefinitions: need interface here
   interface Register {
-    router: ReturnType<typeof createRouter>
+    router: ReturnType<typeof getRouter>
   }
 }
