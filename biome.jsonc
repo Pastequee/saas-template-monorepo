@@ -22,7 +22,7 @@
     }
   },
   "files": {
-    "includes": ["**/*", "!**/*.gen.ts"]
+    "includes": ["**/*", "!**/*.gen.ts", "!**/_generated"]
   },
   "overrides": [
     {
