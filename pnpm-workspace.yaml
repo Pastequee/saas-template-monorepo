@@ -9,9 +9,9 @@ catalog:
   typescript: ^5.9.2
   zod: ^4.1.11
 
-  '@trpc/client': ^11.5.1
-  '@trpc/server': ^11.5.1
-  '@trpc/tanstack-react-query': ^11.5.1
+  '@trpc/client': ^11.6.0
+  '@trpc/server': ^11.6.0
+  '@trpc/tanstack-react-query': ^11.6.0
 
   convex: ^1.27.3
   '@convex-dev/better-auth': ^0.8.6
