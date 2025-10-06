@@ -7,8 +7,10 @@
     "lint": "ultracite check",
     "format": "ultracite fix --unsafe",
     "typecheck": "turbo run typecheck",
-    "db:push": "turbo -F @repo/db push",
-    "db:studio": "turbo -F @repo/db studio",
+    "db:push": "pnpm -F @repo/db push",
+    "db:migrate": "pnpm -F @repo/db migrate",
+    "db:generate": "pnpm -F @repo/db generate",
+    "db:studio": "pnpm -F @repo/db studio",
     "auth:generate": "pnpm -F @repo/auth generate"
   },
   "devDependencies": {

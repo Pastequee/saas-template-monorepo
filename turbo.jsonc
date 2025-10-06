@@ -18,10 +18,6 @@
       "cache": false,
       "persistent": true
     },
-    "push": {
-      "env": ["DATABASE_URL"],
-      "inputs": ["schemas/*"]
-    },
     "studio": {
       "cache": false,
       "persistent": true
