@@ -5,7 +5,7 @@ import { protectedProcedure } from '../trpc'
 
 export const todoRouter = {
   all: protectedProcedure.query(({ ctx }) =>
-    ctx.prisma.todo.findMany({
+    ctx.prisma.todos.findMany({
       where: {
         userId: ctx.session.user.id,
       },
@@ -18,7 +18,7 @@ export const todoRouter = {
   create: protectedProcedure
     .input(z.string().min(1).max(255))
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.todo.create({
+      await ctx.prisma.todos.create({
         data: {
           content: input,
           userId: ctx.session.user.id,
@@ -35,7 +35,7 @@ export const todoRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const todo = await ctx.prisma.todo.findFirst({
+      const todo = await ctx.prisma.todos.findFirst({
         where: {
           id: input.id,
           userId: ctx.session.user.id,
@@ -46,7 +46,7 @@ export const todoRouter = {
         throw new TRPCError({ code: 'NOT_FOUND' })
       }
 
-      await ctx.prisma.todo.update({
+      await ctx.prisma.todos.update({
         where: {
           id: input.id,
         },
@@ -60,7 +60,7 @@ export const todoRouter = {
   delete: protectedProcedure
     .input(z.string().min(1).max(255))
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.todo.delete({
+      await ctx.prisma.todos.delete({
         where: {
           id: input,
           userId: ctx.session.user.id,

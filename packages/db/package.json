@@ -5,11 +5,11 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "deploy": "pnpm dotenv prisma migrate deploy",
-    "migrate": "pnpm dotenv prisma migrate dev",
-    "generate": "pnpm dotenv prisma generate",
-    "push": "pnpm dotenv prisma db push",
-    "studio": "pnpm dotenv prisma studio",
+    "deploy": "bun dotenv prisma migrate deploy",
+    "migrate": "bun dotenv prisma migrate dev",
+    "generate": "bun dotenv prisma generate",
+    "push": "bun dotenv prisma db push",
+    "studio": "bun dotenv prisma studio",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },

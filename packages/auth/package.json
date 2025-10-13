@@ -5,7 +5,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/prisma/models/auth.prisma",
+    "generate": "bun dotenv bunx @better-auth/cli generate --config ./src/index.ts --output ../db/prisma/models/auth.prisma",
     "typecheck": "tsgo --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
