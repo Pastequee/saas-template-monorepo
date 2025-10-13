@@ -1,5 +1,3 @@
-'use client'
-
 import { useRouter } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'

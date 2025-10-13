@@ -33,6 +33,7 @@ dist
 .output
 .nitro
 .tanstack
+_generated
 
 
 # Debug

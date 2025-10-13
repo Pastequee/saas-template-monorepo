@@ -1,5 +1,3 @@
-'use client'
-
 import { useFieldContext } from '~/lib/hooks/form-hook'
 import { InputLabel } from '../input-label'
 

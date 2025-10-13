@@ -2,27 +2,21 @@
   "name": "@repo/auth",
   "private": true,
   "exports": {
-    ".": {
-      "default": "./src/index.ts",
-      "types": "./dist/index.d.ts"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./index.ts --output ../db/schemas/auth.schema.ts",
+    "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/prisma/models/auth.prisma",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@repo/db": "workspace:*",
+    "@repo/db-prisma": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
-    "dotenv-cli": "^10.0.0",
+    "dotenv-cli": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "typescript": "catalog:"
+    "@repo/tsconfig": "workspace:*"
   }
 }

@@ -1,5 +1,3 @@
-'use client'
-
 import { useMutation } from 'convex/react'
 import { useState } from 'react'
 import { api } from '../../../../../packages/backend-convex/convex/_generated/api'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Store, useStore } from '@tanstack/react-store'
 import { isServer, MEDIA, STORAGE_KEY } from './constants'
 import { getThemeProvider } from './get-theme-provider'

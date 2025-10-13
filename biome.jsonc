@@ -18,6 +18,9 @@
         "useBlockStatements": "off",
         "noMagicNumbers": "off",
         "useNamingConvention": "off"
+      },
+      "performance": {
+        "noBarrelFile": "off"
       }
     }
   },

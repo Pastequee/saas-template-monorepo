@@ -1,5 +1,3 @@
-'use client'
-
 import { useFormContext } from '~/lib/hooks/form-hook'
 
 import { Button } from '../button'

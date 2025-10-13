@@ -1,6 +1,4 @@
-'use client'
-
-import type { RouterOutputs } from '@repo/backend-trpc'
+import type { RouterOutputs, TodoStatus } from '@repo/backend-trpc'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
@@ -35,7 +33,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     })
   )
 
-  const updateTodoStatus = (id: string, status: 'completed' | 'pending') => {
+  const updateTodoStatus = (id: string, status: TodoStatus) => {
     updateTodoMutation({ id, status })
   }
 
@@ -58,12 +56,12 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     <div className="flex items-center gap-4" key={todo.id}>
       <div className="flex h-full min-w-0 flex-1 items-center gap-4">
         <Checkbox
-          checked={todo.status === 'completed'}
+          checked={todo.status === 'COMPLETED'}
           disabled={isUpdatingTodo}
           onCheckedChange={() => {
             updateTodoStatus(
               todo.id,
-              todo.status === 'completed' ? 'pending' : 'completed'
+              todo.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'
             )
           }}
         />

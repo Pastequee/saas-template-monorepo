@@ -1,5 +1,3 @@
-'use client'
-
 // biome-ignore lint/performance/noNamespaceImport: no a problem
 import * as LabelPrimitive from '@radix-ui/react-label'
 import type * as React from 'react'

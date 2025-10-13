@@ -2,26 +2,19 @@
   "name": "@repo/backend-trpc",
   "private": true,
   "exports": {
-    ".": {
-      "default": "./src/index.ts",
-      "types": "./dist/index.d.ts"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/auth": "workspace:*",
-    "@repo/db": "workspace:*",
+    "@repo/db-prisma": "workspace:*",
     "@trpc/server": "catalog:",
-    "drizzle-orm": "catalog:",
     "superjson": "^2.2.2",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "typescript": "catalog:"
+    "@repo/tsconfig": "workspace:*"
   }
 }

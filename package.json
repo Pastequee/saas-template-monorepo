@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev:trpc": "turbo run -F @repo/web-trpc dev",
+    "dev:convex": "turbo @repo/web-convex run dev",
     "lint": "ultracite check",
     "format": "ultracite fix --unsafe",
     "typecheck": "turbo run typecheck",
@@ -17,7 +18,9 @@
     "@biomejs/biome": "^2.2.4",
     "lefthook": "^1.13.4",
     "turbo": "^2.5.8",
-    "ultracite": "^5.4.5"
+    "ultracite": "^5.4.5",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.18.6"
   },
   "packageManager": "pnpm@10.17.1",
   "engines": {

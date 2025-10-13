@@ -1,5 +1,3 @@
-'use client'
-
 import { useMutation } from 'convex/react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'

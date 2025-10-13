@@ -1,5 +1,3 @@
-'use client'
-
 import { useRouter } from '@tanstack/react-router'
 import { Button } from '~/components/ui/button'
 import { authClient } from '~/lib/auth-client'

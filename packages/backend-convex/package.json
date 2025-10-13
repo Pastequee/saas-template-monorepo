@@ -13,8 +13,5 @@
     "convex-helpers": "^0.1.104",
     "dotenv-cli": "catalog:"
   },
-  "devDependencies": {
-    "@types/node": "^22.18.6",
-    "typescript": "catalog:"
-  }
+  "devDependencies": {}
 }

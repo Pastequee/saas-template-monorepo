@@ -8,7 +8,7 @@
  */
 
 import type { Auth } from '@repo/auth'
-import { db } from '@repo/db'
+import { prisma } from '@repo/db-prisma'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError, z } from 'zod'
@@ -39,7 +39,7 @@ export const createTRPCContext = async (opts: {
   return {
     authApi,
     session,
-    db,
+    prisma,
   }
 }
 

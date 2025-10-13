@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Indicator as CheckboxPrimitiveIndicator,
   Root as CheckboxPrimitiveRoot,

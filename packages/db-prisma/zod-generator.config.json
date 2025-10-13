@@ -1,0 +1,4 @@
+{
+  "output": "./src/_generated/zod",
+  "input": ["id", "createdAt", "updatedAt"]
+}

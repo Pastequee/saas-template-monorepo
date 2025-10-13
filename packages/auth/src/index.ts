@@ -1,13 +1,14 @@
-import { db } from '@repo/db'
-
+import { prisma } from '@repo/db-prisma'
 import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { env } from './env'
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, { provider: 'pg' }),
+  database: prismaAdapter(prisma, { provider: 'postgresql' }),
   emailAndPassword: { enabled: true },
   secret: env.BETTER_AUTH_SECRET,
 })
 
 export type Auth = typeof auth
+
+export default auth

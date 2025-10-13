@@ -4,24 +4,15 @@ packages:
   - tooling/*
 
 catalog:
-  '@t3-oss/env-core': 0.13.8
-  dotenv-cli: ^10.0.0
-  typescript: ^5.9.2
-  zod: ^4.1.11
-
+  '@convex-dev/better-auth': ^0.8.6
+  '@t3-oss/env-core': ^0.13.8
   '@trpc/client': ^11.6.0
   '@trpc/server': ^11.6.0
   '@trpc/tanstack-react-query': ^11.6.0
-
-  convex: ^1.27.3
-  '@convex-dev/better-auth': ^0.8.6
-
   better-auth: 1.3.8
+  convex: ^1.27.3
+  dotenv-cli: ^10.0.0
   drizzle-orm: ^0.44.5
-
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@tailwindcss/oxide'
-  - esbuild
-  - lefthook
-  - sharp
+  '@prisma/client': ^6.16.3
+  prisma: ^6.16.3
+  zod: 4.1.11

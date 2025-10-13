@@ -1,0 +1,27 @@
+{
+  "name": "@repo/db-prisma",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "deploy": "pnpm dotenv prisma migrate deploy",
+    "migrate": "pnpm dotenv prisma migrate dev",
+    "generate": "pnpm dotenv prisma generate",
+    "push": "pnpm dotenv prisma db push",
+    "studio": "pnpm dotenv prisma studio",
+    "typecheck": "tsc --noEmit",
+    "dotenv": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^6.17.0",
+    "@prisma/client": "catalog:",
+    "dotenv-cli": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/tsconfig": "workspace:*",
+    "prisma": "catalog:",
+    "prisma-zod-generator": "^1.27.3"
+  }
+}
