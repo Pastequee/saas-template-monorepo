@@ -8,7 +8,7 @@
  */
 
 import type { Auth } from '@repo/auth'
-import { prisma } from '@repo/db-prisma'
+import { prisma } from '@repo/db'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError, z } from 'zod'

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@repo/auth": "workspace:*",
-    "@repo/db-prisma": "workspace:*",
+    "@repo/db": "workspace:*",
     "@trpc/server": "catalog:",
     "superjson": "^2.2.2",
     "zod": "catalog:"

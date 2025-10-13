@@ -23,4 +23,4 @@ type RouterOutputs = inferRouterOutputs<AppRouter>
 export { type AppRouter, appRouter } from './root'
 export { createTRPCContext } from './trpc'
 export type { RouterInputs, RouterOutputs }
-export type * from '@repo/db-prisma'
+export type * from '@repo/db'

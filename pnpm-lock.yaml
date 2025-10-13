@@ -307,9 +307,9 @@ importers:
 
   packages/auth:
     dependencies:
-      '@repo/db-prisma':
+      '@repo/db':
         specifier: workspace:*
-        version: link:../db-prisma
+        version: link:../db
       '@t3-oss/env-core':
         specifier: 'catalog:'
         version: 0.13.8(typescript@5.9.3)(zod@4.1.11)
@@ -350,9 +350,9 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../auth
-      '@repo/db-prisma':
+      '@repo/db':
         specifier: workspace:*
-        version: link:../db-prisma
+        version: link:../db
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.6.0(typescript@5.9.3)
@@ -367,7 +367,7 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/typescript
 
-  packages/db-prisma:
+  packages/db:
     dependencies:
       '@prisma/adapter-pg':
         specifier: ^6.17.0

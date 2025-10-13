@@ -10,7 +10,7 @@
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@repo/db-prisma": "workspace:*",
+    "@repo/db": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
     "dotenv-cli": "catalog:",

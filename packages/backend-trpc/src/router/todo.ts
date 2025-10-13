@@ -1,4 +1,4 @@
-import { TodoStatus } from '@repo/db-prisma'
+import { TodoStatus } from '@repo/db'
 import { TRPCError, type TRPCRouterRecord } from '@trpc/server'
 import z from 'zod'
 import { protectedProcedure } from '../trpc'
