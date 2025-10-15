@@ -13,6 +13,7 @@ import {
 import { AuthProvider } from '~/components/auth/auth-provider'
 import { authClient } from '~/lib/auth-client'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
+import { ThemeProvider } from '~/lib/theme-client'
 import { seo } from '~/lib/utils/seo'
 import appCss from '~/styles/app.css?url'
 
@@ -76,6 +77,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <ThemeProvider />
         <Scripts />
         {/* <TanStackRouterDevtools position="bottom-right" /> */}
         {/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}

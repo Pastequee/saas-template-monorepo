@@ -11,6 +11,7 @@ import {
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { AuthProvider } from '~/components/auth/auth-provider'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
+import { ThemeProvider } from '~/lib/theme-client'
 import { seo } from '~/lib/utils/seo'
 import appCss from '~/styles/app.css?url'
 
@@ -52,6 +53,7 @@ function RootDocument() {
         </head>
         <body>
           <Outlet />
+          <ThemeProvider />
           <Scripts />
           {/* <TanStackRouterDevtools position="bottom-right" /> */}
           {/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}

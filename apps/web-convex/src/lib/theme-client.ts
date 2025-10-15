@@ -1,4 +1,4 @@
-import { createThemeClient } from './arthur-theme/create-theme-client'
+import { createThemeClient } from '@pasteque/react-themes'
 
 const { themes, useTheme, ThemeProvider } = createThemeClient()
 
