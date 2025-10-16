@@ -4,12 +4,13 @@
   "scripts": {
     "dev": "bun dotenv convex dev",
     "setup": "bun dotenv convex dev --until-success",
+    "typecheck": "tsc -p ./convex/tsconfig.json --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@convex-dev/better-auth": "^0.8.6",
+    "@convex-dev/better-auth": "catalog:",
     "better-auth": "catalog:",
-    "convex": "^1.27.3",
+    "convex": "^1.28.0",
     "convex-helpers": "^0.1.104",
     "dotenv-cli": "catalog:"
   },

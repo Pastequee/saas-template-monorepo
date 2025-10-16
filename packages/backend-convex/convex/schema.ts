@@ -6,7 +6,8 @@ export const todoStatus = v.union(v.literal('pending'), v.literal('completed'))
 export default defineSchema({
   users: defineTable({
     email: v.string(),
-  }),
+    authId: v.string(),
+  }).index('authId', ['authId']),
 
   todos: defineTable({
     content: v.string(),

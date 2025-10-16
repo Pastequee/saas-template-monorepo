@@ -9,7 +9,7 @@ import { convex } from '@convex-dev/better-auth/plugins'
 import { betterAuth } from 'better-auth'
 import { asyncMap, withoutSystemFields } from 'convex-helpers'
 import { components, internal } from './_generated/api'
-import type { DataModel, Id } from './_generated/dataModel'
+import type { DataModel } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 
 const siteUrl = process.env.SITE_URL!
@@ -24,30 +24,34 @@ export const authComponent = createClient<DataModel>(components.betterAuth, {
   triggers: {
     user: {
       onCreate: async (ctx, authUser) => {
-        const userId = await ctx.db.insert('users', {
+        await ctx.db.insert('users', {
           email: authUser.email,
+          authId: authUser._id,
         })
-        authComponent.setUserId(ctx, authUser._id, userId)
       },
-      onUpdate: async (ctx, authUser) => {
-        const user = await ctx.db.get(authUser.userId as Id<'users'>)
+      onUpdate: async (ctx, authUser, prevAuthUser) => {
+        if (authUser.email === prevAuthUser.email) return
+        const user = await ctx.db
+          .query('users')
+          .withIndex('authId', (q) => q.eq('authId', authUser._id))
+          .unique()
         if (!user) return
         await ctx.db.patch(user._id, { email: authUser.email })
       },
       onDelete: async (ctx, authUser) => {
-        const user = await ctx.db.get(authUser.userId as Id<'users'>)
-
+        const user = await ctx.db
+          .query('users')
+          .withIndex('authId', (q) => q.eq('authId', authUser._id))
+          .unique()
         if (!user) return
-
+        // Cleanup everything regarding the user here
         const todos = await ctx.db
           .query('todos')
           .withIndex('userId', (q) => q.eq('userId', user._id))
           .collect()
-
         await asyncMap(todos, async (todo) => {
           await ctx.db.delete(todo._id)
         })
-
         await ctx.db.delete(user._id)
       },
     },
@@ -68,12 +72,14 @@ export const createAuth = (
     trustedOrigins: [siteUrl],
     baseURL: siteUrl,
     database: authComponent.adapter(ctx),
+
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
       enabled: true,
       autoSignIn: false,
       requireEmailVerification: false,
     },
+
     plugins: [
       // The Convex plugin is required for Convex compatibility
       convex(),
@@ -83,30 +89,25 @@ export const createAuth = (
 
 export const safeGetUser = async (ctx: QueryCtx) => {
   const authUser = await authComponent.safeGetAuthUser(ctx)
+  if (!authUser) return null
 
-  if (!authUser) {
-    return
-  }
-
-  const user = await ctx.db.get(authUser.userId as Id<'users'>)
-
-  if (!user) {
-    return
-  }
+  const user = await ctx.db
+    .query('users')
+    .withIndex('authId', (q) => q.eq('authId', authUser._id))
+    .unique()
+  if (!user) return null
 
   return { ...user, ...withoutSystemFields(authUser) }
 }
 
 export const getUser = async (ctx: QueryCtx) => {
-  const authUser = await authComponent.getAuthUser(ctx)
-
-  const user = await ctx.db.get(authUser.userId as Id<'users'>)
+  const user = await safeGetUser(ctx)
 
   if (!user) {
     throw new Error('Unauthorized')
   }
 
-  return { ...user, ...withoutSystemFields(authUser) }
+  return user
 }
 
 export const { onCreate, onUpdate, onDelete } = authComponent.triggersApi()

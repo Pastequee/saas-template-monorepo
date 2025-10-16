@@ -14,7 +14,7 @@
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^6.17.0",
+    "@prisma/adapter-pg": "^6.17.1",
     "@prisma/client": "catalog:",
     "dotenv-cli": "catalog:",
     "zod": "catalog:"
@@ -22,6 +22,6 @@
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
     "prisma": "catalog:",
-    "prisma-zod-generator": "^1.27.3"
+    "prisma-zod-generator": "^1.28.3"
   }
 }

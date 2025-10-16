@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { LoggedIn } from '../auth/logged-in'
 import { LoggedOut } from '../auth/logged-out'
-import { ToggleThemeButton } from '../ui/toggle-theme-button'
+import { ThemeSwitcher } from '../ui/theme-switcher'
 import { NavbarLink } from './navbar-link'
 
 export const Navbar = () => (
@@ -10,7 +10,7 @@ export const Navbar = () => (
       <Link className="mr-auto font-bold text-2xl" to="/">
         Awesome Todo App
       </Link>
-      <ToggleThemeButton />
+      <ThemeSwitcher />
       <LoggedOut>
         <div className="flex gap-2">
           <NavbarLink to="/login">Login</NavbarLink>
