@@ -18,10 +18,19 @@ export const apiClient = treaty<App>(env.VITE_SERVER_URL)
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 
-type EdenQueryFn = (body?: any, options?: any) => Promise<TreatyResponse>
+type EdenQueryFn =
+  | ((body?: any, options?: any) => Promise<TreatyResponse>)
+  | ((options?: any) => Promise<TreatyResponse>)
 
 type ExtractData<T> = T extends { data: infer D; error: null } ? D : never
 type ExtractError<T> = T extends { error: infer E; data: null } ? E : never
+
+type CountParameters<TFn extends EdenQueryFn> = Parameters<TFn>['length']
+
+type ExtractOptions<TEdenQueryFn extends EdenQueryFn> =
+  CountParameters<TEdenQueryFn> extends 0 | 1
+    ? Parameters<TEdenQueryFn>[0]
+    : Parameters<TEdenQueryFn>[1]
 
 export function useEdenQuery<
   TEdenQueryFn extends EdenQueryFn,
@@ -33,7 +42,7 @@ export function useEdenQuery<
   ...options
 }: Omit<UseQueryOptions<TData, TError, TData, QueryKey>, 'queryFn'> & {
   edenQuery: TEdenQueryFn
-  edenOptions?: Parameters<TEdenQueryFn>[1]
+  edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
   return useQuery({
     queryFn: async () => {
@@ -58,7 +67,7 @@ export function edenQueryOption<
   'queryFn'
 > & {
   edenQuery: TEdenQueryFn
-  edenOptions?: Parameters<TEdenQueryFn>[1]
+  edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
   // biome-ignore lint/style/useObjectSpread: need it for better type inference
   return Object.assign({}, queryOptions(options), { edenOptions, edenQuery })
@@ -83,7 +92,7 @@ export function useEdenMutation<
   'mutationFn'
 > & {
   edenMutation: TEdenQueryFn
-  edenOptions?: Parameters<TEdenQueryFn>[1]
+  edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
   return useMutation({
     mutationFn: async (body: Parameters<TEdenQueryFn>[0]) => {
@@ -114,7 +123,7 @@ export function edenMutationOption<
   'mutationFn'
 > & {
   edenMutation: TEdenQueryFn
-  edenOptions?: Parameters<TEdenQueryFn>[1]
+  edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
   // biome-ignore lint/style/useObjectSpread: need it for better type inference
   return Object.assign({}, mutationOptions(options), {
