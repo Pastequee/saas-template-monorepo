@@ -15,15 +15,15 @@
     "auth:generate": "pnpm -F @repo/auth generate"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.1",
+    "@biomejs/biome": "^2.3.2",
     "@repo/tsconfig": "workspace:*",
-    "@types/node": "^24.9.1",
-    "lefthook": "^1.13.6",
+    "@types/node": "^24.9.2",
+    "lefthook": "^2.0.1",
     "turbo": "^2.5.8",
     "typescript": "^5.9.3",
-    "ultracite": "^6.0.4"
+    "ultracite": "^6.0.5"
   },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.20.0",
   "engines": {
     "node": ">=24"
   }
