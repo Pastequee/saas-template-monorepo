@@ -2,26 +2,26 @@
   "name": "@repo/db",
   "private": true,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas/index.ts"
   },
   "scripts": {
-    "deploy": "bun dotenv prisma migrate deploy",
-    "migrate": "bun dotenv prisma migrate dev",
-    "generate": "bun dotenv prisma generate",
-    "push": "bun dotenv prisma db push",
-    "studio": "bun dotenv prisma studio",
+    "migrate": "bun dotenv drizzle-kit migrate dev",
+    "generate": "bun dotenv drizzle-kit generate",
+    "push": "bun dotenv drizzle-kit push",
+    "studio": "bun dotenv drizzle-kit studio",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^6.17.1",
-    "@prisma/client": "catalog:",
     "dotenv-cli": "catalog:",
-    "zod": "catalog:"
+    "drizzle-orm": "catalog:",
+    "@t3-oss/env-core": "catalog:",
+    "zod": "catalog:",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "prisma": "catalog:",
-    "prisma-zod-generator": "^1.28.3"
+    "@types/pg": "catalog:",
+    "drizzle-kit": "^0.31.5"
   }
 }

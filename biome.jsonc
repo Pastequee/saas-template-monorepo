@@ -1,6 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.6/schema.json",
-  "extends": ["ultracite"],
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/react"],
   "javascript": {
     "formatter": {
       "semicolons": "asNeeded",
@@ -20,12 +20,13 @@
         "useNamingConvention": "off"
       },
       "performance": {
-        "noBarrelFile": "off"
+        "noBarrelFile": "off",
+        "noNamespaceImport": "off"
       }
     }
   },
   "files": {
-    "includes": ["**/*", "!**/*.gen.ts", "!**/_generated"]
+    "includes": ["**/*", "!**/*.gen.ts", "!**/_generated", "!**/*.json"]
   },
   "overrides": [
     {

@@ -5,8 +5,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "bun dotenv bunx @better-auth/cli generate --config ./src/index.ts --output ../db/prisma/models/auth.prisma",
-    "typecheck": "tsgo --noEmit",
+    "generate": "bun dotenv bunx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
+    "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {
@@ -15,8 +15,5 @@
     "better-auth": "catalog:",
     "dotenv-cli": "catalog:",
     "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@repo/tsconfig": "workspace:*"
   }
 }

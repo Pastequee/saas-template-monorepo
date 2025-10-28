@@ -8,7 +8,7 @@ import { getCookie, getRequest } from '@tanstack/react-start/server'
 // Get auth information for SSR using available cookies
 export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
   const { createAuth } = await import(
-    '../../../../../packages/backend-convex/convex/auth.ts'
+    '../../../../packages/backend-convex/convex/auth'
   )
   const { session } = await fetchSession(getRequest())
 

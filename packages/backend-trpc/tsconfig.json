@@ -1,5 +1,0 @@
-{
-  "extends": "@repo/tsconfig/internal-packages",
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
-}
