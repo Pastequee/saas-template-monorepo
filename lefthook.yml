@@ -3,11 +3,11 @@ pre-commit:
 
   jobs:
     - name: Check lockfile
-      run: bun install --frozen-lockfile --silent
+      run: pnpm install --frozen-lockfile --silent
 
     - name: Lint & Format
-      run: bun format
+      run: pnpm format
       stage_fixed: true
 
     - name: Typecheck
-      run: bun typecheck
+      run: pnpm typecheck

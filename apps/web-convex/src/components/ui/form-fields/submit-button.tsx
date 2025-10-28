@@ -3,7 +3,7 @@ import { useFormContext } from '~/lib/hooks/form-hook'
 import { Button } from '../button'
 import { Loader } from '../loader'
 
-interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
+export interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
   label: string
   defaultDisabled?: boolean
 }

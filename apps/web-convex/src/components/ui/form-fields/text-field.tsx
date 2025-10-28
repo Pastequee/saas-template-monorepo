@@ -1,7 +1,7 @@
 import { useFieldContext } from '~/lib/hooks/form-hook'
 import { InputLabel } from '../input-label'
 
-type TextFieldProps = React.ComponentProps<typeof InputLabel>
+export type TextFieldProps = React.ComponentProps<typeof InputLabel>
 
 export function TextField({ label, ...props }: TextFieldProps) {
   const field = useFieldContext<string>()

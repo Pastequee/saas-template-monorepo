@@ -2,8 +2,8 @@
   "name": "@repo/backend-convex",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun dotenv convex dev",
-    "setup": "bun dotenv convex dev --until-success",
+    "dev": "pnpm dotenv convex dev",
+    "setup": "pnpm dotenv convex dev --until-success",
     "typecheck": "tsc -p ./convex/tsconfig.json --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },

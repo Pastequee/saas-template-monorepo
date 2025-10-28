@@ -6,10 +6,10 @@
     "./schemas": "./src/schemas/index.ts"
   },
   "scripts": {
-    "migrate": "bun dotenv drizzle-kit migrate dev",
-    "generate": "bun dotenv drizzle-kit generate",
-    "push": "bun dotenv drizzle-kit push",
-    "studio": "bun dotenv drizzle-kit studio",
+    "migrate": "pnpm dotenv drizzle-kit migrate dev",
+    "generate": "pnpm dotenv drizzle-kit generate",
+    "push": "pnpm dotenv drizzle-kit push",
+    "studio": "pnpm dotenv drizzle-kit studio",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },

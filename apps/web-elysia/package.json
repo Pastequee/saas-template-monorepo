@@ -3,10 +3,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun dotenv vite dev",
-    "build": "bun dotenv vite build",
-    "start": "bun dotenv node .output/server/index.mjs",
-    "preview": "bun dotenv vite preview",
+    "dev": "pnpm dotenv vite dev",
+    "build": "pnpm dotenv vite build",
+    "start": "pnpm dotenv node .output/server/index.mjs",
+    "preview": "pnpm dotenv vite preview",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },

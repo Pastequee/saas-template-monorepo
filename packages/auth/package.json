@@ -5,7 +5,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "bun dotenv bunx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
+    "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
     "typecheck": "tsc --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },

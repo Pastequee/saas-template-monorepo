@@ -6,11 +6,11 @@ import { TextField } from '~/components/ui/form-fields/text-field'
 const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts()
 
-const { useAppForm } = createFormHook({
+export const { useAppForm, withFieldGroup, withForm } = createFormHook({
   fieldComponents: { TextField },
   fieldContext,
   formComponents: { SubmitButton },
   formContext,
 })
 
-export { useAppForm, useFieldContext, useFormContext }
+export { useFieldContext, useFormContext }
