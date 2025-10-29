@@ -12,13 +12,14 @@ import {
   useMutation,
   useQuery,
 } from '@tanstack/react-query'
+import { createIsomorphicFn } from '@tanstack/react-start'
 import { env } from './env'
 
-export const eden = treaty<App>(env.VITE_SERVER_URL)
-
-export type Eden = typeof eden
-
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
+
+export const eden = createIsomorphicFn()
+  .server(() => treaty<App>(env.VITE_SERVER_URL).api)
+  .client(() => treaty<App>(env.VITE_SERVER_URL).api)
 
 type EdenQueryFn =
   | ((body?: any, options?: any) => Promise<TreatyResponse>)

@@ -13,9 +13,9 @@ import { Route as MultiRouteImport } from './routes/multi'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ApiElysiaSplatRouteImport } from './routes/api/elysia/$'
 
 const MultiRoute = MultiRouteImport.update({
   id: '/multi',
@@ -36,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -46,11 +51,6 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const ApiElysiaSplatRoute = ApiElysiaSplatRouteImport.update({
-  id: '/api/elysia/$',
-  path: '/api/elysia/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -58,7 +58,7 @@ export interface FileRoutesByFullPath {
   '/multi': typeof MultiRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/api/elysia/$': typeof ApiElysiaSplatRoute
+  '/api/$': typeof ApiSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -66,7 +66,7 @@ export interface FileRoutesByTo {
   '/multi': typeof MultiRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/api/elysia/$': typeof ApiElysiaSplatRoute
+  '/api/$': typeof ApiSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,19 +76,13 @@ export interface FileRoutesById {
   '/multi': typeof MultiRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
-  '/api/elysia/$': typeof ApiElysiaSplatRoute
+  '/api/$': typeof ApiSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/account'
-    | '/multi'
-    | '/login'
-    | '/register'
-    | '/api/elysia/$'
+  fullPaths: '/' | '/account' | '/multi' | '/login' | '/register' | '/api/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/multi' | '/login' | '/register' | '/api/elysia/$'
+  to: '/' | '/account' | '/multi' | '/login' | '/register' | '/api/$'
   id:
     | '__root__'
     | '/'
@@ -97,7 +91,7 @@ export interface FileRouteTypes {
     | '/multi'
     | '/_auth/login'
     | '/_auth/register'
-    | '/api/elysia/$'
+    | '/api/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,7 +99,7 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
   MultiRoute: typeof MultiRoute
-  ApiElysiaSplatRoute: typeof ApiElysiaSplatRoute
+  ApiSplatRoute: typeof ApiSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
@@ -151,13 +152,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
-    }
-    '/api/elysia/$': {
-      id: '/api/elysia/$'
-      path: '/api/elysia/$'
-      fullPath: '/api/elysia/$'
-      preLoaderRoute: typeof ApiElysiaSplatRouteImport
-      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -181,7 +175,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AccountRoute: AccountRoute,
   MultiRoute: MultiRoute,
-  ApiElysiaSplatRoute: ApiElysiaSplatRoute,
+  ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

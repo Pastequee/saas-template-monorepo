@@ -9,14 +9,12 @@ import {
 } from '@tanstack/react-router'
 import appCss from '~/assets/styles/app.css?url'
 import { AuthProvider } from '~/components/auth/auth-provider'
-import type { Eden } from '~/lib/eden-client'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
 import { ThemeProvider } from '~/lib/theme-client'
 import { seo } from '~/lib/utils/seo'
 
 export type RootRouteContext = {
   queryClient: QueryClient
-  apiClient: Eden
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({

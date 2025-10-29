@@ -1,4 +1,4 @@
-import { fromTypes, openapi } from '@elysiajs/openapi'
+import { openapi } from '@elysiajs/openapi'
 import auth from '@repo/auth'
 import { logger } from '@tqman/nice-logger'
 import { Elysia } from 'elysia'
@@ -9,7 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 const disableInProdOptions = { enabled: !isProduction }
 
-export const app = new Elysia()
+export const app = new Elysia({ prefix: '/api' })
   .use(logger(disableInProdOptions))
   .onError(({ error, status }) => {
     if (!isProduction) {
@@ -21,12 +21,12 @@ export const app = new Elysia()
   .use(
     openapi({
       ...disableInProdOptions,
-      references: fromTypes('./src/index.ts'),
+      // only works if Elysia is hosted separately
+      // references: fromTypes(),
     })
   )
   .mount(auth.handler)
   .use(utilsRouter)
   .use(todosRouter)
-  .listen(3001)
 
 export type App = typeof app

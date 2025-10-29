@@ -5,7 +5,7 @@ import { user } from './auth'
 export const todoStatus = pgEnum('todo_status', ['PENDING', 'COMPLETED'])
 
 export const todos = pgTable('todos', {
-  id: uuid('id').primaryKey().default(sql`uuid_generate_v7()`),
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
   userId: text('user_id')
     .references(() => user.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
