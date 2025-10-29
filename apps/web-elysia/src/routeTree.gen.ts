@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MultiRouteImport } from './routes/multi'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ApiElysiaSplatRouteImport } from './routes/api/elysia/$'
 
+const MultiRoute = MultiRouteImport.update({
+  id: '/multi',
+  path: '/multi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -49,6 +55,7 @@ const ApiElysiaSplatRoute = ApiElysiaSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/multi': typeof MultiRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/api/elysia/$': typeof ApiElysiaSplatRoute
@@ -56,6 +63,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/multi': typeof MultiRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/api/elysia/$': typeof ApiElysiaSplatRoute
@@ -65,20 +73,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/account': typeof AccountRoute
+  '/multi': typeof MultiRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/api/elysia/$': typeof ApiElysiaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/account' | '/login' | '/register' | '/api/elysia/$'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/multi'
+    | '/login'
+    | '/register'
+    | '/api/elysia/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/login' | '/register' | '/api/elysia/$'
+  to: '/' | '/account' | '/multi' | '/login' | '/register' | '/api/elysia/$'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/account'
+    | '/multi'
     | '/_auth/login'
     | '/_auth/register'
     | '/api/elysia/$'
@@ -88,11 +104,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
+  MultiRoute: typeof MultiRoute
   ApiElysiaSplatRoute: typeof ApiElysiaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/multi': {
+      id: '/multi'
+      path: '/multi'
+      fullPath: '/multi'
+      preLoaderRoute: typeof MultiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account': {
       id: '/account'
       path: '/account'
@@ -156,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AccountRoute: AccountRoute,
+  MultiRoute: MultiRoute,
   ApiElysiaSplatRoute: ApiElysiaSplatRoute,
 }
 export const routeTree = rootRouteImport

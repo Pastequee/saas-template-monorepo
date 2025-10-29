@@ -27,6 +27,6 @@ export const app = new Elysia()
   .mount(auth.handler)
   .use(utilsRouter)
   .use(todosRouter)
-  .listen(3000)
+  .listen(3001)
 
 export type App = typeof app
