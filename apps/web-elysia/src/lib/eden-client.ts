@@ -69,8 +69,7 @@ export function edenQueryOption<
   edenQuery: TEdenQueryFn
   edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  // biome-ignore lint/style/useObjectSpread: need it for better type inference
-  return Object.assign({}, queryOptions(options), { edenOptions, edenQuery })
+  return { ...queryOptions(options), edenOptions, edenQuery }
 }
 
 export function useEdenMutation<
@@ -125,9 +124,5 @@ export function edenMutationOption<
   edenMutation: TEdenQueryFn
   edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  // biome-ignore lint/style/useObjectSpread: need it for better type inference
-  return Object.assign({}, mutationOptions(options), {
-    edenOptions,
-    edenMutation,
-  })
+  return { ...mutationOptions(options), edenOptions, edenMutation }
 }
