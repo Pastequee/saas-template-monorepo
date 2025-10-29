@@ -96,7 +96,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
       <Button
         disabled={isDeletingTodo}
         onClick={() => {
-          deleteTodo(todo.id)
+          deleteTodo()
         }}
         size="icon"
         variant="destructive"

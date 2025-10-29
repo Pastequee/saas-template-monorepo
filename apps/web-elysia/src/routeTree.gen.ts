@@ -14,8 +14,7 @@ import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiElysiaSplatRouteImport } from './routes/api/elysia/$'
 
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
@@ -41,14 +40,9 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
-  id: '/api/trpc/$',
-  path: '/api/trpc/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+const ApiElysiaSplatRoute = ApiElysiaSplatRouteImport.update({
+  id: '/api/elysia/$',
+  path: '/api/elysia/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -57,16 +51,14 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/elysia/$': typeof ApiElysiaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/elysia/$': typeof ApiElysiaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -75,20 +67,13 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/elysia/$': typeof ApiElysiaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/account'
-    | '/login'
-    | '/register'
-    | '/api/auth/$'
-    | '/api/trpc/$'
+  fullPaths: '/' | '/account' | '/login' | '/register' | '/api/elysia/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/login' | '/register' | '/api/auth/$' | '/api/trpc/$'
+  to: '/' | '/account' | '/login' | '/register' | '/api/elysia/$'
   id:
     | '__root__'
     | '/'
@@ -96,16 +81,14 @@ export interface FileRouteTypes {
     | '/account'
     | '/_auth/login'
     | '/_auth/register'
-    | '/api/auth/$'
-    | '/api/trpc/$'
+    | '/api/elysia/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
+  ApiElysiaSplatRoute: typeof ApiElysiaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -145,18 +128,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/api/trpc/$': {
-      id: '/api/trpc/$'
-      path: '/api/trpc/$'
-      fullPath: '/api/trpc/$'
-      preLoaderRoute: typeof ApiTrpcSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
+    '/api/elysia/$': {
+      id: '/api/elysia/$'
+      path: '/api/elysia/$'
+      fullPath: '/api/elysia/$'
+      preLoaderRoute: typeof ApiElysiaSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -180,8 +156,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AccountRoute: AccountRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiTrpcSplatRoute: ApiTrpcSplatRoute,
+  ApiElysiaSplatRoute: ApiElysiaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

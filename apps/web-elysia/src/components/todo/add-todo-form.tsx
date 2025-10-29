@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { trpc } from '~/router'
+import { useEdenMutation } from '~/lib/eden-client'
+import { createTodoOptions } from '~/lib/mutations/todos.mutations'
 import { useAuth } from '../auth/auth-provider'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -11,21 +11,18 @@ export const AddTodoForm = () => {
 
   const { isAuthenticated } = useAuth()
 
-  const queryClient = useQueryClient()
-  const { isPending: isCreatingTodo, mutate: createTodoMutation } = useMutation(
-    trpc.todo.create.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: trpc.todo.all.queryKey() })
-      },
-    })
-  )
+  const { isPending: isCreatingTodo, mutate: createTodoMutation } =
+    useEdenMutation(createTodoOptions())
 
   const addTodo = () => {
-    createTodoMutation(newTodo, {
-      onSuccess: () => {
-        setNewTodo('')
-      },
-    })
+    createTodoMutation(
+      { content: newTodo, status: 'PENDING' },
+      {
+        onSuccess: () => {
+          setNewTodo('')
+        },
+      }
+    )
   }
 
   return (

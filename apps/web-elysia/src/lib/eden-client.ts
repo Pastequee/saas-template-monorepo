@@ -16,6 +16,8 @@ import { env } from './env'
 
 export const apiClient = treaty<App>(env.VITE_SERVER_URL)
 
+export type ApiClient = typeof apiClient
+
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 
 type EdenQueryFn =
