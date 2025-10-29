@@ -14,9 +14,9 @@ import {
 } from '@tanstack/react-query'
 import { env } from './env'
 
-export const apiClient = treaty<App>(env.VITE_SERVER_URL)
+export const eden = treaty<App>(env.VITE_SERVER_URL)
 
-export type ApiClient = typeof apiClient
+export type Eden = typeof eden
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 
@@ -48,7 +48,7 @@ export function useEdenQuery<
 }) {
   return useQuery({
     queryFn: async () => {
-      const { data, error } = await edenQuery({}, edenOptions)
+      const { data, error } = await edenQuery(edenOptions)
       if (error) throw error
       return data
     },

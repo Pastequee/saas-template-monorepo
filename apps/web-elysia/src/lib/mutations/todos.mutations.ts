@@ -1,9 +1,9 @@
-import { apiClient, edenMutationOption } from '../eden-client'
+import { eden, edenMutationOption } from '../eden-client'
 import { keys } from '../queries/keys'
 
 export const deleteTodoOptions = (id: string) =>
   edenMutationOption({
-    edenMutation: apiClient.todos({ id }).delete,
+    edenMutation: eden.todos({ id }).delete,
     onSuccess: (_, __, ___, context) => {
       context.client.invalidateQueries({ queryKey: keys.todos.list() })
     },
@@ -11,7 +11,7 @@ export const deleteTodoOptions = (id: string) =>
 
 export const updateTodoOptions = (id: string) =>
   edenMutationOption({
-    edenMutation: apiClient.todos({ id }).patch,
+    edenMutation: eden.todos({ id }).patch,
     onSuccess: (_, __, ___, context) => {
       context.client.invalidateQueries({ queryKey: keys.todos.list() })
     },
@@ -19,7 +19,7 @@ export const updateTodoOptions = (id: string) =>
 
 export const createTodoOptions = () =>
   edenMutationOption({
-    edenMutation: apiClient.todos.post,
+    edenMutation: eden.todos.post,
     onSuccess: (_, __, ___, context) => {
       context.client.invalidateQueries({ queryKey: keys.todos.list() })
     },

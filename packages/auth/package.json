@@ -6,7 +6,7 @@
   },
   "scripts": {
     "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {

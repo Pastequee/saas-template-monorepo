@@ -8,7 +8,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { AuthProvider } from '~/components/auth/auth-provider'
-import type { ApiClient } from '~/lib/eden-client'
+import type { Eden } from '~/lib/eden-client'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
 import { ThemeProvider } from '~/lib/theme-client'
 import { seo } from '~/lib/utils/seo'
@@ -16,7 +16,7 @@ import appCss from '~/styles/app.css?url'
 
 export type RootRouteContext = {
   queryClient: QueryClient
-  apiClient: ApiClient
+  apiClient: Eden
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({

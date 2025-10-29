@@ -7,7 +7,7 @@
     "build": "pnpm dotenv vite build",
     "start": "pnpm dotenv node .output/server/index.mjs",
     "preview": "pnpm dotenv vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {

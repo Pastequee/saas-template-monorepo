@@ -10,7 +10,7 @@
     "generate": "pnpm dotenv drizzle-kit generate",
     "push": "pnpm dotenv drizzle-kit push",
     "studio": "pnpm dotenv drizzle-kit studio",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "dotenv": "dotenv -e ../../.env --"
   },
   "dependencies": {

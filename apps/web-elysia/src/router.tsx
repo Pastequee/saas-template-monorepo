@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { apiClient } from './lib/eden-client'
+import { eden } from './lib/eden-client'
 import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient({
@@ -28,7 +28,7 @@ export function getRouter() {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: 'intent',
-    context: { queryClient, apiClient },
+    context: { queryClient, apiClient: eden },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0, // Let React Query handle all caching
     defaultErrorComponent: (err) => <div>{err.error.message}</div>,
