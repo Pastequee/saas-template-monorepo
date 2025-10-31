@@ -3,7 +3,7 @@ import { betterAuth } from '#macros/auth'
 import { insertTodo, udpateTodo } from './models'
 import { TodosService } from './service'
 
-export const todosRouter = new Elysia()
+export const todosRouter = new Elysia({ name: 'todos' })
   .use(betterAuth)
   .get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {
     auth: true,

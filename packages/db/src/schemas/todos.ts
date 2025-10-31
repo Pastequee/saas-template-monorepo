@@ -14,9 +14,9 @@ export const todos = pgTable('todos', {
   status: todoStatus('status').notNull(),
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('created_at')
+  updatedAt: timestamp('updated_at')
     .defaultNow()
-    .$onUpdateFn(() => new Date())
+    .$onUpdate(() => new Date())
     .notNull(),
 })
 
