@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev:elysia": "turbo run -F @repo/web-elysia dev",
-    "dev:convex": "turbo run -F @repo/web-convex dev",
+    "dev:convex": "turbo run -F @repo/web-convex dev -F @repo/backend-convex dev",
     "lint": "ultracite check",
     "format": "ultracite fix --unsafe",
     "typecheck": "turbo run typecheck",
@@ -19,6 +19,7 @@
     "@repo/tsconfig": "workspace:*",
     "@types/node": "^24.9.2",
     "@typescript/native-preview": "7.0.0-dev.20251029.1",
+    "concurrently": "^9.2.1",
     "lefthook": "^2.0.2",
     "turbo": "^2.6.0",
     "typescript": "^5.9.3",

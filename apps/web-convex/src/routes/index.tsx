@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Footer } from '~/components/footer'
 import { Navbar } from '~/components/navigation/navbar'
 import { TodoListCard } from '~/components/todo/todo-list-card'
-import { api } from '../../../../packages/backend-convex/convex/_generated/api'
+import { api } from '../../../backend-convex/convex/_generated/api'
 
 export const Route = createFileRoute('/')({
   component: Home,

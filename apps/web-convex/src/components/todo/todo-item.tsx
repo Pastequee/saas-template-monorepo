@@ -1,7 +1,7 @@
 import { useMutation } from 'convex/react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { api } from '../../../../../packages/backend-convex/convex/_generated/api'
+import { api } from '../../../../backend-convex/convex/_generated/api'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'

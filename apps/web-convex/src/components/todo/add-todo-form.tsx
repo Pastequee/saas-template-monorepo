@@ -1,6 +1,6 @@
 import { useMutation } from 'convex/react'
 import { useState } from 'react'
-import { api } from '../../../../../packages/backend-convex/convex/_generated/api'
+import { api } from '../../../../backend-convex/convex/_generated/api'
 import { useAuth } from '../auth/auth-provider'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'

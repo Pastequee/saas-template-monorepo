@@ -1,5 +1,5 @@
 import { useQuery } from 'convex/react'
-import { api } from '../../../../../packages/backend-convex/convex/_generated/api'
+import { api } from '../../../../backend-convex/convex/_generated/api'
 import { TodoItem } from './todo-item'
 
 export type GetTodosResponse = typeof api.todo.getTodos._returnType
