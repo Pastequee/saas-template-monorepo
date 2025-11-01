@@ -10,7 +10,6 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "dev": "pnpm dotenv bun run --watch src/index.ts",
     "dotenv": "dotenv -e ../../.env --",
     "typecheck": "tsgo --noEmit"
   },
