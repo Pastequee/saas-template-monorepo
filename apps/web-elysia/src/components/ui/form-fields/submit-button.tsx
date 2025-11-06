@@ -5,13 +5,11 @@ import { Loader } from '../loader'
 
 export interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
   label: string
-  defaultDisabled?: boolean
 }
 
 export const SubmitButton = ({
   disabled,
   label,
-  defaultDisabled = true,
   ...props
 }: SubmitButtonProps) => {
   const form = useFormContext()
@@ -24,17 +22,8 @@ export const SubmitButton = ({
         state.isPristine,
       ]}
     >
-      {([isSubmitting, canSubmit, isPristine]) => (
-        <Button
-          disabled={
-            !canSubmit ||
-            isSubmitting ||
-            disabled ||
-            (isPristine && defaultDisabled)
-          }
-          type="submit"
-          {...props}
-        >
+      {([isSubmitting]) => (
+        <Button disabled={disabled || isSubmitting} type="submit" {...props}>
           {label}
           {isSubmitting && <Loader className="ml-2" />}
         </Button>
