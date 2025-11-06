@@ -31,7 +31,7 @@ export const MultiStepForm = () => {
       onDynamicAsync: currentValidator as unknown as typeof formSchema,
     },
     onSubmit: ({ value }) => {
-      // biome-ignore lint/suspicious/noConsole: just for demonstration
+      // biome-ignore lint/suspicious/noConsole: for demo purposes
       console.log('Submit', value)
     },
   })

@@ -22,6 +22,9 @@
       "performance": {
         "noBarrelFile": "off",
         "noNamespaceImport": "off"
+      },
+      "suspicious": {
+        "noConsole": "on"
       }
     }
   },
