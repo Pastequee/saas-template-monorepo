@@ -15,9 +15,6 @@ catalogs:
     better-auth:
       specifier: ^1.3.34
       version: 1.3.34
-    dotenv-cli:
-      specifier: ^11.0.0
-      version: 11.0.0
     drizzle-orm:
       specifier: ^0.44.7
       version: 0.44.7
@@ -125,9 +122,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      dotenv-cli:
-        specifier: 'catalog:'
-        version: 11.0.0
       lucide-react:
         specifier: ^0.552.0
         version: 0.552.0(react@19.2.0)
@@ -192,12 +186,16 @@ importers:
       better-auth:
         specifier: 'catalog:'
         version: 1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.10)
-      dotenv-cli:
-        specifier: 'catalog:'
-        version: 11.0.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       zod:
         specifier: 'catalog:'
         version: 4.1.12
+    devDependencies:
+      dotenv-cli:
+        specifier: ^11.0.0
+        version: 11.0.0
 
   packages/backend-elysia:
     dependencies:
@@ -213,9 +211,6 @@ importers:
       '@tqman/nice-logger':
         specifier: ^1.1.1
         version: 1.1.1(elysia@1.4.15(@sinclair/typebox@0.34.41)(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
-      dotenv-cli:
-        specifier: 'catalog:'
-        version: 11.0.0
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.44.7(@types/pg@8.15.6)(bun-types@1.3.1(@types/react@19.2.2))(kysely@0.28.8)(pg@8.16.3)
@@ -238,9 +233,9 @@ importers:
       '@t3-oss/env-core':
         specifier: 'catalog:'
         version: 0.13.8(typescript@5.9.3)(zod@4.1.12)
-      dotenv-cli:
-        specifier: 'catalog:'
-        version: 11.0.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.44.7(@types/pg@8.15.6)(bun-types@1.3.1(@types/react@19.2.2))(kysely@0.28.8)(pg@8.16.3)

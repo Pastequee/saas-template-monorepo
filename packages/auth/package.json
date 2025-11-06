@@ -5,15 +5,17 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "pnpm dotenv pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
-    "typecheck": "tsgo --noEmit",
-    "dotenv": "dotenv -e ../../.env --"
+    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@repo/db": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
-    "dotenv-cli": "catalog:",
+    "dotenv": "^17.2.3",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0"
   }
 }

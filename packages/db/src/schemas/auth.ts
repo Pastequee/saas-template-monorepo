@@ -1,7 +1,10 @@
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { boolean, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-export const user = pgTable('user', {
-  id: text('id').primaryKey(),
+export const authSchema = pgSchema('auth')
+
+export const users = authSchema.table('users', {
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').default(false).notNull(),
@@ -13,8 +16,8 @@ export const user = pgTable('user', {
     .notNull(),
 })
 
-export const session = pgTable('session', {
-  id: text('id').primaryKey(),
+export const sessions = authSchema.table('sessions', {
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
   expiresAt: timestamp('expires_at').notNull(),
   token: text('token').notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -23,18 +26,18 @@ export const session = pgTable('session', {
     .notNull(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
-  userId: text('user_id')
+  userId: uuid('user_id')
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
 })
 
-export const account = pgTable('account', {
-  id: text('id').primaryKey(),
+export const accounts = authSchema.table('accounts', {
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
-  userId: text('user_id')
+  userId: uuid('user_id')
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
   accessToken: text('access_token'),
   refreshToken: text('refresh_token'),
   idToken: text('id_token'),
@@ -48,8 +51,8 @@ export const account = pgTable('account', {
     .notNull(),
 })
 
-export const verification = pgTable('verification', {
-  id: text('id').primaryKey(),
+export const verifications = authSchema.table('verifications', {
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
   expiresAt: timestamp('expires_at').notNull(),

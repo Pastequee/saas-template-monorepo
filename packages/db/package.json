@@ -6,16 +6,15 @@
     "./schemas": "./src/schemas/index.ts"
   },
   "scripts": {
-    "migrate": "pnpm dotenv drizzle-kit migrate dev",
-    "generate": "pnpm dotenv drizzle-kit generate",
-    "push": "pnpm dotenv drizzle-kit push",
-    "studio": "pnpm dotenv drizzle-kit studio",
-    "typecheck": "tsgo --noEmit",
-    "dotenv": "dotenv -e ../../.env --"
+    "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate",
+    "push": "drizzle-kit push",
+    "studio": "drizzle-kit studio",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
-    "dotenv-cli": "catalog:",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "catalog:",
     "pg": "^8.16.3",
     "zod": "catalog:"

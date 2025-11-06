@@ -3,12 +3,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "pnpm dotenv vite dev --port 3000",
-    "build": "pnpm dotenv vite build",
-    "start": "pnpm dotenv vite start",
-    "preview": "pnpm dotenv vite preview",
-    "typecheck": "tsgo --noEmit",
-    "dotenv": "dotenv -e ../../.env --"
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "start": "vite start",
+    "preview": "vite preview",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@elysiajs/eden": "^1.4.4",
@@ -34,7 +33,6 @@
     "better-auth": "catalog:",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dotenv-cli": "catalog:",
     "lucide-react": "^0.552.0",
     "motion": "^12.23.24",
     "next-themes": "^0.4.6",

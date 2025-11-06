@@ -1,13 +1,13 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { user } from './auth'
+import { users } from './auth'
 
 export const todoStatus = pgEnum('todo_status', ['PENDING', 'COMPLETED'])
 
 export const todos = pgTable('todos', {
   id: uuid('id').primaryKey().default(sql`uuidv7()`),
-  userId: text('user_id')
-    .references(() => user.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
 
   content: text('content').notNull(),
@@ -21,8 +21,8 @@ export const todos = pgTable('todos', {
 })
 
 export const todosRelations = relations(todos, ({ one }) => ({
-  user: one(user, {
+  user: one(users, {
     fields: [todos.userId],
-    references: [user.id],
+    references: [users.id],
   }),
 }))

@@ -11,7 +11,10 @@
     "db:migrate": "pnpm -F @repo/db migrate",
     "db:generate": "pnpm -F @repo/db generate",
     "db:studio": "pnpm -F @repo/db studio",
-    "auth:generate": "pnpm -F @repo/auth generate"
+    "auth:generate": "pnpm -F @repo/auth generate",
+    "dev:docker": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "dev:docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down -v",
+    "dev:docker:refresh": "pnpm dev:docker:down && pnpm dev:docker"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.4",
