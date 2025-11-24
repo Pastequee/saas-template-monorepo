@@ -1,9 +1,9 @@
 import { createAuthClient } from 'better-auth/react'
-import { reactStartCookies } from 'better-auth/react-start'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { env } from './env'
 
 export const authClient = createAuthClient({
-  plugins: [reactStartCookies()],
+  plugins: [tanstackStartCookies()],
   baseURL: env.VITE_BACKEND_URL,
 })
 

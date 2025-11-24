@@ -20,23 +20,22 @@ export const RegisterForm = () => {
   const form = useAppForm({
     defaultValues: { email: '', name: '', password: '' },
     onSubmit: async ({ value }) => {
-      await authClient.signUp.email(
-        {
-          email: value.email,
-          password: value.password,
-          name: value.name,
-        },
-        {
-          onSuccess: () => {
-            router.navigate({ to: '/login' })
-          },
-          onError: (e) => {
-            setSignUpResponseError(e.error.message)
-          },
-        }
-      )
+      const { error } = await authClient.signUp.email({
+        email: value.email,
+        password: value.password,
+        name: value.name,
+      })
+
+      if (error) {
+        setSignUpResponseError(
+          error.message ?? 'An unknown error occurred, please try again later.'
+        )
+        return
+      }
+
+      router.navigate({ to: '/login', replace: true })
     },
-    validators: { onChange: formSchema, onMount: formSchema },
+    validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
   })
 
   return (

@@ -14,27 +14,27 @@ const formSchema = z.object({
 
 export const LoginForm = () => {
   const router = useRouter()
-  const [error, setError] = useState<string>()
+  const [errorMessage, setErrorMessage] = useState<string>()
 
   const form = useAppForm({
     defaultValues: { email: '', password: '' },
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email(
-        { email: value.email, password: value.password },
-        {
-          onSuccess: () => {
-            router.navigate({ to: '/' })
-          },
-          onError: (e) => {
-            setError(e.error.message)
-          },
-        }
-      )
+      const { error } = await authClient.signIn.email({
+        email: value.email,
+        password: value.password,
+      })
+
+      if (error) {
+        setErrorMessage(error.message ?? 'An unknown error occurred, please try again later.')
+        return
+      }
+
+      router.navigate({ to: '/', replace: true })
     },
     defaultState: {
       canSubmit: false,
     },
-    validators: { onChange: formSchema, onMount: formSchema },
+    validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
   })
 
   return (
@@ -47,10 +47,10 @@ export const LoginForm = () => {
         form.handleSubmit()
       }}
     >
-      {error && (
+      {errorMessage && (
         <Alert variant="destructive">
           <AlertCircle />
-          <AlertTitle>{error}</AlertTitle>
+          <AlertTitle>{errorMessage}</AlertTitle>
         </Alert>
       )}
 
