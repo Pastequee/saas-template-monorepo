@@ -16,7 +16,7 @@
     "@elysiajs/cors": "^1.4.0",
     "@elysiajs/openapi": "^1.4.11",
     "@repo/auth": "workspace:*",
-    "@repo/db": "workspace:*",
+    "@repo/db-prisma": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "@tqman/nice-logger": "^1.1.1",
     "drizzle-orm": "catalog:",

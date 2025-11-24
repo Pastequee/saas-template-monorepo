@@ -30,7 +30,13 @@
     }
   },
   "files": {
-    "includes": ["**/*", "!**/*.gen.ts", "!**/_generated", "!**/*.json"]
+    "includes": [
+      "**/*",
+      "!**/*.gen.ts",
+      "!**/_generated",
+      "!**/*.json",
+      "!**/generated"
+    ]
   },
   "overrides": [
     {

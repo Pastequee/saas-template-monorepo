@@ -5,11 +5,11 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- pnpm dlx @better-auth/cli generate --config ./src/index.ts --output ../db/src/schemas/auth.ts",
+    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- pnpm dlx @better-auth/cli generate --config src/index.ts --output ../db-prisma/schemas/tmp-auth.prisma",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@repo/db": "workspace:*",
+    "@repo/db-prisma": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
     "dotenv": "^17.2.3",
