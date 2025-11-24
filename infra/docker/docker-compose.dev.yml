@@ -2,7 +2,7 @@ name: saas-monorepo-dev
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:18
     container_name: local-postgres
     restart: unless-stopped
     environment:

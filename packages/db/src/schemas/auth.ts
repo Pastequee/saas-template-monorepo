@@ -1,9 +1,7 @@
 import { sql } from 'drizzle-orm'
-import { boolean, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-export const authSchema = pgSchema('auth')
-
-export const users = authSchema.table('users', {
+export const users = pgTable('users', {
   id: uuid('id').primaryKey().default(sql`uuidv7()`),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
@@ -16,7 +14,7 @@ export const users = authSchema.table('users', {
     .notNull(),
 })
 
-export const sessions = authSchema.table('sessions', {
+export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().default(sql`uuidv7()`),
   expiresAt: timestamp('expires_at').notNull(),
   token: text('token').notNull().unique(),
@@ -31,7 +29,7 @@ export const sessions = authSchema.table('sessions', {
     .references(() => users.id, { onDelete: 'cascade' }),
 })
 
-export const accounts = authSchema.table('accounts', {
+export const accounts = pgTable('accounts', {
   id: uuid('id').primaryKey().default(sql`uuidv7()`),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
@@ -51,7 +49,7 @@ export const accounts = authSchema.table('accounts', {
     .notNull(),
 })
 
-export const verifications = authSchema.table('verifications', {
+export const verifications = pgTable('verifications', {
   id: uuid('id').primaryKey().default(sql`uuidv7()`),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),

@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "@types/pg": "catalog:",
-    "drizzle-kit": "^0.31.6"
+    "drizzle-kit": "^0.31.7"
   }
 }

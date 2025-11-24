@@ -2,13 +2,19 @@
  * Represents a successful operation result
  * @template T - The type of the successful result data
  */
-type Success<T> = [T, null]
+type Success<T> = {
+  data: T
+  error?: never
+}
 
 /**
  * Represents a failed operation result
  * @template E - The type of the error that occurred
  */
-type Failure<E> = [null, E]
+type Failure<E> = {
+  data?: never
+  error: E
+}
 
 /**
  * Represents the result of an operation which can either be a success or a failure
@@ -40,8 +46,8 @@ type Result<T, E = Error> = Failure<E> | Success<T>
 export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Result<T, E>> {
   try {
     const data = await promise
-    return [data, null]
+    return { data }
   } catch (error) {
-    return [null, error as E]
+    return { error: error as E }
   }
 }

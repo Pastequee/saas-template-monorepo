@@ -5,16 +5,16 @@ import { users } from './auth'
 export const todoStatus = pgEnum('todo_status', ['PENDING', 'COMPLETED'])
 
 export const todos = pgTable('todos', {
-  id: uuid('id').primaryKey().default(sql`uuidv7()`),
-  userId: uuid('user_id')
+  id: uuid().primaryKey().default(sql`uuidv7()`),
+  userId: uuid()
     .references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
 
-  content: text('content').notNull(),
-  status: todoStatus('status').notNull(),
+  content: text().notNull(),
+  status: todoStatus().notNull(),
 
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),

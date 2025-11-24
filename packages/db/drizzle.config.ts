@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import dotenv from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
 
-const localEnvPath = resolve(__dirname, '../../apps/web-elysia/.env.local')
+const localEnvPath = resolve(__dirname, '../../apps/backend/.env.local')
 
 if (process.env.NODE_ENV !== 'production' && existsSync(localEnvPath)) {
   dotenv.config({ path: localEnvPath })

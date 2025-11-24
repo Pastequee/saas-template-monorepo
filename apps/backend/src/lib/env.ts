@@ -5,11 +5,12 @@ import { z } from 'zod'
 
 export const env = createEnv({
   server: {
-    BETTER_AUTH_SECRET: z.string(),
     FRONTEND_URL: z.url(),
+    NODE_ENV: z.enum(['development', 'production']).default('development'),
+    LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
   },
 
-  runtimeEnv: process.env,
+  runtimeEnv: import.meta.env,
 
   emptyStringAsUndefined: true,
 })
