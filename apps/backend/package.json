@@ -5,7 +5,8 @@
   "imports": {
     "#routers/*": "./src/routers/*.ts",
     "#lib/*": "./src/lib/*.ts",
-    "#middlewares/*": "./src/middlewares/*.ts"
+    "#middlewares/*": "./src/middlewares/*.ts",
+    "#services/*": "./src/services/*.ts"
   },
   "scripts": {
     "dev": "bun --watch src/index.ts",
