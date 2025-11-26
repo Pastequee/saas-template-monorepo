@@ -184,7 +184,7 @@ export type VerificationWhereInput = {
   AND?: Prisma.VerificationWhereInput | Prisma.VerificationWhereInput[]
   OR?: Prisma.VerificationWhereInput[]
   NOT?: Prisma.VerificationWhereInput | Prisma.VerificationWhereInput[]
-  id?: Prisma.StringFilter<"Verification"> | string
+  id?: Prisma.UuidFilter<"Verification"> | string
   identifier?: Prisma.StringFilter<"Verification"> | string
   value?: Prisma.StringFilter<"Verification"> | string
   expiresAt?: Prisma.DateTimeFilter<"Verification"> | Date | string
@@ -229,7 +229,7 @@ export type VerificationScalarWhereWithAggregatesInput = {
   AND?: Prisma.VerificationScalarWhereWithAggregatesInput | Prisma.VerificationScalarWhereWithAggregatesInput[]
   OR?: Prisma.VerificationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.VerificationScalarWhereWithAggregatesInput | Prisma.VerificationScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Verification"> | string
+  id?: Prisma.UuidWithAggregatesFilter<"Verification"> | string
   identifier?: Prisma.StringWithAggregatesFilter<"Verification"> | string
   value?: Prisma.StringWithAggregatesFilter<"Verification"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Verification"> | Date | string

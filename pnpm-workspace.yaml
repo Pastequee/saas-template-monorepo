@@ -4,11 +4,12 @@ packages:
   - tooling/*
 
 catalog:
-  '@t3-oss/env-core': 0.13.8
-  '@types/pg': 8.15.6
+  '@t3-oss/env-core': ^0.13.8
+  '@types/pg': ^8.15.6
   better-auth: ^1.4.2
-  elysia: 1.4.16
-  zod: 4.1.12
+  elysia: ^1.4.16
+  zod: ^4.1.12
+  '@types/bun': ^1.3.3
 
 onlyBuiltDependencies:
   - lefthook
