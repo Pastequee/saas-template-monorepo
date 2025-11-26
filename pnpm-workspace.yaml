@@ -6,7 +6,7 @@ packages:
 catalog:
   '@t3-oss/env-core': 0.13.8
   '@types/pg': 8.15.6
-  better-auth: ^1.4.1
+  better-auth: ^1.4.2
   elysia: 1.4.16
   zod: 4.1.12
 
