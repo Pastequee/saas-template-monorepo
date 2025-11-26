@@ -5,6 +5,7 @@ import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
 import { env } from '#lib/env'
 import { logger } from '#lib/logger'
+import { AuthOpenAPI } from '#middlewares/auth'
 import { todosRouter } from '#routers/todos/controller'
 import { utilsRouter } from '#routers/utils/controller'
 
@@ -20,6 +21,11 @@ const app = new Elysia({ prefix: '/api' })
   .use(
     openapi({
       enabled: !isProduction,
+      documentation: {
+        components: await AuthOpenAPI.components,
+        paths: await AuthOpenAPI.getPaths(),
+        tags: [{ name: 'Utils' }, { name: 'Todo' }],
+      },
       references: fromTypes(),
     })
   )

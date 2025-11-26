@@ -3,7 +3,7 @@ import { Elysia } from 'elysia'
 import { betterAuth } from '#middlewares/auth'
 import { TodosService } from './service'
 
-export const todosRouter = new Elysia({ name: 'todos' })
+export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
   .use(betterAuth)
 
   .get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {

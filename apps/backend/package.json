@@ -16,6 +16,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
     "@elysiajs/openapi": "^1.4.11",
+    "@repo/utils": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/db-prisma": "workspace:*",
     "@t3-oss/env-core": "catalog:",

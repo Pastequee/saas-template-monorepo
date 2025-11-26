@@ -68,6 +68,9 @@ importers:
       '@repo/db-prisma':
         specifier: workspace:*
         version: link:../../packages/db-prisma
+      '@repo/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@t3-oss/env-core':
         specifier: 'catalog:'
         version: 0.13.8(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(zod@4.1.12)
