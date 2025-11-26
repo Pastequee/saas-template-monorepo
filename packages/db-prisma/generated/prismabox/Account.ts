@@ -41,6 +41,68 @@ export const AccountRelations = t.Object(
   { additionalProperties: false },
 );
 
+export const AccountPlainInputCreate = t.Object(
+  {
+    accessToken: t.Optional(__nullable__(t.String())),
+    refreshToken: t.Optional(__nullable__(t.String())),
+    idToken: t.Optional(__nullable__(t.String())),
+    accessTokenExpiresAt: t.Optional(__nullable__(t.Date())),
+    refreshTokenExpiresAt: t.Optional(__nullable__(t.Date())),
+    scope: t.Optional(__nullable__(t.String())),
+    password: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const AccountPlainInputUpdate = t.Object(
+  {
+    accessToken: t.Optional(__nullable__(t.String())),
+    refreshToken: t.Optional(__nullable__(t.String())),
+    idToken: t.Optional(__nullable__(t.String())),
+    accessTokenExpiresAt: t.Optional(__nullable__(t.Date())),
+    refreshTokenExpiresAt: t.Optional(__nullable__(t.Date())),
+    scope: t.Optional(__nullable__(t.String())),
+    password: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const AccountRelationsInputCreate = t.Object(
+  {
+    user: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: false }),
+          },
+          { additionalProperties: false },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export const AccountRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      user: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: false }),
+            },
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    },
+    { additionalProperties: false },
+  ),
+);
+
 export const AccountWhere = t.Partial(
   t.Recursive(
     (Self) =>
@@ -200,3 +262,13 @@ export const AccountOrderBy = t.Partial(
 export const Account = t.Composite([AccountPlain, AccountRelations], {
   additionalProperties: false,
 });
+
+export const AccountInputCreate = t.Composite(
+  [AccountPlainInputCreate, AccountRelationsInputCreate],
+  { additionalProperties: false },
+);
+
+export const AccountInputUpdate = t.Composite(
+  [AccountPlainInputUpdate, AccountRelationsInputUpdate],
+  { additionalProperties: false },
+);

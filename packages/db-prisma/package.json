@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./client.ts"
+    ".": "./client.ts",
+    "./types": "./types.d.ts",
+    "./schemas": "./generated/prismabox/barrel.ts"
   },
   "scripts": {
     "migrate": "prisma migrate dev",

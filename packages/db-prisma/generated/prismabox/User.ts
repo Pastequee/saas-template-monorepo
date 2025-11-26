@@ -76,6 +76,163 @@ export const UserRelations = t.Object(
   { additionalProperties: false },
 );
 
+export const UserPlainInputCreate = t.Object(
+  {
+    name: t.String(),
+    email: t.String(),
+    emailVerified: t.Optional(t.Boolean()),
+    image: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const UserPlainInputUpdate = t.Object(
+  {
+    name: t.Optional(t.String()),
+    email: t.Optional(t.String()),
+    emailVerified: t.Optional(t.Boolean()),
+    image: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const UserRelationsInputCreate = t.Object(
+  {
+    sessions: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    accounts: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    todos: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export const UserRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      sessions: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      accounts: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      todos: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+    },
+    { additionalProperties: false },
+  ),
+);
+
 export const UserWhere = t.Partial(
   t.Recursive(
     (Self) =>
@@ -222,3 +379,13 @@ export const UserOrderBy = t.Partial(
 export const User = t.Composite([UserPlain, UserRelations], {
   additionalProperties: false,
 });
+
+export const UserInputCreate = t.Composite(
+  [UserPlainInputCreate, UserRelationsInputCreate],
+  { additionalProperties: false },
+);
+
+export const UserInputUpdate = t.Composite(
+  [UserPlainInputUpdate, UserRelationsInputUpdate],
+  { additionalProperties: false },
+);

@@ -17,7 +17,7 @@ export const AddTodoForm = () => {
 
   const addTodo = () => {
     createTodoMutation(
-      { content: newTodo, status: 'PENDING' },
+      { content: newTodo, status: 'pending' },
       {
         onSuccess: () => {
           setNewTodo('')

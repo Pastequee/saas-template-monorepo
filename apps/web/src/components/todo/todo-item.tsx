@@ -7,7 +7,7 @@ import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
 
 type TodoItemProps = {
-  todo: { id: string; content: string; status: 'COMPLETED' | 'PENDING' }
+  todo: { id: string; content: string; status: 'completed' | 'pending' }
 }
 
 export const TodoItem = ({ todo }: TodoItemProps) => {
@@ -22,7 +22,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     updateTodoOptions(todo.id)
   )
 
-  const updateTodo = (data: { content?: string; status?: 'COMPLETED' | 'PENDING' }) => {
+  const updateTodo = (data: { content?: string; status?: 'completed' | 'pending' }) => {
     updateTodoMutation(data)
   }
 
@@ -45,11 +45,11 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     <div className="flex items-center gap-4" key={todo.id}>
       <div className="flex h-full min-w-0 flex-1 items-center gap-4">
         <Checkbox
-          checked={todo.status === 'COMPLETED'}
+          checked={todo.status === 'completed'}
           disabled={isUpdatingTodo}
           onCheckedChange={() => {
             updateTodo({
-              status: todo.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED',
+              status: todo.status === 'completed' ? 'pending' : 'completed',
             })
           }}
         />

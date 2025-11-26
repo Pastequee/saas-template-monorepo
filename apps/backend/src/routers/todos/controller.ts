@@ -1,6 +1,6 @@
-import { Elysia, t } from 'elysia'
+import { TodoPlainInputCreate, TodoPlainInputUpdate } from '@repo/db-prisma/schemas'
+import { Elysia } from 'elysia'
 import { betterAuth } from '#middlewares/auth'
-import { insertTodo, udpateTodo } from './models'
 import { TodosService } from './service'
 
 export const todosRouter = new Elysia({ name: 'todos' })
@@ -17,7 +17,7 @@ export const todosRouter = new Elysia({ name: 'todos' })
 
       return status('Created', todo)
     },
-    { auth: true, body: t.Omit(insertTodo, ['userId']) }
+    { auth: true, body: TodoPlainInputCreate }
   )
 
   .patch(
@@ -35,11 +35,7 @@ export const todosRouter = new Elysia({ name: 'todos' })
 
       return updatedTodo
     },
-    {
-      auth: true,
-      body: t.Omit(udpateTodo, ['userId']),
-      params: t.Object({ id: t.String() }),
-    }
+    { auth: true, body: TodoPlainInputUpdate }
   )
 
   .delete(
@@ -50,9 +46,9 @@ export const todosRouter = new Elysia({ name: 'todos' })
       if (!todo) return status('Not Found')
       if (todo.userId !== user.id) return status('Forbidden')
 
-      await TodosService.deleteTodo(params.id)
+      const deletedTodo = await TodosService.deleteTodo(params.id)
 
-      return status('OK')
+      return deletedTodo
     },
-    { auth: true, params: t.Object({ id: t.String() }) }
+    { auth: true }
   )

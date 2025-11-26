@@ -21,6 +21,29 @@ export const VerificationRelations = t.Object(
   { additionalProperties: false },
 );
 
+export const VerificationPlainInputCreate = t.Object(
+  { identifier: t.String(), value: t.String(), expiresAt: t.Date() },
+  { additionalProperties: false },
+);
+
+export const VerificationPlainInputUpdate = t.Object(
+  {
+    identifier: t.Optional(t.String()),
+    value: t.Optional(t.String()),
+    expiresAt: t.Optional(t.Date()),
+  },
+  { additionalProperties: false },
+);
+
+export const VerificationRelationsInputCreate = t.Object(
+  {},
+  { additionalProperties: false },
+);
+
+export const VerificationRelationsInputUpdate = t.Partial(
+  t.Object({}, { additionalProperties: false }),
+);
+
 export const VerificationWhere = t.Partial(
   t.Recursive(
     (Self) =>
@@ -133,5 +156,15 @@ export const VerificationOrderBy = t.Partial(
 
 export const Verification = t.Composite(
   [VerificationPlain, VerificationRelations],
+  { additionalProperties: false },
+);
+
+export const VerificationInputCreate = t.Composite(
+  [VerificationPlainInputCreate, VerificationRelationsInputCreate],
+  { additionalProperties: false },
+);
+
+export const VerificationInputUpdate = t.Composite(
+  [VerificationPlainInputUpdate, VerificationRelationsInputUpdate],
   { additionalProperties: false },
 );

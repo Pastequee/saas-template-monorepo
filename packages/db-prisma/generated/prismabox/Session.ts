@@ -36,6 +36,62 @@ export const SessionRelations = t.Object(
   { additionalProperties: false },
 );
 
+export const SessionPlainInputCreate = t.Object(
+  {
+    expiresAt: t.Date(),
+    token: t.String(),
+    ipAddress: t.Optional(__nullable__(t.String())),
+    userAgent: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionPlainInputUpdate = t.Object(
+  {
+    expiresAt: t.Optional(t.Date()),
+    token: t.Optional(t.String()),
+    ipAddress: t.Optional(__nullable__(t.String())),
+    userAgent: t.Optional(__nullable__(t.String())),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionRelationsInputCreate = t.Object(
+  {
+    user: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: false }),
+          },
+          { additionalProperties: false },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      user: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: false }),
+            },
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    },
+    { additionalProperties: false },
+  ),
+);
+
 export const SessionWhere = t.Partial(
   t.Recursive(
     (Self) =>
@@ -181,3 +237,13 @@ export const SessionOrderBy = t.Partial(
 export const Session = t.Composite([SessionPlain, SessionRelations], {
   additionalProperties: false,
 });
+
+export const SessionInputCreate = t.Composite(
+  [SessionPlainInputCreate, SessionRelationsInputCreate],
+  { additionalProperties: false },
+);
+
+export const SessionInputUpdate = t.Composite(
+  [SessionPlainInputUpdate, SessionRelationsInputUpdate],
+  { additionalProperties: false },
+);

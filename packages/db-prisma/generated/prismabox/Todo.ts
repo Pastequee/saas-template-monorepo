@@ -36,6 +36,64 @@ export const TodoRelations = t.Object(
   { additionalProperties: false },
 );
 
+export const TodoPlainInputCreate = t.Object(
+  {
+    content: t.String(),
+    status: t.Union([t.Literal("pending"), t.Literal("completed")], {
+      additionalProperties: false,
+    }),
+  },
+  { additionalProperties: false },
+);
+
+export const TodoPlainInputUpdate = t.Object(
+  {
+    content: t.Optional(t.String()),
+    status: t.Optional(
+      t.Union([t.Literal("pending"), t.Literal("completed")], {
+        additionalProperties: false,
+      }),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export const TodoRelationsInputCreate = t.Object(
+  {
+    user: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: false }),
+          },
+          { additionalProperties: false },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export const TodoRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      user: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: false }),
+            },
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    },
+    { additionalProperties: false },
+  ),
+);
+
 export const TodoWhere = t.Partial(
   t.Recursive(
     (Self) =>
@@ -154,3 +212,13 @@ export const TodoOrderBy = t.Partial(
 export const Todo = t.Composite([TodoPlain, TodoRelations], {
   additionalProperties: false,
 });
+
+export const TodoInputCreate = t.Composite(
+  [TodoPlainInputCreate, TodoRelationsInputCreate],
+  { additionalProperties: false },
+);
+
+export const TodoInputUpdate = t.Composite(
+  [TodoPlainInputUpdate, TodoRelationsInputUpdate],
+  { additionalProperties: false },
+);

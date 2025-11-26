@@ -15,4 +15,5 @@ generator prismabox {
   typeboxImportVariableName   = "t"
   typeboxImportDependencyName = "elysia"
   importFileExtension         = ".js"
+  inputModel                  = true
 }

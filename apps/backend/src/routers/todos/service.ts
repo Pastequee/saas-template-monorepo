@@ -1,24 +1,36 @@
-import { db } from '@repo/db'
-import { todos } from '@repo/db/schemas'
-import { asc, eq } from 'drizzle-orm'
-import type { InsertTodo, UpdateTodo } from './models'
+import { db } from '@repo/db-prisma'
+import type {
+  Todo,
+  TodoUncheckedCreateInput,
+  TodoUncheckedUpdateInput,
+  User,
+} from '@repo/db-prisma/types'
 
 export const TodosService = {
-  getUserTodos: async (userId: string) =>
-    db.query.todos.findMany({
-      where: eq(todos.userId, userId),
-      orderBy: asc(todos.createdAt),
+  getUserTodos: async (userId: User['id']) =>
+    db.todo.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
     }),
 
-  getTodo: async (id: string) =>
-    db.query.todos.findFirst({
-      where: eq(todos.id, id),
+  getTodo: async (id: Todo['id']) =>
+    db.todo.findFirst({
+      where: { id },
     }),
 
-  createTodos: async (data: InsertTodo) => db.insert(todos).values(data).returning(),
+  createTodos: async (data: TodoUncheckedCreateInput) =>
+    db.todo.create({
+      data,
+    }),
 
-  updateTodo: async (id: string, data: UpdateTodo) =>
-    db.update(todos).set(data).where(eq(todos.id, id)).returning(),
+  updateTodo: async (id: Todo['id'], data: TodoUncheckedUpdateInput) =>
+    db.todo.update({
+      where: { id },
+      data,
+    }),
 
-  deleteTodo: async (id: string) => db.delete(todos).where(eq(todos.id, id)),
+  deleteTodo: async (id: Todo['id']) =>
+    db.todo.delete({
+      where: { id },
+    }),
 }
