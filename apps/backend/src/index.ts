@@ -1,5 +1,7 @@
 import cors from '@elysiajs/cors'
 import openapi, { fromTypes } from '@elysiajs/openapi'
+import { auth } from '@repo/auth'
+import { logger as devLogger } from '@tqman/nice-logger'
 import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
 import { env } from '#lib/env'
@@ -8,7 +10,7 @@ import { AuthOpenAPI } from '#middlewares/auth'
 import { todosRouter } from '#routers/todos/controller'
 import { utilsRouter } from '#routers/utils/controller'
 
-const app = new Elysia({ prefix: '/api' })
+const app = new Elysia()
   .use(
     cors({
       origin: [env.FRONTEND_URL],
@@ -28,15 +30,16 @@ const app = new Elysia({ prefix: '/api' })
       references: fromTypes(),
     })
   )
-  // .onError({ as: 'global' }, ({ error, status }) => {
-  //   logger.error(error)
-  //   if (isProduction) {
-  //     return status(500)
-  //   }
+  .mount(auth.handler)
+  .onError({ as: 'global' }, ({ error, status }) => {
+    logger.error(error)
+    if (isProduction) {
+      return status(500)
+    }
 
-  //   return status(500, error)
-  // })
-  // .use(devLogger()) // Enabled only in development
+    return status(500, error)
+  })
+  .use(devLogger()) // Enabled only in development
   .use(utilsRouter)
   .use(todosRouter)
   .listen(3001)

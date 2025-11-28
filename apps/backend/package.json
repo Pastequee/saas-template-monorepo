@@ -1,6 +1,7 @@
 {
   "name": "@repo/backend",
   "private": true,
+  "type": "module",
   "main": "./src/index.ts",
   "imports": {
     "#routers/*": "./src/routers/*.ts",
@@ -16,9 +17,9 @@
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
     "@elysiajs/openapi": "^1.4.11",
-    "@repo/utils": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/db-prisma": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "@tqman/nice-logger": "^1.1.1",
     "elysia": "catalog:",

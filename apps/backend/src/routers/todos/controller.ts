@@ -13,9 +13,9 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
   .post(
     '/todos',
     async ({ body, status, user }) => {
-      const todo = await TodosService.createTodos({ userId: user.id, ...body })
+      const createdTodo = await TodosService.createTodos({ userId: user.id, ...body })
 
-      return status('Created', todo)
+      return status('Created', createdTodo)
     },
     { auth: true, body: TodoPlainInputCreate }
   )
@@ -33,7 +33,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
       const updatedTodo = await TodosService.updateTodo(params.id, body)
 
-      return updatedTodo
+      return status('OK', updatedTodo)
     },
     { auth: true, body: TodoPlainInputUpdate }
   )
@@ -48,7 +48,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
       const deletedTodo = await TodosService.deleteTodo(params.id)
 
-      return deletedTodo
+      return status('OK', deletedTodo)
     },
     { auth: true }
   )

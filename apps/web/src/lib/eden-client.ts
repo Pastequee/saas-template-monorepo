@@ -30,7 +30,7 @@ export const eden = treaty<App>(env.VITE_BACKEND_URL, {
     const headers = getRequestHeaders()
     return { headers }
   },
-}).api
+})
 
 type EdenQueryFn =
   | ((body?: any, options?: any) => Promise<TreatyResponse>)

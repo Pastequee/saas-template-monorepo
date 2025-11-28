@@ -3,7 +3,7 @@ import { typedObjectKeys } from '@repo/utils'
 import { Elysia } from 'elysia'
 
 // user middleware (compute user and session and pass to routes)
-export const betterAuth = new Elysia({ name: 'better-auth' }).mount(auth.handler).macro({
+export const betterAuth = new Elysia({ name: 'better-auth' }).macro({
   auth: {
     async resolve({ status, request: { headers } }) {
       const session = await auth.api.getSession({
@@ -27,7 +27,7 @@ const getSchema = () => {
 }
 
 export const AuthOpenAPI = {
-  getPaths: (prefix = '/api/auth') =>
+  getPaths: (prefix = '/auth') =>
     getSchema().then(({ paths }) => {
       const reference: typeof paths = Object.create(null)
 
