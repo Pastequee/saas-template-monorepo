@@ -10,12 +10,12 @@
     "test": "turbo run test",
     "db:push": "bun -F ./packages/db-prisma push",
     "db:migrate": "bun -F ./packages/db-prisma migrate",
-    "db:generate": "bun -F ./packages/db-prisma generate",
+    "db:gen": "bun -F ./packages/db-prisma generate",
     "db:studio": "bun -F ./packages/db-prisma studio",
-    "auth:generate": "bun -F ./packages/auth generate",
-    "dev:docker": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
-    "dev:docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down -v",
-    "dev:docker:refresh": "bun dev:docker:down && bun dev:docker"
+    "auth:gen": "bun -F ./packages/auth generate",
+    "docker:up": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down -v",
+    "docker:refresh": "bun docker:down && bun docker:up"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",

@@ -1,11 +1,10 @@
 {
   "name": "@repo/auth",
   "private": true,
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "type": "module",
+  "main": "./src/auth-config.ts",
   "scripts": {
-    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- bunx @better-auth/cli generate --config src/index.ts --output ../db-prisma/schemas/tmp-auth.prisma",
+    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db-prisma/schemas/tmp-auth.prisma",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
