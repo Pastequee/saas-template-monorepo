@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "build": "bun build --compile --sourcemap --minify --bytecode src/index.ts --outfile dist/server",
+    "build": "bun build --compile --sourcemap --minify src/index.ts --outfile dist/server",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
