@@ -17,10 +17,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Lint
-        run: pnpm lint
+        run: bun lint
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: bun typecheck
 
   tests:
     name: Run tests
@@ -35,7 +35,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run tests
-        run: pnpm test
+        run: bun test
   
   build:
     name: Build
@@ -49,6 +49,6 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build
-        run: pnpm build
+        run: bun build
 
   
