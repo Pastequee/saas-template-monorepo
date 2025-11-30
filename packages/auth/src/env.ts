@@ -4,12 +4,12 @@ import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
 export const env = createEnv({
-  server: {
-    BETTER_AUTH_SECRET: z.string(),
-    FRONTEND_URL: z.url(),
-  },
+	server: {
+		BETTER_AUTH_SECRET: z.string(),
+		FRONTEND_URL: z.url(),
+	},
 
-  runtimeEnv: process.env,
+	runtimeEnv: process.env,
 
-  emptyStringAsUndefined: true,
+	emptyStringAsUndefined: true,
 })

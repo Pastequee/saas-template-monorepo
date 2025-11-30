@@ -4,16 +4,16 @@ import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
 export const env = createEnv({
-  client: {
-    VITE_BACKEND_URL: z.url(),
-  },
+	client: {
+		VITE_BACKEND_URL: z.url(),
+	},
 
-  shared: {
-    NODE_ENV: z.enum(['development', 'production']).default('development'),
-  },
+	shared: {
+		NODE_ENV: z.enum(['development', 'production']).default('development'),
+	},
 
-  runtimeEnv: import.meta.env,
+	runtimeEnv: import.meta.env,
 
-  emptyStringAsUndefined: true,
-  clientPrefix: 'VITE_',
+	emptyStringAsUndefined: true,
+	clientPrefix: 'VITE_',
 })

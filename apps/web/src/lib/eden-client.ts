@@ -3,126 +3,127 @@
 import { type Treaty, treaty } from '@elysiajs/eden'
 import type { App } from '@repo/backend'
 import {
-  isServer,
-  mutationOptions,
-  type QueryKey,
-  queryOptions,
-  type UndefinedInitialDataOptions,
-  type UseMutationOptions,
-  type UseQueryOptions,
-  useMutation,
-  useQuery,
+	isServer,
+	mutationOptions,
+	type QueryKey,
+	queryOptions,
+	type UndefinedInitialDataOptions,
+	type UseMutationOptions,
+	type UseQueryOptions,
+	useMutation,
+	useQuery,
 } from '@tanstack/react-query'
 import { env } from './env'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 
 export const eden = treaty<App>(env.VITE_BACKEND_URL, {
-  fetch: {
-    credentials: 'include',
-  },
-  // On the server, since we're making API calls on behalf of the client,
-  // we need to forward the headers from the client request to the backend
-  onRequest: async () => {
-    if (!isServer) return
+	fetch: {
+		credentials: 'include',
+	},
+	// On the server, since we're making API calls on behalf of the client,
+	// we need to forward the headers from the client request to the backend
+	onRequest: async () => {
+		if (!isServer) return
 
-    const { getRequestHeaders } = await import('@tanstack/react-start/server')
-    const headers = getRequestHeaders()
-    return { headers }
-  },
+		const { getRequestHeaders } = await import('@tanstack/react-start/server')
+		const headers = getRequestHeaders()
+		return { headers }
+	},
 })
 
 type EdenQueryFn =
-  | ((body?: any, options?: any) => Promise<TreatyResponse>)
-  | ((options?: any) => Promise<TreatyResponse>)
+	| ((body?: any, options?: any) => Promise<TreatyResponse>)
+	| ((options?: any) => Promise<TreatyResponse>)
 
 type ExtractData<T> = T extends { data: infer D; error: null } ? D : never
 type ExtractError<T> = T extends { error: infer E; data: null } ? E : never
 
 type CountParameters<TFn extends EdenQueryFn> = Parameters<TFn>['length']
 
-type ExtractOptions<TEdenQueryFn extends EdenQueryFn> = CountParameters<TEdenQueryFn> extends 0 | 1
-  ? Parameters<TEdenQueryFn>[0]
-  : Parameters<TEdenQueryFn>[1]
+type ExtractOptions<TEdenQueryFn extends EdenQueryFn> =
+	CountParameters<TEdenQueryFn> extends 0 | 1
+		? Parameters<TEdenQueryFn>[0]
+		: Parameters<TEdenQueryFn>[1]
 
 export function useEdenQuery<
-  TEdenQueryFn extends EdenQueryFn,
-  TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
-  TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
+	TEdenQueryFn extends EdenQueryFn,
+	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
+	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
 >({
-  edenQuery,
-  edenOptions,
-  ...options
+	edenQuery,
+	edenOptions,
+	...options
 }: Omit<UseQueryOptions<TData, TError, TData, QueryKey>, 'queryFn'> & {
-  edenQuery: TEdenQueryFn
-  edenOptions?: ExtractOptions<TEdenQueryFn>
+	edenQuery: TEdenQueryFn
+	edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  return useQuery({
-    queryFn: async () => {
-      const { data, error } = await edenQuery(edenOptions)
-      if (error) throw error
-      return data
-    },
-    ...options,
-  })
+	return useQuery({
+		queryFn: async () => {
+			const { data, error } = await edenQuery(edenOptions)
+			if (error) throw error
+			return data
+		},
+		...options,
+	})
 }
 
 export function edenQueryOption<
-  TEdenQueryFn extends EdenQueryFn,
-  TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
-  TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
+	TEdenQueryFn extends EdenQueryFn,
+	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
+	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
 >({
-  edenQuery,
-  edenOptions,
-  ...options
+	edenQuery,
+	edenOptions,
+	...options
 }: Omit<UndefinedInitialDataOptions<TData, TError, TData, QueryKey>, 'queryFn'> & {
-  edenQuery: TEdenQueryFn
-  edenOptions?: ExtractOptions<TEdenQueryFn>
+	edenQuery: TEdenQueryFn
+	edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  return { ...queryOptions(options), edenOptions, edenQuery }
+	return { ...queryOptions(options), edenOptions, edenQuery }
 }
 
 export function useEdenMutation<
-  TEdenQueryFn extends EdenQueryFn,
-  TData = NonNullable<ExtractData<Awaited<ReturnType<TEdenQueryFn>>>>,
-  TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
-  TOnMutateResult = unknown,
+	TEdenQueryFn extends EdenQueryFn,
+	TData = NonNullable<ExtractData<Awaited<ReturnType<TEdenQueryFn>>>>,
+	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
+	TOnMutateResult = unknown,
 >({
-  edenMutation,
-  edenOptions,
-  ...options
+	edenMutation,
+	edenOptions,
+	...options
 }: Omit<
-  UseMutationOptions<TData, TError, Parameters<TEdenQueryFn>[0], TOnMutateResult>,
-  'mutationFn'
+	UseMutationOptions<TData, TError, Parameters<TEdenQueryFn>[0], TOnMutateResult>,
+	'mutationFn'
 > & {
-  edenMutation: TEdenQueryFn
-  edenOptions?: ExtractOptions<TEdenQueryFn>
+	edenMutation: TEdenQueryFn
+	edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  return useMutation({
-    mutationFn: async (body: Parameters<TEdenQueryFn>[0]) => {
-      const { data, error } = await edenMutation(body, edenOptions)
-      if (error) throw error
-      return data
-    },
-    ...options,
-  })
+	return useMutation({
+		mutationFn: async (body: Parameters<TEdenQueryFn>[0]) => {
+			const { data, error } = await edenMutation(body, edenOptions)
+			if (error) throw error
+			return data
+		},
+		...options,
+	})
 }
 
 export function edenMutationOption<
-  TEdenQueryFn extends EdenQueryFn,
-  TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
-  TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
-  TOnMutateResult = unknown,
+	TEdenQueryFn extends EdenQueryFn,
+	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
+	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
+	TOnMutateResult = unknown,
 >({
-  edenMutation,
-  edenOptions,
-  ...options
+	edenMutation,
+	edenOptions,
+	...options
 }: Omit<
-  UseMutationOptions<TData, TError, Parameters<TEdenQueryFn>[0], TOnMutateResult>,
-  'mutationFn'
+	UseMutationOptions<TData, TError, Parameters<TEdenQueryFn>[0], TOnMutateResult>,
+	'mutationFn'
 > & {
-  edenMutation: TEdenQueryFn
-  edenOptions?: ExtractOptions<TEdenQueryFn>
+	edenMutation: TEdenQueryFn
+	edenOptions?: ExtractOptions<TEdenQueryFn>
 }) {
-  return { ...mutationOptions(options), edenOptions, edenMutation }
+	return { ...mutationOptions(options), edenOptions, edenMutation }
 }

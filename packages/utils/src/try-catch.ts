@@ -38,10 +38,10 @@ type Result<T, E = Error> = Failure<E> | Success<T>
  * @returns Promise<Result<T, E>> - A Result object containing either data or error
  */
 export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Result<T, E>> {
-  try {
-    const data = await promise
-    return [data, null]
-  } catch (error) {
-    return [null, error as E]
-  }
+	try {
+		const data = await promise
+		return [data, null]
+	} catch (error) {
+		return [null, error as E]
+	}
 }

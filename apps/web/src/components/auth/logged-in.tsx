@@ -1,15 +1,15 @@
 import { useAuth } from './auth-provider'
 
 type LoggedInProps = {
-  children: React.ReactNode
+	children: React.ReactNode
 }
 
 export const LoggedIn = ({ children }: LoggedInProps) => {
-  const { isAuthenticated } = useAuth()
+	const { isAuthenticated } = useAuth()
 
-  if (!isAuthenticated) {
-    return
-  }
+	if (!isAuthenticated) {
+		return
+	}
 
-  return <>{children}</>
+	return <>{children}</>
 }

@@ -4,17 +4,17 @@ import { Loader } from '../ui/loader'
 import { TodoItem } from './todo-item'
 
 export const TodoList = () => {
-  const { data: todos, isLoading, isSuccess } = useEdenQuery(todoListOptions())
+	const { data: todos, isLoading, isSuccess } = useEdenQuery(todoListOptions())
 
-  if (isLoading) return <Loader className="text-muted-foreground" />
+	if (isLoading) return <Loader className="text-muted-foreground" />
 
-  if (!isSuccess || todos.length === 0) return null
+	if (!isSuccess || todos.length === 0) return null
 
-  return (
-    <div className="flex flex-col gap-2">
-      {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
-      ))}
-    </div>
-  )
+	return (
+		<div className="flex flex-col gap-2">
+			{todos.map((todo) => (
+				<TodoItem key={todo.id} todo={todo} />
+			))}
+		</div>
+	)
 }

@@ -5,6 +5,7 @@
     "formatter": {
       "semicolons": "asNeeded",
       "quoteStyle": "single",
+      "indentStyle": "tab",
       "lineWidth": 100
     }
   },
@@ -14,11 +15,9 @@
         "noChildrenProp": "off"
       },
       "style": {
-        "noHeadElement": "off",
         "noNestedTernary": "off",
         "useBlockStatements": "off",
-        "noMagicNumbers": "off",
-        "useNamingConvention": "off"
+        "noMagicNumbers": "off"
       },
       "performance": {
         "noBarrelFile": "off",
@@ -26,19 +25,23 @@
       },
       "suspicious": {
         "noConsole": "on"
+      },
+      "nursery": {
+        "noLeakedRender": "off" // its buggy for now, remove if stable
       }
     }
   },
   "files": {
     "includes": [
       "**/*",
+      "!**/*.json",
       "!**/*.gen.ts",
       "!**/_generated",
-      "!**/*.json",
       "!**/generated"
     ]
   },
   "overrides": [
+    // remove file naming convention for tsrouter file routing features
     {
       "includes": ["**/$.ts"],
       "linter": {

@@ -7,14 +7,14 @@ import { z } from 'zod'
 const localEnvPath = resolve(__dirname, '../../apps/backend/.env.local')
 
 if (process.env.NODE_ENV !== 'production' && existsSync(localEnvPath)) {
-  dotenv.config({ path: localEnvPath })
+	dotenv.config({ path: localEnvPath })
 } else {
-  dotenv.config()
+	dotenv.config()
 }
 
 export const env = createEnv({
-  server: {
-    DATABASE_URL: z.string(),
-  },
-  runtimeEnv: process.env,
+	server: {
+		DATABASE_URL: z.string(),
+	},
+	runtimeEnv: process.env,
 })
