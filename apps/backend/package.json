@@ -29,6 +29,6 @@
   "devDependencies": {
     "@types/bun": "catalog:",
     "@types/pg": "catalog:",
-    "pino-pretty": "^13.1.2"
+    "pino-pretty": "^13.1.3"
   }
 }
