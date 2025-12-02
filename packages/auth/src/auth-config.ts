@@ -1,4 +1,5 @@
 import { db } from '@repo/db-prisma'
+import { mail } from '@repo/email'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
@@ -21,7 +22,28 @@ export const auth = betterAuth({
 		},
 	},
 
-	emailAndPassword: { enabled: true },
+	emailAndPassword: {
+		enabled: true,
+		requireEmailVerification: true,
+		sendResetPassword: async ({ url, user }) => {
+			await mail.send({
+				to: user.email,
+				subject: 'Reset your password',
+				text: `Click here to reset your password: ${url}`,
+			})
+		},
+	},
+
+	emailVerification: {
+		sendVerificationEmail: async ({ url, user }) => {
+			await mail.send({
+				to: user.email,
+				subject: 'Verify your email',
+				text: `Click here to verify your email: ${url}`,
+			})
+		},
+		autoSignInAfterVerification: true,
+	},
 
 	socialProviders: {
 		google: {

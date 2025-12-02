@@ -5,17 +5,12 @@ import { z } from 'zod'
 
 export const env = createEnv({
 	server: {
-		FRONTEND_URL: z.url(),
-		NODE_ENV: z.enum(['development', 'production']).default('development'),
-		LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
-
-		// Email service
 		RESEND_API_KEY: z.string(),
 		FROM_EMAIL: z.email(),
 		FROM_NAME: z.string(),
 	},
 
-	runtimeEnv: import.meta.env,
+	runtimeEnv: process.env,
 
 	emptyStringAsUndefined: true,
 })

@@ -1,0 +1,15 @@
+{
+  "name": "@repo/email",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "catalog:",
+    "resend": "^6.5.2",
+    "zod": "catalog:"
+  },
+  "devDependencies": {}
+}
