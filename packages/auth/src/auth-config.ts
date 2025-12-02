@@ -1,4 +1,4 @@
-import { db } from '@repo/db-prisma'
+import { db } from '@repo/db'
 import { mail } from '@repo/email'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'

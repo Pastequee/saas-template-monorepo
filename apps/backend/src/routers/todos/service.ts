@@ -1,10 +1,5 @@
-import { db } from '@repo/db-prisma'
-import type {
-	Todo,
-	TodoUncheckedCreateInput,
-	TodoUncheckedUpdateInput,
-	User,
-} from '@repo/db-prisma/types'
+import { db } from '@repo/db'
+import type { Todo, TodoUncheckedCreateInput, TodoUncheckedUpdateInput, User } from '@repo/db/types'
 
 export const TodosService = {
 	getUserTodos: async (userId: User['id']) =>

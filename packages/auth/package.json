@@ -4,11 +4,11 @@
   "type": "module",
   "main": "./src/auth-config.ts",
   "scripts": {
-    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db-prisma/schemas/tmp-auth.prisma",
+    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/schemas/tmp-auth.prisma",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@repo/db-prisma": "workspace:*",
+    "@repo/db": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
     "dotenv": "^17.2.3",

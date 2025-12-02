@@ -1,4 +1,4 @@
-import { TodoPlainInputCreate, TodoPlainInputUpdate } from '@repo/db-prisma/schemas'
+import { TodoPlainInputCreate, TodoPlainInputUpdate } from '@repo/db/schemas'
 import { Elysia } from 'elysia'
 import { betterAuth } from '#middlewares/auth'
 import { TodosService } from './service'

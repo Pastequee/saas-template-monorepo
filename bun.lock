@@ -21,13 +21,12 @@
         "@elysiajs/cors": "^1.4.0",
         "@elysiajs/openapi": "^1.4.11",
         "@repo/auth": "workspace:*",
-        "@repo/db-prisma": "workspace:*",
+        "@repo/db": "workspace:*",
         "@repo/utils": "workspace:*",
         "@t3-oss/env-core": "catalog:",
         "@tqman/nice-logger": "^1.1.1",
         "elysia": "catalog:",
         "pino": "^10.1.0",
-        "resend": "^6.5.2",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -84,7 +83,7 @@
     "packages/auth": {
       "name": "@repo/auth",
       "dependencies": {
-        "@repo/db-prisma": "workspace:*",
+        "@repo/db": "workspace:*",
         "@repo/email": "workspace:*",
         "@t3-oss/env-core": "catalog:",
         "better-auth": "catalog:",
@@ -96,8 +95,8 @@
         "dotenv-cli": "^11.0.0",
       },
     },
-    "packages/db-prisma": {
-      "name": "@repo/db-prisma",
+    "packages/db": {
+      "name": "@repo/db",
       "dependencies": {
         "@prisma/adapter-pg": "^7.0.1",
         "@prisma/client": "^7.0.1",
@@ -451,7 +450,7 @@
 
     "@repo/backend": ["@repo/backend@workspace:apps/backend"],
 
-    "@repo/db-prisma": ["@repo/db-prisma@workspace:packages/db-prisma"],
+    "@repo/db": ["@repo/db@workspace:packages/db"],
 
     "@repo/email": ["@repo/email@workspace:packages/email"],
 
