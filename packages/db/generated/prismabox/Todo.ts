@@ -29,6 +29,10 @@ export const TodoRelations = t.Object(
         image: __nullable__(t.String()),
         createdAt: t.Date(),
         updatedAt: t.Date(),
+        role: __nullable__(t.String()),
+        banned: __nullable__(t.Boolean()),
+        banReason: __nullable__(t.String()),
+        banExpires: __nullable__(t.Date()),
       },
       { additionalProperties: false },
     ),
@@ -168,11 +172,11 @@ export const TodoSelect = t.Partial(
     {
       id: t.Boolean(),
       userId: t.Boolean(),
-      user: t.Boolean(),
       content: t.Boolean(),
       status: t.Boolean(),
       createdAt: t.Boolean(),
       updatedAt: t.Boolean(),
+      user: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -181,7 +185,7 @@ export const TodoSelect = t.Partial(
 
 export const TodoInclude = t.Partial(
   t.Object(
-    { user: t.Boolean(), status: t.Boolean(), _count: t.Boolean() },
+    { status: t.Boolean(), user: t.Boolean(), _count: t.Boolean() },
     { additionalProperties: false },
   ),
 );

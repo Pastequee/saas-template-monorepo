@@ -6,6 +6,7 @@ import { z } from 'zod'
 export const env = createEnv({
 	client: {
 		VITE_BACKEND_URL: z.url(),
+		VITE_FRONTEND_URL: z.url(),
 	},
 
 	shared: {

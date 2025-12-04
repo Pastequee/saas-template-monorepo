@@ -14,6 +14,7 @@ export const SessionPlain = t.Object(
     ipAddress: __nullable__(t.String()),
     userAgent: __nullable__(t.String()),
     userId: t.String(),
+    impersonatedBy: __nullable__(t.String()),
   },
   { additionalProperties: false },
 );
@@ -29,6 +30,10 @@ export const SessionRelations = t.Object(
         image: __nullable__(t.String()),
         createdAt: t.Date(),
         updatedAt: t.Date(),
+        role: __nullable__(t.String()),
+        banned: __nullable__(t.Boolean()),
+        banReason: __nullable__(t.String()),
+        banExpires: __nullable__(t.Date()),
       },
       { additionalProperties: false },
     ),
@@ -42,6 +47,7 @@ export const SessionPlainInputCreate = t.Object(
     token: t.String(),
     ipAddress: t.Optional(__nullable__(t.String())),
     userAgent: t.Optional(__nullable__(t.String())),
+    impersonatedBy: t.Optional(__nullable__(t.String())),
   },
   { additionalProperties: false },
 );
@@ -52,6 +58,7 @@ export const SessionPlainInputUpdate = t.Object(
     token: t.Optional(t.String()),
     ipAddress: t.Optional(__nullable__(t.String())),
     userAgent: t.Optional(__nullable__(t.String())),
+    impersonatedBy: t.Optional(__nullable__(t.String())),
   },
   { additionalProperties: false },
 );
@@ -108,6 +115,7 @@ export const SessionWhere = t.Partial(
           ipAddress: t.String(),
           userAgent: t.String(),
           userId: t.String(),
+          impersonatedBy: t.String(),
         },
         { additionalProperties: false },
       ),
@@ -167,6 +175,7 @@ export const SessionWhereUnique = t.Recursive(
               ipAddress: t.String(),
               userAgent: t.String(),
               userId: t.String(),
+              impersonatedBy: t.String(),
             },
             { additionalProperties: false },
           ),
@@ -188,6 +197,7 @@ export const SessionSelect = t.Partial(
       ipAddress: t.Boolean(),
       userAgent: t.Boolean(),
       userId: t.Boolean(),
+      impersonatedBy: t.Boolean(),
       user: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -227,6 +237,9 @@ export const SessionOrderBy = t.Partial(
         additionalProperties: false,
       }),
       userId: t.Union([t.Literal("asc"), t.Literal("desc")], {
+        additionalProperties: false,
+      }),
+      impersonatedBy: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
     },

@@ -19,6 +19,7 @@ function RegisterPage() {
 			</CardHeader>
 			<CardContent>
 				<RegisterForm />
+
 				<p className="mt-4 flex flex-wrap justify-center gap-1 text-muted-foreground text-sm">
 					Already have an account?{' '}
 					<Link className="flex items-center gap-1 text-primary" to="/login">

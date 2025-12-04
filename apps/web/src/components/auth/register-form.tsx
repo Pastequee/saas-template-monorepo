@@ -2,10 +2,14 @@ import { useRouter } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import z from 'zod'
+import googleIcon from '~/assets/google.svg'
 import { Alert, AlertTitle } from '~/components/ui/alert'
 import { authClient } from '~/lib/auth-client'
+import { env } from '~/lib/env'
 import { useAppForm } from '~/lib/hooks/form-hook'
+import { Button } from '../ui/button'
 import { PasswordInput } from '../ui/password-input'
+import { Separator } from '../ui/separator'
 
 const formSchema = z.object({
 	email: z.email('Invalid email address').nonempty('Name is required'),
@@ -37,6 +41,18 @@ export const RegisterForm = () => {
 		},
 		validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
 	})
+
+	const handleSocialSignIn = async ({ provider }: { provider: 'google' }) => {
+		const { error } = await authClient.signIn.social({
+			provider,
+			callbackURL: env.VITE_FRONTEND_URL,
+		})
+
+		if (error) {
+			setSignUpResponseError(error.message ?? 'An unknown error occurred, please try again later.')
+			return
+		}
+	}
 
 	return (
 		<form
@@ -72,6 +88,21 @@ export const RegisterForm = () => {
 			<form.AppForm>
 				<form.SubmitButton label="Create account" />
 			</form.AppForm>
+
+			<div className="my-2 flex items-center gap-4">
+				<Separator className="flex-1" />
+				<span className="text-muted-foreground text-sm">OR</span>
+				<Separator className="flex-1" />
+			</div>
+
+			<Button
+				className="w-full"
+				onClick={() => handleSocialSignIn({ provider: 'google' })}
+				variant="outline"
+			>
+				<img alt="Google" className="size-4" height={16} src={googleIcon} width={16} />
+				Continue with Google
+			</Button>
 		</form>
 	)
 }
