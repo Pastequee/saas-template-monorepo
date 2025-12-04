@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
+    "@repo/email": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "better-auth": "catalog:",
     "dotenv": "^17.2.3",
-    "zod": "catalog:",
-    "@repo/email": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/bun": "catalog:",
