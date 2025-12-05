@@ -1,24 +1,50 @@
 import { auth } from '@repo/auth'
+import { Role } from '@repo/db/types'
 import { typedObjectKeys } from '@repo/utils'
 import { Elysia } from 'elysia'
 
-// user middleware (compute user and session and pass to routes)
-export const betterAuth = new Elysia({ name: 'better-auth' }).macro({
-	auth: {
-		async resolve({ status, request: { headers } }) {
-			const session = await auth.api.getSession({
-				headers,
-			})
+const isValidRole = (role: string | null | undefined): role is Role => {
+	if (!role) return false
+	return Object.values(Role).includes(role as Role)
+}
 
-			if (!session) return status(401)
+export const betterAuth = new Elysia({ name: 'better-auth' }).macro('auth', {
+	resolve: async ({ status, request: { headers } }) => {
+		const session = await auth.api.getSession({
+			headers,
+		})
 
-			return {
-				user: session.user,
-				session: session.session,
-			}
-		},
+		if (!session || !isValidRole(session.user.role)) return status(401)
+
+		return {
+			user: {
+				...session.user,
+				role: session.user.role as Role, // Need to help type inference here
+			},
+			session: session.session,
+		}
 	},
 })
+// Not working for now becuase of type bug in Elysia
+// .macro({
+// 	role: (askedRole: Role | TypedExclude<Role, 'superadmin' | 'admin'>[]) => ({
+// 		auth: true,
+// 		resolve: ({ user, status }) => {
+// 			// Superadmin has all permissions
+// 			if (user.role === 'superadmin') return
+
+// 			// Admin has all permissions except superadmin specific permissions
+// 			if (user.role === 'admin' && askedRole !== 'superadmin') return
+
+// 			const askedRoles = Array.isArray(askedRole) ? askedRole : [askedRole]
+
+// 			// Check if the user has the asked role
+// 			if (askedRoles.some((role) => role === user.role)) return
+
+// 			return status(403)
+// 		},
+// 	}),
+// })
 
 let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>
 const getSchema = () => {

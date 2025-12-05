@@ -6,7 +6,7 @@ model User {
   image         String?
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
-  role          String?
+  role          Role?     @default(user)
   banned        Boolean?  @default(false)
   banReason     String?   @map("ban_reason")
   banExpires    DateTime? @map("ban_expires")
@@ -71,5 +71,14 @@ model Verification {
 
   @@index([identifier])
   @@map("verifications")
+  @@schema("auth")
+}
+
+enum Role {
+  user
+  admin
+  superadmin
+
+  @@map("roles")
   @@schema("auth")
 }

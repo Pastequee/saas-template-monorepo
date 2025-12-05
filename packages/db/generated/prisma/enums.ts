@@ -9,6 +9,15 @@
 * 🟢 You can import this file directly.
 */
 
+export const Role = {
+  user: 'user',
+  admin: 'admin',
+  superadmin: 'superadmin'
+} as const
+
+export type Role = (typeof Role)[keyof typeof Role]
+
+
 export const TodoStatus = {
   pending: 'pending',
   completed: 'completed'

@@ -1,3 +1,4 @@
+export * from "./Role.js";
 export * from "./TodoStatus.js";
 export * from "./User.js";
 export * from "./Session.js";

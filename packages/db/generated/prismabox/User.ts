@@ -13,7 +13,12 @@ export const UserPlain = t.Object(
     image: __nullable__(t.String()),
     createdAt: t.Date(),
     updatedAt: t.Date(),
-    role: __nullable__(t.String()),
+    role: __nullable__(
+      t.Union(
+        [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
+        { additionalProperties: false },
+      ),
+    ),
     banned: __nullable__(t.Boolean()),
     banReason: __nullable__(t.String()),
     banExpires: __nullable__(t.Date()),
@@ -87,7 +92,14 @@ export const UserPlainInputCreate = t.Object(
     email: t.String(),
     emailVerified: t.Optional(t.Boolean()),
     image: t.Optional(__nullable__(t.String())),
-    role: t.Optional(__nullable__(t.String())),
+    role: t.Optional(
+      __nullable__(
+        t.Union(
+          [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
+          { additionalProperties: false },
+        ),
+      ),
+    ),
     banned: t.Optional(__nullable__(t.Boolean())),
     banReason: t.Optional(__nullable__(t.String())),
     banExpires: t.Optional(__nullable__(t.Date())),
@@ -101,7 +113,14 @@ export const UserPlainInputUpdate = t.Object(
     email: t.Optional(t.String()),
     emailVerified: t.Optional(t.Boolean()),
     image: t.Optional(__nullable__(t.String())),
-    role: t.Optional(__nullable__(t.String())),
+    role: t.Optional(
+      __nullable__(
+        t.Union(
+          [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
+          { additionalProperties: false },
+        ),
+      ),
+    ),
     banned: t.Optional(__nullable__(t.Boolean())),
     banReason: t.Optional(__nullable__(t.String())),
     banExpires: t.Optional(__nullable__(t.Date())),
@@ -261,7 +280,10 @@ export const UserWhere = t.Partial(
           image: t.String(),
           createdAt: t.Date(),
           updatedAt: t.Date(),
-          role: t.String(),
+          role: t.Union(
+            [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
+            { additionalProperties: false },
+          ),
           banned: t.Boolean(),
           banReason: t.String(),
           banExpires: t.Date(),
@@ -323,7 +345,14 @@ export const UserWhereUnique = t.Recursive(
               image: t.String(),
               createdAt: t.Date(),
               updatedAt: t.Date(),
-              role: t.String(),
+              role: t.Union(
+                [
+                  t.Literal("user"),
+                  t.Literal("admin"),
+                  t.Literal("superadmin"),
+                ],
+                { additionalProperties: false },
+              ),
               banned: t.Boolean(),
               banReason: t.String(),
               banExpires: t.Date(),
@@ -363,6 +392,7 @@ export const UserSelect = t.Partial(
 export const UserInclude = t.Partial(
   t.Object(
     {
+      role: t.Boolean(),
       sessions: t.Boolean(),
       accounts: t.Boolean(),
       todos: t.Boolean(),
@@ -394,9 +424,6 @@ export const UserOrderBy = t.Partial(
         additionalProperties: false,
       }),
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")], {
-        additionalProperties: false,
-      }),
-      role: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
       banned: t.Union([t.Literal("asc"), t.Literal("desc")], {

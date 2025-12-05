@@ -14,6 +14,9 @@
       "correctness": {
         "noChildrenProp": "off"
       },
+      "complexity": {
+        "useSimplifiedLogicExpression": "off"
+      },
       "style": {
         "noNestedTernary": "off",
         "useBlockStatements": "off",
