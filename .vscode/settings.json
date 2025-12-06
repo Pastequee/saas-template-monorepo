@@ -24,6 +24,9 @@
   "[css]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
 
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
@@ -66,8 +69,5 @@
     "titleBar.activeForeground": "#15202b",
     "titleBar.inactiveBackground": "#42b88399",
     "titleBar.inactiveForeground": "#15202b99"
-  },
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
   }
 }

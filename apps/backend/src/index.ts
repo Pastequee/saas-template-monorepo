@@ -54,4 +54,14 @@ logger.info(
 	'Server is running'
 )
 
+process.on('SIGTERM', async () => {
+	await app.stop()
+	process.exit(0)
+})
+
+process.on('SIGINT', async () => {
+	await app.stop()
+	process.exit(0)
+})
+
 export type App = typeof app
