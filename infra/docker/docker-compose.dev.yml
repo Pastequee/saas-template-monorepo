@@ -13,6 +13,21 @@ services:
       - 5400:5432
     volumes:
       - postgres_data:/var/lib/postgresql
+  
+  files:
+    image: rustfs/rustfs:latest
+    container_name: local-files
+    restart: unless-stopped
+    environment:
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+      RUSTFS_CONSOLE_ENABLE: true
+    ports:
+      - 9000:9000 # S3 API
+      - 9001:9001 # Http Console
+    volumes:
+      - files_data:/data
 
 volumes:
   postgres_data:
+  files_data:
