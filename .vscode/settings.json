@@ -50,6 +50,15 @@
     "**/routeTree.gen.ts": true
   },
 
+  "workbench.editor.customLabels.patterns": {
+    "**/src/index.{ts,tsx}": "${dirname(1)}/src - index",
+    "**/.env*": "${dirname} - ${filename}.${extname}",
+    "**/index.{ts,tsx}": "${dirname} - index",
+    "**/route.tsx": "${dirname} - route",
+    "**/controller.ts": "${dirname} - controller",
+    "**/service.ts": "${dirname} - service"
+  },
+
   "peacock.color": "#42b883",
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#65c89b",
