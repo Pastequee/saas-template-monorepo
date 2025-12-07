@@ -1,6 +1,6 @@
 import { auth } from '@repo/auth'
 import { Role } from '@repo/db/types'
-import { typedObjectKeys } from '@repo/utils'
+import { type TypedExclude, typedObjectKeys } from '@repo/utils'
 import { Elysia } from 'elysia'
 
 const isValidRole = (role: string | null | undefined): role is Role => {
@@ -8,23 +8,47 @@ const isValidRole = (role: string | null | undefined): role is Role => {
 	return Object.values(Role).includes(role as Role)
 }
 
-export const betterAuth = new Elysia({ name: 'better-auth' }).macro('auth', {
-	resolve: async ({ status, request: { headers } }) => {
-		const session = await auth.api.getSession({
-			headers,
-		})
+export const betterAuth = new Elysia({ name: 'better-auth' })
+	.macro('auth', {
+		resolve: async ({ status, request: { headers } }) => {
+			const session = await auth.api.getSession({ headers })
 
-		if (!session || !isValidRole(session.user.role)) return status(401)
+			if (!session || !isValidRole(session.user.role)) return status(401)
 
-		return {
-			user: {
-				...session.user,
-				role: session.user.role as Role, // Need to help type inference here
-			},
-			session: session.session,
-		}
-	},
-})
+			return {
+				user: {
+					...session.user,
+					role: session.user.role as Role, // Need to help type inference here
+				},
+				session: session.session,
+			}
+		},
+	})
+	.macro('role', (askedRole: Role | TypedExclude<Role, 'superadmin' | 'admin'>[]) => ({
+		resolve: async ({ status, request: { headers } }) => {
+			const session = await auth.api.getSession({ headers })
+
+			if (!session || !isValidRole(session.user.role)) return status(401)
+
+			const context = {
+				user: { ...session.user, role: session.user.role as Role },
+				session: session.session,
+			}
+
+			// Superadmin has all permissions
+			if (session.user.role === 'superadmin') return context
+
+			// Admin has all permissions except superadmin specific permissions
+			if (session.user.role === 'admin' && askedRole !== 'superadmin') return context
+
+			const askedRoles = Array.isArray(askedRole) ? askedRole : [askedRole]
+
+			// Check if the user has the asked role
+			if (askedRoles.some((role) => role === session.user.role)) return context
+
+			return status(403)
+		},
+	}))
 // Not working for now becuase of type bug in Elysia
 // .macro({
 // 	role: (askedRole: Role | TypedExclude<Role, 'superadmin' | 'admin'>[]) => ({
