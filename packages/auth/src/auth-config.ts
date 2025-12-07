@@ -1,7 +1,7 @@
 import { db } from '@repo/db'
 import { mail } from '@repo/email'
-import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
 import { randomUUIDv7 } from 'bun'
 import { env } from './env'
@@ -11,6 +11,13 @@ export const auth = betterAuth({
 
 	secret: env.BETTER_AUTH_SECRET,
 	trustedOrigins: [env.FRONTEND_URL],
+
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 5 * 60, // 5 minutes
+		},
+	},
 
 	experimental: {
 		joins: true,
