@@ -35,10 +35,9 @@ export const AccountRelations = t.Object(
         createdAt: t.Date(),
         updatedAt: t.Date(),
         role: __nullable__(
-          t.Union(
-            [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-            { additionalProperties: false },
-          ),
+          t.Union([t.Literal("admin"), t.Literal("user")], {
+            additionalProperties: false,
+          }),
         ),
         banned: __nullable__(t.Boolean()),
         banReason: __nullable__(t.String()),

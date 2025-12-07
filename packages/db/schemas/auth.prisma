@@ -1,7 +1,7 @@
 model User {
   id            String    @id @db.Uuid
   name          String
-  email         String
+  email         String    @unique
   emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -15,7 +15,6 @@ model User {
   accounts Account[]
   todos    Todo[]
 
-  @@unique([email])
   @@map("users")
   @@schema("auth")
 }
@@ -23,7 +22,7 @@ model User {
 model Session {
   id             String   @id @db.Uuid
   expiresAt      DateTime @map("expires_at")
-  token          String
+  token          String   @unique
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
   ipAddress      String?  @map("ip_address")
@@ -33,7 +32,6 @@ model Session {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@index([userId])
   @@map("sessions")
   @@schema("auth")
@@ -75,9 +73,8 @@ model Verification {
 }
 
 enum Role {
-  user
   admin
-  superadmin
+  user
 
   @@map("roles")
   @@schema("auth")

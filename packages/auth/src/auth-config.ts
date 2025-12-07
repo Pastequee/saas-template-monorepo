@@ -1,5 +1,4 @@
 import { db } from '@repo/db'
-import { Role } from '@repo/db/types'
 import { mail } from '@repo/email'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
@@ -37,15 +36,7 @@ export const auth = betterAuth({
 		},
 	},
 
-	plugins: [
-		openAPI(),
-		admin({
-			adminRoles: [Role.admin, Role.superadmin],
-
-			defaultRole: Role.user,
-		}),
-		lastLoginMethod(),
-	],
+	plugins: [openAPI(), admin(), lastLoginMethod()],
 })
 
 export type Auth = typeof auth

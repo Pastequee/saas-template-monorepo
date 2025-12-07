@@ -1,17 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
-import { authClient } from '../auth-client'
+import { eden } from '../eden-client'
 
 export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
-	const request = getRequest()
+	const { data } = await eden.me.get()
 
-	const { data } = await authClient.getSession({
-		fetchOptions: {
-			headers: request.headers,
-		},
-	})
-
-	return {
-		auth: data,
-	}
+	return data
 })

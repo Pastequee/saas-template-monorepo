@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
 export function getRouter() {
 	const router = createTanStackRouter({
 		routeTree,
-		defaultPreload: 'intent',
+		defaultPreload: false,
 		context: { queryClient },
 		scrollRestoration: true,
 		defaultPreloadStaleTime: 0, // Let React Query handle all caching

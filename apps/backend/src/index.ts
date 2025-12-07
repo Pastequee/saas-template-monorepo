@@ -7,7 +7,8 @@ import { isProduction } from 'elysia/error'
 import { env } from '#lib/env'
 import { logger } from '#lib/logger'
 import { AuthOpenAPI } from '#middlewares/auth'
-import { todosRouter } from '#routers/todos/controller'
+import { todosRouter } from '#routers/todo/controller'
+import { userRouter } from '#routers/user/controller'
 import { utilsRouter } from '#routers/utils/controller'
 
 const app = new Elysia()
@@ -41,6 +42,7 @@ const app = new Elysia()
 	})
 	.use(devLogger()) // Enabled only in development
 	.use(utilsRouter)
+	.use(userRouter)
 	.use(todosRouter)
 	.listen(3001)
 

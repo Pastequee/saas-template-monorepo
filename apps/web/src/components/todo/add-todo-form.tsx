@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useEdenMutation } from '~/lib/eden-client'
+import { useAuth } from '~/lib/hooks/use-auth'
 import { createTodoOptions } from '~/lib/mutations/todos.mutations'
-import { useAuth } from '../auth/auth-provider'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loader } from '../ui/loader'
@@ -9,7 +9,7 @@ import { Loader } from '../ui/loader'
 export const AddTodoForm = () => {
 	const [newTodo, setNewTodo] = useState('')
 
-	const { isAuthenticated } = useAuth()
+	const auth = useAuth()
 
 	const { isPending: isCreatingTodo, mutate: createTodoMutation } = useEdenMutation(
 		createTodoOptions()
@@ -37,14 +37,14 @@ export const AddTodoForm = () => {
 		>
 			<Input
 				autoFocus
-				disabled={!isAuthenticated}
+				disabled={!auth}
 				onChange={(e) => {
 					setNewTodo(e.target.value)
 				}}
 				placeholder="Add a new todo"
 				value={newTodo}
 			/>
-			<Button disabled={!isAuthenticated || isCreatingTodo || newTodo.length === 0} type="submit">
+			<Button disabled={!auth || isCreatingTodo || newTodo.length === 0} type="submit">
 				Add
 				{isCreatingTodo && <Loader />}
 			</Button>

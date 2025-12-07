@@ -1,13 +1,13 @@
-import { useAuth } from './auth-provider'
+import { useAuth } from '~/lib/hooks/use-auth'
 
 type LoggedOutProps = {
 	children: React.ReactNode
 }
 
 export const LoggedOut = ({ children }: LoggedOutProps) => {
-	const { isAuthenticated } = useAuth()
+	const auth = useAuth()
 
-	if (isAuthenticated) {
+	if (auth) {
 		return
 	}
 

@@ -31,10 +31,9 @@ export const SessionRelations = t.Object(
         createdAt: t.Date(),
         updatedAt: t.Date(),
         role: __nullable__(
-          t.Union(
-            [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-            { additionalProperties: false },
-          ),
+          t.Union([t.Literal("admin"), t.Literal("user")], {
+            additionalProperties: false,
+          }),
         ),
         banned: __nullable__(t.Boolean()),
         banReason: __nullable__(t.String()),
@@ -134,25 +133,13 @@ export const SessionWhereUnique = t.Recursive(
       [
         t.Partial(
           t.Object(
-            {
-              id: t.String(),
-              token: t.String(),
-            },
+            { id: t.String(), token: t.String() },
             { additionalProperties: false },
           ),
           { additionalProperties: false },
         ),
         t.Union(
-          [
-            t.Object({ id: t.String() }),
-            t.Object({ token: t.String() }),
-            t.Object({
-              token: t.Object(
-                { token: t.String() },
-                { additionalProperties: false },
-              ),
-            }),
-          ],
+          [t.Object({ id: t.String() }), t.Object({ token: t.String() })],
           { additionalProperties: false },
         ),
         t.Partial(

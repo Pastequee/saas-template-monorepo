@@ -14,10 +14,9 @@ export const UserPlain = t.Object(
     createdAt: t.Date(),
     updatedAt: t.Date(),
     role: __nullable__(
-      t.Union(
-        [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-        { additionalProperties: false },
-      ),
+      t.Union([t.Literal("admin"), t.Literal("user")], {
+        additionalProperties: false,
+      }),
     ),
     banned: __nullable__(t.Boolean()),
     banReason: __nullable__(t.String()),
@@ -94,10 +93,9 @@ export const UserPlainInputCreate = t.Object(
     image: t.Optional(__nullable__(t.String())),
     role: t.Optional(
       __nullable__(
-        t.Union(
-          [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-          { additionalProperties: false },
-        ),
+        t.Union([t.Literal("admin"), t.Literal("user")], {
+          additionalProperties: false,
+        }),
       ),
     ),
     banned: t.Optional(__nullable__(t.Boolean())),
@@ -115,10 +113,9 @@ export const UserPlainInputUpdate = t.Object(
     image: t.Optional(__nullable__(t.String())),
     role: t.Optional(
       __nullable__(
-        t.Union(
-          [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-          { additionalProperties: false },
-        ),
+        t.Union([t.Literal("admin"), t.Literal("user")], {
+          additionalProperties: false,
+        }),
       ),
     ),
     banned: t.Optional(__nullable__(t.Boolean())),
@@ -280,10 +277,9 @@ export const UserWhere = t.Partial(
           image: t.String(),
           createdAt: t.Date(),
           updatedAt: t.Date(),
-          role: t.Union(
-            [t.Literal("user"), t.Literal("admin"), t.Literal("superadmin")],
-            { additionalProperties: false },
-          ),
+          role: t.Union([t.Literal("admin"), t.Literal("user")], {
+            additionalProperties: false,
+          }),
           banned: t.Boolean(),
           banReason: t.String(),
           banExpires: t.Date(),
@@ -300,25 +296,13 @@ export const UserWhereUnique = t.Recursive(
       [
         t.Partial(
           t.Object(
-            {
-              id: t.String(),
-              email: t.String(),
-            },
+            { id: t.String(), email: t.String() },
             { additionalProperties: false },
           ),
           { additionalProperties: false },
         ),
         t.Union(
-          [
-            t.Object({ id: t.String() }),
-            t.Object({ email: t.String() }),
-            t.Object({
-              email: t.Object(
-                { email: t.String() },
-                { additionalProperties: false },
-              ),
-            }),
-          ],
+          [t.Object({ id: t.String() }), t.Object({ email: t.String() })],
           { additionalProperties: false },
         ),
         t.Partial(
@@ -345,14 +329,9 @@ export const UserWhereUnique = t.Recursive(
               image: t.String(),
               createdAt: t.Date(),
               updatedAt: t.Date(),
-              role: t.Union(
-                [
-                  t.Literal("user"),
-                  t.Literal("admin"),
-                  t.Literal("superadmin"),
-                ],
-                { additionalProperties: false },
-              ),
+              role: t.Union([t.Literal("admin"), t.Literal("user")], {
+                additionalProperties: false,
+              }),
               banned: t.Boolean(),
               banReason: t.String(),
               banExpires: t.Date(),

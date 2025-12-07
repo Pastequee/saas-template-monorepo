@@ -24,7 +24,7 @@ export const betterAuth = new Elysia({ name: 'better-auth' })
 			}
 		},
 	})
-	.macro('role', (askedRole: Role | TypedExclude<Role, 'superadmin' | 'admin'>[]) => ({
+	.macro('role', (askedRole: Role | TypedExclude<Role, 'admin'>[]) => ({
 		resolve: async ({ status, request: { headers } }) => {
 			const session = await auth.api.getSession({ headers })
 
@@ -35,11 +35,8 @@ export const betterAuth = new Elysia({ name: 'better-auth' })
 				session: session.session,
 			}
 
-			// Superadmin has all permissions
-			if (session.user.role === 'superadmin') return context
-
-			// Admin has all permissions except superadmin specific permissions
-			if (session.user.role === 'admin' && askedRole !== 'superadmin') return context
+			// Admin has all permissions
+			if (session.user.role === 'admin') return context
 
 			const askedRoles = Array.isArray(askedRole) ? askedRole : [askedRole]
 
