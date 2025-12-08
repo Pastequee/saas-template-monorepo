@@ -1,6 +1,6 @@
 import { Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { useEdenMutation } from '~/lib/eden-client'
+import { useEdenMutation } from '~/lib/clients/eden-client'
 import { deleteTodoOptions, updateTodoOptions } from '~/lib/mutations/todos.mutations'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'

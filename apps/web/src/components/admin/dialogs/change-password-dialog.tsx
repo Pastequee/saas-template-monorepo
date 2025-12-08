@@ -11,7 +11,7 @@ import {
 	DialogTitle,
 } from '~/components/ui/dialog'
 import { PasswordInput } from '~/components/ui/password-input'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 
 // User type matching the admin API response

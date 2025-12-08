@@ -2,7 +2,7 @@ import type { Role } from '@repo/db/types'
 import type { Prettify } from '@repo/utils'
 import { queryOptions } from '@tanstack/react-query'
 import type { UserWithRole as BetterAuthUserWithRole } from 'better-auth/plugins'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import { keys } from './keys'
 
 export const adminUsersOptions = () =>

@@ -19,7 +19,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import type { UserWithRole } from '~/lib/queries/admin.queries'
 
 type Props = {

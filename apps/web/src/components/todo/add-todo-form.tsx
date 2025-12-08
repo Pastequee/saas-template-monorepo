@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useEdenMutation } from '~/lib/eden-client'
+import { useEdenMutation } from '~/lib/clients/eden-client'
 import { useAuth } from '~/lib/hooks/use-auth'
 import { createTodoOptions } from '~/lib/mutations/todos.mutations'
 import { Button } from '../ui/button'

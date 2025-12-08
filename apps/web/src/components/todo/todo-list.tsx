@@ -1,4 +1,4 @@
-import { useEdenQuery } from '~/lib/eden-client'
+import { useEdenQuery } from '~/lib/clients/eden-client'
 import { todoListOptions } from '~/lib/queries/todos.queries'
 import { Loader } from '../ui/loader'
 import { TodoItem } from './todo-item'

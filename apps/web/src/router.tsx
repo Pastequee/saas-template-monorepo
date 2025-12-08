@@ -1,23 +1,7 @@
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { toast } from 'sonner'
+import { queryClient } from './lib/clients/query-client'
 import { routeTree } from './routeTree.gen'
-
-const queryClient = new QueryClient({
-	queryCache: new QueryCache({
-		onError: (error) => {
-			toast.error(error.message, {
-				action: {
-					label: 'retry',
-					onClick: () => {
-						queryClient.invalidateQueries()
-					},
-				},
-			})
-		},
-	}),
-	defaultOptions: { queries: { staleTime: 60 * 1000 } },
-})
 
 export function getRouter() {
 	const router = createTanStackRouter({

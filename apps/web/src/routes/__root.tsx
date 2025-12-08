@@ -4,8 +4,8 @@ import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import appCss from '~/assets/styles/app.css?url'
 import { ImpersonationBanner } from '~/components/admin/impersonation-banner'
+import { ThemeProvider } from '~/lib/clients/theme-client'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
-import { ThemeProvider } from '~/lib/theme-client'
 import { seo } from '~/lib/utils/seo'
 
 export type RootRouteContext = {

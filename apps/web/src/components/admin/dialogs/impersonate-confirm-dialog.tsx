@@ -10,7 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '~/components/ui/dialog'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import type { UserWithRole } from '~/lib/queries/admin.queries'
 
 type Props = {

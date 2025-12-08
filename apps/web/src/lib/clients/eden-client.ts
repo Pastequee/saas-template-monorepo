@@ -13,7 +13,7 @@ import {
 	useMutation,
 	useQuery,
 } from '@tanstack/react-query'
-import { env } from './env'
+import { env } from '../env'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 

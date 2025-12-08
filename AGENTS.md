@@ -160,9 +160,7 @@ export const todoListOptions = () =>
 export const createTodoOptions = () =>
   edenMutationOption({
     edenMutation: eden.todos.post,
-    onSuccess: (_, __, ___, context) => {
-      context.client.invalidateQueries({ queryKey: keys.todos.list() })
-    },
+    meta: { invalidate: [keys.todos.list()] },
   })
 ```
 
@@ -368,7 +366,7 @@ export const auth = betterAuth({
 ### Frontend Auth
 
 ```typescript
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 
 // Sign in
 await authClient.signIn.email({ email, password })

@@ -1,4 +1,4 @@
-import { eden, edenQueryOption } from '../eden-client'
+import { eden, edenQueryOption } from '~/lib/clients/eden-client'
 import { keys } from './keys'
 
 export const todoListOptions = () =>

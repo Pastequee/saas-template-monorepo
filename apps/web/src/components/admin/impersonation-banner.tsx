@@ -3,7 +3,7 @@ import { UserCheck } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import { useAuth } from '~/lib/hooks/use-auth'
 
 // Banner shown when an admin is impersonating a user

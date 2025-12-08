@@ -9,7 +9,7 @@ import { Navbar } from '~/components/navigation/navbar'
 import { Alert, AlertTitle } from '~/components/ui/alert'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { PasswordInput } from '~/components/ui/password-input'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 
 export const Route = createFileRoute('/account')({

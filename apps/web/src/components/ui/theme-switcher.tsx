@@ -1,6 +1,6 @@
 import { type LucideIcon, Monitor, Moon, Sun } from 'lucide-react'
 import { motion } from 'motion/react'
-import { type Theme, useTheme } from '~/lib/theme-client'
+import { type Theme, useTheme } from '~/lib/clients/theme-client'
 import { cn } from '~/lib/utils/cn'
 
 const themes: {
