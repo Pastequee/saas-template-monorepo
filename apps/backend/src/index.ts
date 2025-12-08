@@ -31,7 +31,6 @@ const app = new Elysia()
 			references: fromTypes(),
 		})
 	)
-	.mount(auth.handler)
 	.onError({ as: 'global' }, ({ error, status }) => {
 		logger.error(error)
 		if (isProduction) {
@@ -41,6 +40,7 @@ const app = new Elysia()
 		return status(500, error)
 	})
 	.use(devLogger()) // Enabled only in development
+	.mount(auth.handler)
 	.use(utilsRouter)
 	.use(userRouter)
 	.use(todosRouter)
