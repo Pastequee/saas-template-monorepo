@@ -19,17 +19,17 @@
     "auth:gen": "bun -F ./packages/auth generate",
     "docker:up": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down -v",
-    "docker:refresh": "bun docker:down && bun docker:up"
+    "docker:fresh": "bun docker:down && bun docker:up"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
     "@repo/tsconfig": "workspace:*",
     "@types/node": "^24.10.1",
-    "@typescript/native-preview": "^7.0.0-dev.20251207.1",
-    "lefthook": "^2.0.8",
+    "@typescript/native-preview": "^7.0.0-dev.20251208.1",
+    "lefthook": "^2.0.9",
     "turbo": "^2.6.3",
     "typescript": "^5.9.3",
-    "ultracite": "^6.3.9"
+    "ultracite": "^6.3.10"
   },
   "packageManager": "bun@1.3.4",
   "engines": {
@@ -47,7 +47,7 @@
       "better-auth": "^1.4.5",
       "elysia": "^1.4.18",
       "zod": "^4.1.13",
-      "@types/bun": "^1.3.3"
+      "@types/bun": "^1.3.4"
     }
   }
 }
