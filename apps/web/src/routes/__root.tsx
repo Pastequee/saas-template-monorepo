@@ -1,7 +1,11 @@
 /// <reference types="vite/client" />
 
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { FormDevtoolsPanel } from '@tanstack/react-form-devtools'
 import type { QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import appCss from '~/assets/styles/app.css?url'
 import { ImpersonationBanner } from '~/components/admin/impersonation-banner'
 import { ThemeProvider } from '~/lib/clients/theme-client'
@@ -45,8 +49,13 @@ function RootDocument() {
 				<Outlet />
 				<ThemeProvider />
 				<Scripts />
-				{/* <TanStackRouterDevtools position="bottom-right" /> */}
-				{/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}
+				<TanStackDevtools
+					plugins={[
+						{ name: 'TanStack Query', render: <ReactQueryDevtoolsPanel /> },
+						{ name: 'TanStack Router', render: <TanStackRouterDevtoolsPanel /> },
+						{ name: 'TanStack Form', render: <FormDevtoolsPanel /> },
+					]}
+				/>
 			</body>
 		</html>
 	)
