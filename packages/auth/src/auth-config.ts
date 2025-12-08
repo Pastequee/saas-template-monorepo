@@ -3,11 +3,20 @@ import { mail } from '@repo/email'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
-import { randomUUIDv7 } from 'bun'
+import { RedisClient, randomUUIDv7 } from 'bun'
 import { env } from './env'
+
+const redisClient = new RedisClient(env.REDIS_URL)
 
 export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: 'postgresql' }),
+
+	secondaryStorage: {
+		get: async (key) => await redisClient.get(key),
+		set: async (key, value, ttl) =>
+			ttl ? await redisClient.set(key, value, 'EX', ttl) : await redisClient.set(key, value),
+		delete: async (key) => (await redisClient.del(key)).toString(),
+	},
 
 	secret: env.BETTER_AUTH_SECRET,
 	trustedOrigins: [env.FRONTEND_URL],

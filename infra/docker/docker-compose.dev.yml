@@ -27,7 +27,19 @@ services:
       - 9001:9001 # Http Console
     volumes:
       - files_data:/data
+  
+  redis:
+    image: redis:8
+    container_name: local-redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_PASSWORD=redispassword
+    volumes:
+      - redis_data:/data
 
 volumes:
   postgres_data:
   files_data:
+  redis_data:

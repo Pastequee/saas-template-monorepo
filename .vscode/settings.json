@@ -52,6 +52,8 @@
 
   "workbench.editor.customLabels.patterns": {
     "**/src/index.{ts,tsx}": "${dirname(1)}/src - index",
+    "**/src/env.ts": "${dirname(1)} - env",
+    "**/src/lib/env.ts": "${dirname(2)} - env",
     "**/.env*": "${dirname} - ${filename}.${extname}",
     "**/index.{ts,tsx}": "${dirname} - index",
     "**/route.tsx": "${dirname} - route",

@@ -8,6 +8,9 @@ export const env = createEnv({
 		BETTER_AUTH_SECRET: z.string(),
 		FRONTEND_URL: z.url(),
 
+		// Redis
+		REDIS_URL: z.url(),
+
 		// Google OAuth2
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
