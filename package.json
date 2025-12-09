@@ -24,8 +24,8 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
     "@repo/tsconfig": "workspace:*",
-    "@types/node": "^24.10.1",
-    "@typescript/native-preview": "^7.0.0-dev.20251208.1",
+    "@types/node": "^24.10.2",
+    "@typescript/native-preview": "^7.0.0-dev.20251209.1",
     "lefthook": "^2.0.9",
     "turbo": "^2.6.3",
     "typescript": "^5.9.3",

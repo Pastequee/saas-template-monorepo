@@ -26,6 +26,6 @@
     "@types/pg": "catalog:",
     "elysia": "catalog:",
     "prisma": "^7.1.0",
-    "prismabox": "^1.1.25"
+    "prismabox": "^1.1.26"
   }
 }
