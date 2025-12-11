@@ -4,6 +4,7 @@ import { auth } from '@repo/auth'
 import { logger as devLogger } from '@tqman/nice-logger'
 import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
+import z from 'zod'
 import { env } from '#lib/env'
 import { logger } from '#lib/logger'
 import { AuthOpenAPI } from '#middlewares/auth'
@@ -11,7 +12,7 @@ import { todosRouter } from '#routers/todo/controller'
 import { userRouter } from '#routers/user/controller'
 import { utilsRouter } from '#routers/utils/controller'
 
-const app = new Elysia()
+export const app = new Elysia()
 	.use(
 		cors({
 			origin: [env.FRONTEND_URL],
@@ -23,6 +24,7 @@ const app = new Elysia()
 	.use(
 		openapi({
 			enabled: !isProduction,
+			mapJsonSchema: { zod: z.toJSONSchema },
 			documentation: {
 				components: await AuthOpenAPI.components,
 				paths: await AuthOpenAPI.getPaths(),
