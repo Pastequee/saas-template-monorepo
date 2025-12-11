@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./src/auth-config.ts",
   "scripts": {
-    "generate": "dotenv -e ../../apps/web-elysia/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/schemas/tmp-auth.prisma",
+    "generate": "dotenv -e ../../apps/backend/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/src/schemas/tmp-auth.ts",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {

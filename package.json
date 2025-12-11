@@ -19,7 +19,7 @@
     "auth:gen": "bun -F ./packages/auth generate",
     "docker:up": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down -v",
-    "docker:fresh": "bun docker:down && bun docker:up"
+    "docker:reset": "bun docker:down && bun docker:up"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
@@ -43,6 +43,7 @@
     ],
     "catalog": {
       "@t3-oss/env-core": "^0.13.8",
+      "drizzle-orm": "^1.0.0-beta.2-58a4521",
       "@types/pg": "^8.15.6",
       "better-auth": "^1.4.5",
       "elysia": "^1.4.18",

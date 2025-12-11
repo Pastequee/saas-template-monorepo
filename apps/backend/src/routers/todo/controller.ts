@@ -1,4 +1,4 @@
-import { TodoPlainInputCreate, TodoPlainInputUpdate } from '@repo/db/schemas'
+import { todoInsertSchema, todoUpdateSchema } from '@repo/db/types'
 import { Elysia } from 'elysia'
 import { betterAuth } from '#middlewares/auth'
 import { TodosService } from './service'
@@ -17,7 +17,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 			return status('Created', createdTodo)
 		},
-		{ auth: true, body: TodoPlainInputCreate }
+		{ auth: true, body: todoInsertSchema }
 	)
 
 	.patch(
@@ -35,7 +35,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 			return status('OK', updatedTodo)
 		},
-		{ auth: true, body: TodoPlainInputUpdate }
+		{ auth: true, body: todoUpdateSchema }
 	)
 
 	.delete(

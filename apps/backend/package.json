@@ -22,6 +22,7 @@
     "@repo/utils": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "@tqman/nice-logger": "^1.1.1",
+    "drizzle-orm": "catalog:",
     "elysia": "catalog:",
     "pino": "^10.1.0",
     "zod": "catalog:"

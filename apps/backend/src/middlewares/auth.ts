@@ -1,11 +1,11 @@
 import { auth } from '@repo/auth'
-import { Role } from '@repo/db/types'
+import { UserRole } from '@repo/db/types'
 import { type TypedExclude, typedObjectKeys } from '@repo/utils'
 import { Elysia } from 'elysia'
 
-const isValidRole = (role: string | null | undefined): role is Role => {
+const isValidRole = (role: string | null | undefined): role is UserRole => {
 	if (!role) return false
-	return Object.values(Role).includes(role as Role)
+	return UserRole.includes(role as UserRole)
 }
 
 export const betterAuth = new Elysia({ name: 'better-auth' })
@@ -18,20 +18,20 @@ export const betterAuth = new Elysia({ name: 'better-auth' })
 			return {
 				user: {
 					...session.user,
-					role: session.user.role as Role, // Need to help type inference here
+					role: session.user.role as UserRole, // Need to help type inference here
 				},
 				session: session.session,
 			}
 		},
 	})
-	.macro('role', (askedRole: Role | TypedExclude<Role, 'admin'>[]) => ({
+	.macro('role', (askedRole: UserRole | TypedExclude<UserRole, 'admin'>[]) => ({
 		resolve: async ({ status, request: { headers } }) => {
 			const session = await auth.api.getSession({ headers })
 
 			if (!session || !isValidRole(session.user.role)) return status(401)
 
 			const context = {
-				user: { ...session.user, role: session.user.role as Role },
+				user: { ...session.user, role: session.user.role as UserRole },
 				session: session.session,
 			}
 

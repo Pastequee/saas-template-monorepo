@@ -51,6 +51,7 @@
   },
 
   "workbench.editor.customLabels.patterns": {
+    "**/package.json": "${dirname} - package.json",
     "**/src/index.{ts,tsx}": "${dirname(1)}/src - index",
     "**/src/env.ts": "${dirname(1)} - env",
     "**/src/lib/env.ts": "${dirname(2)} - env",

@@ -1,15 +1,15 @@
 import { db } from '@repo/db'
 import { mail } from '@repo/email'
-import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
-import { RedisClient, randomUUIDv7 } from 'bun'
+import { RedisClient } from 'bun'
 import { env } from './env'
 
 const redisClient = new RedisClient(env.REDIS_URL)
 
 export const auth = betterAuth({
-	database: prismaAdapter(db, { provider: 'postgresql' }),
+	database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
 
 	secondaryStorage: {
 		get: async (key) => await redisClient.get(key),
@@ -34,7 +34,7 @@ export const auth = betterAuth({
 
 	advanced: {
 		database: {
-			generateId: () => randomUUIDv7(),
+			generateId: 'uuid',
 		},
 	},
 
@@ -54,7 +54,5 @@ export const auth = betterAuth({
 
 	plugins: [openAPI(), admin(), lastLoginMethod()],
 })
-
-export type Auth = typeof auth
 
 export default auth

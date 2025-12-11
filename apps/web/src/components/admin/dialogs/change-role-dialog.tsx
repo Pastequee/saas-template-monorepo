@@ -1,5 +1,4 @@
-import { Role } from '@repo/db/types'
-import { typedObjectKeys } from '@repo/utils'
+import { UserRole } from '@repo/db/types'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
@@ -31,7 +30,7 @@ type Props = {
 
 export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props) {
 	const currentRole = user.role
-	const [selectedRole, setSelectedRole] = useState<Role>(currentRole)
+	const [selectedRole, setSelectedRole] = useState(currentRole)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const handleSubmit = async () => {
@@ -79,12 +78,13 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 
 				<div className="space-y-2">
 					<Label htmlFor="role-select">Role</Label>
-					<Select onValueChange={(v) => setSelectedRole(v as Role)} value={selectedRole}>
+					<Select onValueChange={(v) => setSelectedRole(v as UserRole)} value={selectedRole}>
 						<SelectTrigger id="role-select">
 							<SelectValue placeholder="Select a role" />
 						</SelectTrigger>
+
 						<SelectContent>
-							{typedObjectKeys(Role).map((role) => (
+							{UserRole.map((role) => (
 								<SelectItem key={role} value={role}>
 									{role.charAt(0).toUpperCase() + role.slice(1)}
 								</SelectItem>
