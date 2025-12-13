@@ -18,13 +18,13 @@
     "@t3-oss/env-core": "catalog:",
     "dotenv": "^17.2.3",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "^1.0.0-beta.2-58a4521",
+    "drizzle-zod": "^1.0.0-beta.2-f9236e3",
     "pg": "^8.16.3",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@types/pg": "^8.16.0",
-    "drizzle-kit": "^1.0.0-beta.2-58a4521",
+    "drizzle-kit": "^1.0.0-beta.2-f9236e3",
     "elysia": "catalog:"
   }
 }
