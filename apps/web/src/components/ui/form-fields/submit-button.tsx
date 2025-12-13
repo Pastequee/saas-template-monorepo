@@ -1,9 +1,9 @@
 import { useFormContext } from '~/lib/hooks/form-hook'
 
-import { Button } from '../button'
+import { Button, type ButtonProps } from '../button'
 import { Loader } from '../loader'
 
-export interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
+export type SubmitButtonProps = ButtonProps & {
 	label: string
 }
 
@@ -13,7 +13,7 @@ export const SubmitButton = ({ disabled, label, ...props }: SubmitButtonProps) =
 	return (
 		<form.Subscribe selector={(state) => [state.isSubmitting, state.canSubmit, state.isPristine]}>
 			{([isSubmitting]) => (
-				<Button disabled={disabled || isSubmitting} type="submit" {...props}>
+				<Button disabled={disabled || isSubmitting} {...props} nativeButton={true} type="submit">
 					{label}
 					{isSubmitting && <Loader className="ml-2" />}
 				</Button>

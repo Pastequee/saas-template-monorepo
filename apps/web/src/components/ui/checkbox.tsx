@@ -1,29 +1,24 @@
-import {
-	Indicator as CheckboxPrimitiveIndicator,
-	Root as CheckboxPrimitiveRoot,
-} from '@radix-ui/react-checkbox'
+import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox'
 import { CheckIcon } from 'lucide-react'
-import type * as React from 'react'
-
 import { cn } from '~/lib/utils/cn'
 
-function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitiveRoot>) {
+function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
 	return (
-		<CheckboxPrimitiveRoot
+		<CheckboxPrimitive.Root
 			className={cn(
-				'peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:bg-input/30 dark:data-[state=checked]:bg-primary dark:aria-invalid:ring-destructive/40',
+				'peer after:-inset-x-3 after:-inset-y-2 relative flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input shadow-xs outline-none transition-shadow after:absolute focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 group-has-disabled/field:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground dark:bg-input/30 dark:data-checked:bg-primary dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40',
 				className
 			)}
 			data-slot="checkbox"
 			{...props}
 		>
-			<CheckboxPrimitiveIndicator
-				className="flex items-center justify-center text-current transition-none"
+			<CheckboxPrimitive.Indicator
+				className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
 				data-slot="checkbox-indicator"
 			>
-				<CheckIcon className="size-3.5" />
-			</CheckboxPrimitiveIndicator>
-		</CheckboxPrimitiveRoot>
+				<CheckIcon />
+			</CheckboxPrimitive.Indicator>
+		</CheckboxPrimitive.Root>
 	)
 }
 

@@ -156,7 +156,7 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 						<Label htmlFor="ban-duration">Duration</Label>
 						<Select onValueChange={(v) => setBanDuration(Number(v))} value={String(banDuration)}>
 							<SelectTrigger id="ban-duration">
-								<SelectValue placeholder="Select duration" />
+								<SelectValue>Select duration</SelectValue>
 							</SelectTrigger>
 							<SelectContent>
 								{BAN_DURATIONS.map((d) => (

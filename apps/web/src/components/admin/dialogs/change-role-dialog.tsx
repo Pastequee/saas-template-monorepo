@@ -80,7 +80,7 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 					<Label htmlFor="role-select">Role</Label>
 					<Select onValueChange={(v) => setSelectedRole(v as UserRole)} value={selectedRole}>
 						<SelectTrigger id="role-select">
-							<SelectValue placeholder="Select a role" />
+							<SelectValue>Select a role</SelectValue>
 						</SelectTrigger>
 
 						<SelectContent>

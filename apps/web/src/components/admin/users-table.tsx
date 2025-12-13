@@ -134,7 +134,7 @@ function UserActions({ user }: { user: UserWithRole }) {
 	return (
 		<>
 			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
+				<DropdownMenuTrigger>
 					<Button className="size-8 p-0" variant="ghost">
 						<span className="sr-only">Open menu</span>
 						<MoreHorizontal className="size-4" />
