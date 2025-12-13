@@ -1,10 +1,10 @@
-import { useEdenQuery } from '~/lib/clients/eden-client'
+import { useQuery } from '@tanstack/react-query'
 import { todoListOptions } from '~/lib/queries/todos.queries'
 import { Loader } from '../ui/loader'
 import { TodoItem } from './todo-item'
 
 export const TodoList = () => {
-	const { data: todos, isLoading, isSuccess } = useEdenQuery(todoListOptions())
+	const { data: todos, isLoading, isSuccess } = useQuery(todoListOptions())
 
 	if (isLoading) return <Loader className="text-muted-foreground" />
 

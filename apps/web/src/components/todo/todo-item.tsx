@@ -1,6 +1,6 @@
+import { useMutation } from '@tanstack/react-query'
 import { Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { useEdenMutation } from '~/lib/clients/eden-client'
 import { deleteTodoOptions, updateTodoOptions } from '~/lib/mutations/todos.mutations'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
@@ -14,11 +14,11 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 	const [isEditing, setIsEditing] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	const { isPending: isDeletingTodo, mutate: deleteTodoMutation } = useEdenMutation(
+	const { isPending: isDeletingTodo, mutate: deleteTodoMutation } = useMutation(
 		deleteTodoOptions(todo.id)
 	)
 
-	const { isPending: isUpdatingTodo, mutate: updateTodoMutation } = useEdenMutation(
+	const { isPending: isUpdatingTodo, mutate: updateTodoMutation } = useMutation(
 		updateTodoOptions(todo.id)
 	)
 

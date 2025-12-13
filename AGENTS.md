@@ -166,8 +166,8 @@ export const createTodoOptions = () =>
 
 ```typescript
 // Component usage
-const { data, isLoading } = useEdenQuery(todoListOptions())
-const mutation = useEdenMutation(createTodoOptions())
+const { data, isLoading } = useQuery(todoListOptions())
+const mutation = useMutation(createTodoOptions())
 ```
 
 ### Query Keys
@@ -192,7 +192,7 @@ export const keys = {
 
 ```typescript
 export const TodoList = () => {
-  const { data: todos, isLoading, isSuccess } = useEdenQuery(todoListOptions())
+  const { data: todos, isLoading, isSuccess } = useQuery(todoListOptions())
 
   if (isLoading) return <Loader />
   if (!isSuccess || todos.length === 0) return null

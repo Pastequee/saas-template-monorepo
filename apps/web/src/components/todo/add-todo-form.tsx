@@ -1,5 +1,5 @@
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useEdenMutation } from '~/lib/clients/eden-client'
 import { useAuth } from '~/lib/hooks/use-auth'
 import { createTodoOptions } from '~/lib/mutations/todos.mutations'
 import { Button } from '../ui/button'
@@ -11,9 +11,7 @@ export const AddTodoForm = () => {
 
 	const auth = useAuth()
 
-	const { isPending: isCreatingTodo, mutate: createTodoMutation } = useEdenMutation(
-		createTodoOptions()
-	)
+	const { isPending: isCreatingTodo, mutate: createTodoMutation } = useMutation(createTodoOptions())
 
 	const addTodo = () => {
 		createTodoMutation(
