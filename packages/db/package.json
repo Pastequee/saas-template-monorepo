@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/pg": "^8.16.0",
-    "drizzle-kit": "^1.0.0-beta.2-f9236e3",
+    "drizzle-kit": "^1.0.0-beta.3-36e9b9e",
     "elysia": "catalog:"
   }
 }
