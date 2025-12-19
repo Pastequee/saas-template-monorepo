@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
-    "@elysiajs/openapi": "^1.4.11",
+    "@elysiajs/openapi": "^1.4.12",
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/utils": "workspace:*",

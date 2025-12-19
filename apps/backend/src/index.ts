@@ -1,10 +1,10 @@
+import path from 'node:path'
 import cors from '@elysiajs/cors'
 import openapi, { fromTypes } from '@elysiajs/openapi'
 import { auth } from '@repo/auth'
 import { logger as devLogger } from '@tqman/nice-logger'
 import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
-import z from 'zod'
 import { env } from '#lib/env'
 import { logger } from '#lib/logger'
 import { AuthOpenAPI } from '#middlewares/auth'
@@ -24,13 +24,12 @@ export const app = new Elysia()
 	.use(
 		openapi({
 			enabled: !isProduction,
-			mapJsonSchema: { zod: z.toJSONSchema },
 			documentation: {
 				components: await AuthOpenAPI.components,
 				paths: await AuthOpenAPI.getPaths(),
 				tags: [{ name: 'Utils' }, { name: 'Todo' }],
 			},
-			references: fromTypes(),
+			references: fromTypes('src/index.ts', { projectRoot: path.join(import.meta.dir, '..') }),
 		})
 	)
 	.onError({ as: 'global' }, ({ error, status }) => {
