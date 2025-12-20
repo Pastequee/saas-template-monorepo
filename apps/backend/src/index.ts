@@ -1,7 +1,6 @@
 import cors from '@elysiajs/cors'
 import openapi, { fromTypes } from '@elysiajs/openapi'
 import { auth } from '@repo/auth'
-import { logger as devLogger } from '@tqman/nice-logger'
 import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
 import { env } from '#lib/env'
@@ -20,7 +19,8 @@ export const app = new Elysia()
 			allowedHeaders: ['Content-Type', 'Authorization'],
 		})
 	)
-	.use(devLogger()) // Enabled only in development
+	// Make openapi documentation bug
+	// .use(devLogger()) // Enabled only in development
 	.use(
 		openapi({
 			enabled: !isProduction,
