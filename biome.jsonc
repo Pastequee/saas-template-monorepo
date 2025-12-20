@@ -20,7 +20,8 @@
       "style": {
         "noNestedTernary": "off",
         "useBlockStatements": "off",
-        "noMagicNumbers": "off"
+        "noMagicNumbers": "off",
+        "noParameterAssign": "off"
       },
       "performance": {
         "noBarrelFile": "off",
@@ -30,7 +31,8 @@
         "noConsole": "on"
       },
       "nursery": {
-        "noLeakedRender": "off" // its buggy for now, remove if stable
+        "noLeakedRender": "off", // its buggy for now, remove if stable
+        "noIncrementDecrement": "off"
       }
     }
   },

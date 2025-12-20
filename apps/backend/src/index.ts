@@ -3,6 +3,7 @@ import openapi, { fromTypes } from '@elysiajs/openapi'
 import { auth } from '@repo/auth'
 import { Elysia } from 'elysia'
 import { isProduction } from 'elysia/error'
+import { devLogger } from '#lib/dev-logger'
 import { env } from '#lib/env'
 import { logger } from '#lib/logger'
 import { AuthOpenAPI } from '#middlewares/auth'
@@ -19,8 +20,7 @@ export const app = new Elysia()
 			allowedHeaders: ['Content-Type', 'Authorization'],
 		})
 	)
-	// Make openapi documentation bug
-	// .use(devLogger()) // Enabled only in development
+	.use(devLogger()) // Enabled only in development
 	.use(
 		openapi({
 			enabled: !isProduction,
