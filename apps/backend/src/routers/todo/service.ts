@@ -32,5 +32,7 @@ export const TodosService = {
 			// biome-ignore lint/style/noNonNullAssertion: always returns a todo
 			.then(([todo]) => todo!),
 
-	deleteTodo: async (id: Todo['id']) => db.delete(todos).where(eq(todos.id, id)),
+	deleteTodo: async (id: Todo['id']) => {
+		await db.delete(todos).where(eq(todos.id, id))
+	},
 }

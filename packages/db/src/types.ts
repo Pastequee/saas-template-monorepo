@@ -5,7 +5,7 @@ import { todoStatus, todos } from './schemas/todos'
 const omits = { id: true, createdAt: true, updatedAt: true } as const
 
 // todos.ts
-export const TodoStatus = todoStatus.enumValues
+export const TodoStatus = [...todoStatus.enumValues] as const
 export type TodoStatus = (typeof TodoStatus)[number]
 
 export type Todo = typeof todos.$inferSelect
@@ -16,7 +16,7 @@ export const todoInsertSchema = createInsertSchema(todos).omit({ ...omits, userI
 export const todoUpdateSchema = createUpdateSchema(todos).omit({ ...omits, userId: true })
 
 // auth.ts
-export const UserRole = roles.enumValues
+export const UserRole = [...roles.enumValues] as const
 export type UserRole = (typeof UserRole)[number]
 
 export type User = typeof users.$inferSelect

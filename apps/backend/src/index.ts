@@ -1,4 +1,3 @@
-import path from 'node:path'
 import cors from '@elysiajs/cors'
 import openapi, { fromTypes } from '@elysiajs/openapi'
 import { auth } from '@repo/auth'
@@ -21,6 +20,7 @@ export const app = new Elysia()
 			allowedHeaders: ['Content-Type', 'Authorization'],
 		})
 	)
+	.use(devLogger()) // Enabled only in development
 	.use(
 		openapi({
 			enabled: !isProduction,
@@ -29,18 +29,18 @@ export const app = new Elysia()
 				paths: await AuthOpenAPI.getPaths(),
 				tags: [{ name: 'Utils' }, { name: 'Todo' }],
 			},
-			references: fromTypes('src/index.ts', { projectRoot: path.join(import.meta.dir, '..') }),
+			references: fromTypes('src/index.ts'),
 		})
 	)
-	.onError({ as: 'global' }, ({ error, status }) => {
-		logger.error(error)
-		if (isProduction) {
-			return status(500)
-		}
+	// introduce bug with openapi
+	// .onError(({ error, status }) => {
+	// 	logger.error(error)
+	// 	if (isProduction) {
+	// 		return status(500)
+	// 	}
 
-		return status(500, error)
-	})
-	.use(devLogger()) // Enabled only in development
+	// 	return status(500, error)
+	// })
 	.mount(auth.handler)
 	.use(utilsRouter)
 	.use(userRouter)

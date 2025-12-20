@@ -46,9 +46,9 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 			if (!todo) return status('Not Found')
 			if (todo.userId !== user.id) return status('Forbidden')
 
-			const deletedTodo = await TodosService.deleteTodo(params.id)
+			await TodosService.deleteTodo(params.id)
 
-			return status('OK', deletedTodo)
+			return status('No Content')
 		},
 		{ auth: true }
 	)
