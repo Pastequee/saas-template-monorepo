@@ -11,18 +11,17 @@ export const devLogger = () => {
 			// @ts-expect-error - store is not typed
 			store.requestStartTime = process.hrtime.bigint()
 		})
-		.onAfterResponse(({ set, request, store }) => {
+		.onAfterResponse(({ set, request, store, path, responseValue }) => {
 			// @ts-expect-error - store is not typed
 			const duration = (process.hrtime.bigint() - store.requestStartTime) / BigInt(1000) // nano to micro
-			const url = new URL(request.url)
-			const statusCode = Number(set.status ?? 500)
+			const responseStatus = extractStatusIfExists(responseValue)
+			const statusCode = responseStatus ?? set.status ?? '???'
 
-			const sign = statusCode >= 400 ? pc.red('✗') : pc.green('✓')
 			const components = [
 				pc.dim(`[${new Date().toLocaleString()}]`),
-				sign,
+				formatSign(statusCode),
 				pc.bold(formatMethod(request.method)),
-				url.pathname,
+				path,
 				pc.bold(formatStatus(statusCode)),
 				pc.dim(formatDuration(duration)),
 			]
@@ -33,10 +32,10 @@ export const devLogger = () => {
 		.as('global')
 }
 
-function formatStatus(statusCode: string | number | undefined): string {
-	if (statusCode === undefined) return '???'
-
+function formatStatus(statusCode: string | number): string {
 	const status = Number(statusCode)
+
+	if (Number.isNaN(status)) return pc.red(status)
 
 	if (status < 300) return pc.green(status)
 	if (status < 400) return pc.yellow(status)
@@ -76,4 +75,39 @@ function formatMethod(method: string): string {
 	}
 
 	return method
+}
+
+function extractStatusIfExists(response: unknown) {
+	if (
+		typeof response === 'object' &&
+		response &&
+		'status' in response &&
+		typeof response.status === 'number'
+	) {
+		return response.status
+	}
+
+	return null
+}
+
+function formatSign(status: number | string) {
+	const statusCode = Number(status)
+
+	// If the status code is not a number there is some kind of error
+	if (Number.isNaN(statusCode)) return pc.red('✗')
+
+	// Special sign for Not found
+	if (statusCode === 404) return pc.red('?')
+
+	// Special sign for Unauthorized and Forbidden
+	if (statusCode === 401 || statusCode === 403) return pc.red('🔒')
+
+	// All 2XX status codes are marked as good
+	if (statusCode < 300) return pc.green('✓')
+
+	// All 3XX status codes are marked as weird
+	if (statusCode < 400) return pc.yellow('~')
+
+	// All other status codes 4XX and 5XX are marked as errors
+	return pc.red('✗')
 }

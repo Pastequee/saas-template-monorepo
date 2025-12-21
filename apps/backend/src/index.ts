@@ -27,7 +27,6 @@ export const app = new Elysia()
 			documentation: {
 				components: await AuthOpenAPI.components,
 				paths: await AuthOpenAPI.getPaths(),
-				tags: [{ name: 'Utils' }, { name: 'Todo' }],
 			},
 			references: fromTypes('src/index.ts'),
 		})
