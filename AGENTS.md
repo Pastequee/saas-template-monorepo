@@ -9,7 +9,7 @@ This document provides guidelines for AI agents working on this codebase.
 - **Package Manager:** Bun with workspaces
 - **Monorepo Tool:** Turborepo
 - **Linting/Formatting:** Biome via Ultracite
-- **Database:** PostgreSQL with Prisma ORM
+- **Database:** PostgreSQL with Drizzle ORM
 - **Backend:** Elysia (Bun-native web framework)
 - **Frontend:** React + TanStack Router + TanStack Query + TanStack Start
 - **Auth:** better-auth
@@ -26,7 +26,7 @@ apps/
 
 packages/
   auth/          # better-auth configuration (shared)
-  db/            # Prisma client, schemas, generated types
+  db/            # Drizzle ORM client, schemas, generated types
   email/         # Email service (Resend)
   utils/         # Shared utilities
 
@@ -93,7 +93,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 // service.ts - All business logic here
 export const TodosService = {
   getUserTodos: async (userId: User['id']) =>
-    db.todo.findMany({
+    db.query.todos.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     }),
@@ -109,14 +109,14 @@ export const TodosService = {
 
 ### Validation
 
-- Use Prismabox-generated schemas for body validation
-- Import from `@repo/db/schemas`
-- Insert and Update schemas do not include foreign keys like `somethingId`
+- Use Drizzle-Zod generated schemas for body validation
+- Import from `@repo/db/types`
+- Insert and Update schemas do not include foreign keys like `somethingId` (automatically omitted)
 
 ```typescript
-import { TodoPlainInputCreate } from '@repo/db/schemas'
+import { todoInsertSchema } from '@repo/db/types'
 
-.post('/todos', handler, { body: TodoPlainInputCreate })
+.post('/todos', handler, { body: todoInsertSchema })
 ```
 
 ### Error Handling
@@ -243,45 +243,46 @@ return (
 
 ---
 
-## Database Patterns (Prisma)
+## Database Patterns (Drizzle)
 
 ### Schema Organization
 
-Schemas are split by domain in `packages/db/schemas/`:
-- `base.prisma` — Datasource & generators
-- `auth.prisma` — User, Session, Account tables (handled by better-auth, DO NOT EDIT)
-- `todo.prisma` — Todo-related models
+Schemas are split by domain in `packages/db/src/schemas/`:
+- `auth.ts` — User, Session, Account tables (handled by better-auth, DO NOT EDIT)
+- `todos.ts` — Todo-related models
+- `schema-utils.ts` — Shared utilities (`id`, `timestamps`)
 
 ### Model Conventions
 
-```prisma
-model Todo {
-  id     String @id @default(uuid(7)) @db.Uuid
-  userId String @map("user_id") @db.Uuid  // FK uses camelCase in code
+```typescript
+import { pgTable, text, uuid } from 'drizzle-orm/pg-core'
+import { id, timestamps } from '../schema-utils'
+import { users } from './auth'
 
-  content String
-  status  TodoStatus
+export const todos = pgTable('todos', {
+  id,  // UUIDv7 primary key (from schema-utils)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
 
-  user User @relation(...)
+  content: text().notNull(),
+  status: todoStatus().notNull(),
 
-  @@map("todos")        // Table name is snake_case plural
-  @@schema("public")
-}
+  ...timestamps,  // createdAt, updatedAt (from schema-utils)
+})
 ```
 
 ### Key Points
 
-- Use UUIDv7 for IDs (`@default(uuid(7))`)
-- Map column names to snake_case using `@map()`
-- Map table names using `@@map()`
-- Always include `createdAt` and `updatedAt`
-- Always include `@@schema("public")`
-- Add indexes when relevant
-- Types are exported from `@repo/db/types`
-- Validation schemas from `@repo/db/schemas`
+- Use `id` helper from `schema-utils.ts` for UUIDv7 primary keys
+- Use `timestamps` helper from `schema-utils.ts` for createdAt/updatedAt
+- Column names use snake_case in database (via `casing: 'snake_case'` in drizzle config)
+- Table names are snake_case plural
+- Use `pgSchema()` for schema names (e.g., `authSchema.table()`)
+- Add indexes in table definition's second parameter
+- Types are exported from `@repo/db/types` (inferred from schemas)
+- Validation schemas (Zod) are exported from `@repo/db/types` (generated via drizzle-zod)
 
 ---
 
@@ -324,8 +325,8 @@ bun typecheck        # Run TypeScript checks
 # Database
 bun db:push          # Push schema changes (dev)
 bun db:migrate       # Run migrations (prod)
-bun db:gen           # Regenerate Prisma client
-bun db:studio        # Open Prisma Studio
+bun db:gen           # Generate Drizzle migrations
+bun db:studio        # Open Drizzle Studio
 
 # Docker
 bun docker:up        # Start PostgreSQL container
@@ -353,13 +354,15 @@ On PR and push to main/staging/dev:
 Configuration lives in `packages/auth/src/auth-config.ts`:
 
 ```typescript
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+
 export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: 'postgresql' }),
+  database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
   emailAndPassword: { enabled: true },
   socialProviders: {
     google: { clientId, clientSecret },
   },
-  plugins: [openAPI(), admin({ adminRoles: [Role.admin] })],
+  plugins: [openAPI(), admin()],
 })
 ```
 
@@ -410,7 +413,7 @@ const { data: session } = authClient.useSession()
 | Add a new page | `apps/web/src/routes/` |
 | Add a new query | `apps/web/src/lib/queries/` |
 | Add a new mutation | `apps/web/src/lib/mutations/` |
-| Add a new DB model | `packages/db/schemas/` |
+| Add a new DB model | `packages/db/src/schemas/` |
 | Add a new UI component | `apps/web/src/components/ui/` |
 | Add shared types | `packages/utils/src/` |
 | Configure auth | `packages/auth/src/auth-config.ts` |
