@@ -1,0 +1,14 @@
+{
+  "name": "@repo/env",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./backend": "./src/backend.env.ts",
+    "./web": "./src/web.env.ts"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {}
+}

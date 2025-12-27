@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/tsconfig/base.json",
+  "extends": "@repo/tsconfig/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "module": "es2022",

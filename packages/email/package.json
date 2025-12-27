@@ -7,9 +7,8 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@t3-oss/env-core": "catalog:",
-    "resend": "^6.6.0",
-    "zod": "catalog:"
+    "@repo/env": "workspace:*",
+    "resend": "^6.6.0"
   },
   "devDependencies": {}
 }

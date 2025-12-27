@@ -1,10 +1,10 @@
 import { db } from '@repo/db'
 import { mail } from '@repo/email'
+import { env } from '@repo/env/backend'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
 import { RedisClient } from 'bun'
-import { env } from './env'
 
 const redisClient = new RedisClient(env.REDIS_URL)
 

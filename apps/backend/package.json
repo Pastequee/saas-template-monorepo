@@ -20,7 +20,7 @@
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@t3-oss/env-core": "catalog:",
+    "@repo/env": "workspace:*",
     "drizzle-orm": "catalog:",
     "elysia": "catalog:",
     "pino": "^10.1.0",

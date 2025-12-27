@@ -2,6 +2,7 @@
 
 import { type Treaty, treaty } from '@elysiajs/eden'
 import type { App } from '@repo/backend'
+import { env } from '@repo/env/web'
 import {
 	isServer,
 	mutationOptions,
@@ -10,7 +11,6 @@ import {
 	type UndefinedInitialDataOptions,
 	type UseMutationOptions,
 } from '@tanstack/react-query'
-import { env } from '../env'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
 

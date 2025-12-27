@@ -10,13 +10,11 @@
   "dependencies": {
     "@repo/db": "workspace:*",
     "@repo/email": "workspace:*",
-    "@t3-oss/env-core": "catalog:",
+    "@repo/env": "workspace:*",
     "better-auth": "catalog:",
-    "dotenv": "^17.2.3",
-    "zod": "catalog:"
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
     "dotenv-cli": "^11.0.0"
   }
 }

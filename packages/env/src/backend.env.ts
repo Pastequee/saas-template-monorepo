@@ -13,9 +13,21 @@ export const env = createEnv({
 		RESEND_API_KEY: z.string(),
 		FROM_EMAIL: z.email(),
 		FROM_NAME: z.string(),
+
+		// Database
+		DATABASE_URL: z.url(),
+
+		// Better Auth
+		BETTER_AUTH_SECRET: z.string(),
+		GOOGLE_CLIENT_ID: z.string(),
+		GOOGLE_CLIENT_SECRET: z.string(),
+
+		// Redis
+		REDIS_URL: z.url(),
 	},
 
-	runtimeEnv: import.meta.env,
+	// biome-ignore lint/suspicious/noExplicitAny: its ok
+	runtimeEnv: (import.meta as any).env,
 
 	emptyStringAsUndefined: true,
 })

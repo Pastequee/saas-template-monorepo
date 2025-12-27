@@ -1,6 +1,6 @@
+import { env } from '@repo/env/web'
 import { adminClient, lastLoginMethodClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
-import { env } from '../env'
 
 export const authClient = createAuthClient({
 	plugins: [lastLoginMethodClient(), adminClient()],
