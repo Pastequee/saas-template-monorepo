@@ -3,7 +3,6 @@ name: saas-monorepo-dev
 services:
   postgres:
     image: postgres:18
-    container_name: local-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -16,7 +15,6 @@ services:
   
   files:
     image: rustfs/rustfs:latest
-    container_name: local-files
     restart: unless-stopped
     environment:
       RUSTFS_ACCESS_KEY: rustfsadmin
@@ -30,7 +28,6 @@ services:
   
   redis:
     image: redis:8
-    container_name: local-redis
     restart: unless-stopped
     ports:
       - 6379:6379

@@ -31,17 +31,8 @@ export const app = new Elysia()
 			references: fromTypes('src/index.ts'),
 		})
 	)
-	// introduce bug with openapi
-	// .onError(({ error, status }) => {
-	// 	logger.error(error)
-	// 	if (isProduction) {
-	// 		return status(500)
-	// 	}
-
-	// 	return status(500, error)
-	// })
-	.mount(auth.handler)
 	.use(utilsRouter)
+	.mount(auth.handler)
 	.use(userRouter)
 	.use(todosRouter)
 	.listen(3001)

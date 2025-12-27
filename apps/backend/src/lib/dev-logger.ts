@@ -7,13 +7,9 @@ export const devLogger = () => {
 	if (isProduction) return new Elysia({ name: 'dev-logger' })
 
 	return new Elysia({ name: 'dev-logger' })
-		.onRequest(({ store }) => {
-			// @ts-expect-error - store is not typed
-			store.requestStartTime = process.hrtime.bigint()
-		})
-		.onAfterResponse(({ set, request, store, path, responseValue }) => {
-			// @ts-expect-error - store is not typed
-			const duration = (process.hrtime.bigint() - store.requestStartTime) / BigInt(1000) // nano to micro
+		.derive(() => ({ requestStartTime: process.hrtime.bigint() }))
+		.onAfterResponse(({ set, request, path, responseValue, requestStartTime }) => {
+			const duration = (process.hrtime.bigint() - requestStartTime) / BigInt(1000) // nano to micro
 			const responseStatus = extractStatusIfExists(responseValue)
 			const statusCode = responseStatus ?? set.status ?? '???'
 
