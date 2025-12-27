@@ -21,7 +21,11 @@
         "noNestedTernary": "off",
         "useBlockStatements": "off",
         "noMagicNumbers": "off",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "useConsistentTypeDefinitions": {
+          "level": "warn",
+          "options": { "style": "type" }
+        }
       },
       "performance": {
         "noBarrelFile": "off",

@@ -4,7 +4,7 @@ import { useReducer } from 'react'
 import { Input } from '~/components/ui/input'
 import { cn } from '~/lib/utils/cn'
 
-interface PasswordInputProps extends React.ComponentProps<typeof Input> {
+type PasswordInputProps = React.ComponentProps<typeof Input> & {
 	containerClassName?: string
 }
 
