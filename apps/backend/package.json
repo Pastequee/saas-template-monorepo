@@ -15,12 +15,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.0",
+    "@elysiajs/cors": "^1.4.1",
     "@elysiajs/openapi": "^1.4.13",
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
-    "@repo/utils": "workspace:*",
     "@repo/env": "workspace:*",
+    "@repo/utils": "workspace:*",
     "drizzle-orm": "catalog:",
     "elysia": "catalog:",
     "pino": "^10.1.0",
