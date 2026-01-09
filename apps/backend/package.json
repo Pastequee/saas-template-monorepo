@@ -23,7 +23,7 @@
     "@repo/utils": "workspace:*",
     "drizzle-orm": "catalog:",
     "elysia": "catalog:",
-    "pino": "^10.1.0",
+    "pino": "^10.1.1",
     "zod": "catalog:"
   },
   "devDependencies": {
