@@ -1,10 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: needed for complex types */
 
-import { type Treaty, treaty } from '@elysiajs/eden'
-import type { App } from '@repo/backend'
-import { env } from '@repo/env/web'
+import type { Treaty } from '@elysiajs/eden'
 import {
-	isServer,
 	mutationOptions,
 	type QueryKey,
 	queryOptions,
@@ -13,21 +10,6 @@ import {
 } from '@tanstack/react-query'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
-
-export const eden = treaty<App>(env.VITE_BACKEND_URL, {
-	fetch: {
-		credentials: 'include',
-	},
-	// On the server, since we're making API calls on behalf of the client,
-	// we need to forward the headers from the client request to the backend
-	onRequest: async () => {
-		if (!isServer) return
-
-		const { getRequestHeaders } = await import('@tanstack/react-start/server')
-		const headers = getRequestHeaders()
-		return { headers }
-	},
-})
 
 type EdenQueryFn =
 	| ((body?: any, options?: any) => Promise<TreatyResponse>)

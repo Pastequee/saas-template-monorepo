@@ -1,4 +1,4 @@
-import { env } from '@repo/env/backend'
+import { env } from '@repo/env/server'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { relations } from './relations'
 import * as schema from './schemas'

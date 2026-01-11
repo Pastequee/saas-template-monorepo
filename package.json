@@ -4,8 +4,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "ultracite check",
-    "format": "ultracite fix --unsafe",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix",
+    "format": "biome format --fix",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "build:web": "bun -F ./apps/web build",

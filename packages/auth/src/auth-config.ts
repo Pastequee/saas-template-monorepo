@@ -1,6 +1,6 @@
 import { db } from '@repo/db'
 import { mail } from '@repo/email'
-import { env } from '@repo/env/backend'
+import { env } from '@repo/env/server'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'

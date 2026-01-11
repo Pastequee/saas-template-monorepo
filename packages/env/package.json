@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./backend": "./src/backend.env.ts",
+    "./server": "./src/server.env.ts",
     "./web": "./src/web.env.ts"
   },
   "dependencies": {

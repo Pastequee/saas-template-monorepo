@@ -1,20 +1,21 @@
-import { eden, edenMutationOption } from '~/lib/clients/eden-client'
+import { edenMutationOption } from '~/lib/utils/eden-query'
 import { keys } from '../queries/keys'
+import { eden } from '../server-fn/eden'
 
 export const deleteTodoOptions = (id: string) =>
 	edenMutationOption({
-		edenMutation: eden.todos({ id }).delete,
+		edenMutation: eden().todos({ id }).delete,
 		meta: { invalidate: [keys.todos.list()] },
 	})
 
 export const updateTodoOptions = (id: string) =>
 	edenMutationOption({
-		edenMutation: eden.todos({ id }).patch,
+		edenMutation: eden().todos({ id }).patch,
 		meta: { invalidate: [keys.todos.list()] },
 	})
 
 export const createTodoOptions = () =>
 	edenMutationOption({
-		edenMutation: eden.todos.post,
+		edenMutation: eden().todos.post,
 		meta: { invalidate: [keys.todos.list()] },
 	})

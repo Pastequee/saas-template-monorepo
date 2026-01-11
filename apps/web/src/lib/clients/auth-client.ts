@@ -4,7 +4,7 @@ import { createAuthClient } from 'better-auth/react'
 
 export const authClient = createAuthClient({
 	plugins: [lastLoginMethodClient(), adminClient()],
-	baseURL: env.VITE_BACKEND_URL,
+	baseURL: env.VITE_SERVER_URL,
 })
 
 export type BetterAuthContext = typeof authClient.$Infer.Session

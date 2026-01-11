@@ -1,11 +1,11 @@
 import { todoInsertSchema, todoUpdateSchema } from '@repo/db/types'
 import { Elysia } from 'elysia'
 import z from 'zod'
-import { betterAuth } from '#middlewares/auth'
+import { authMacro } from '../../lib/auth'
 import { TodosService } from './service'
 
 export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
-	.use(betterAuth)
+	.use(authMacro)
 	.model('uuidParam', z.object({ id: z.uuidv7() }))
 
 	.get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {

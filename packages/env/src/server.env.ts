@@ -24,10 +24,13 @@ export const env = createEnv({
 
 		// Redis
 		REDIS_URL: z.url(),
+
+		// Axiom (for OTEL)
+		AXIOM_API_KEY: z.string(),
+		AXIOM_DATASET: z.string(),
 	},
 
-	// biome-ignore lint/suspicious/noExplicitAny: its ok
-	runtimeEnv: (import.meta as any).env,
+	runtimeEnv: process.env,
 
 	emptyStringAsUndefined: true,
 })

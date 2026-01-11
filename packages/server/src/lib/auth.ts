@@ -1,3 +1,4 @@
+import { setAttributes } from '@elysiajs/opentelemetry'
 import { auth } from '@repo/auth'
 import { UserRole } from '@repo/db/types'
 import { type TypedExclude, typedObjectKeys } from '@repo/utils'
@@ -8,12 +9,14 @@ const isValidRole = (role: string | null | undefined): role is UserRole => {
 	return UserRole.includes(role as UserRole)
 }
 
-export const betterAuth = new Elysia({ name: 'better-auth' })
+export const authMacro = new Elysia({ name: 'auth-macro' })
 	.macro('auth', {
-		resolve: async ({ status, request: { headers } }) => {
+		resolve: async function authMiddleware({ status, request: { headers } }) {
 			const session = await auth.api.getSession({ headers })
 
 			if (!session || !isValidRole(session.user.role)) return status(401)
+
+			setAttributes({ 'user.id': session.user.id })
 
 			return {
 				user: {
@@ -25,10 +28,12 @@ export const betterAuth = new Elysia({ name: 'better-auth' })
 		},
 	})
 	.macro('role', (askedRole: UserRole | TypedExclude<UserRole, 'admin'>[]) => ({
-		resolve: async ({ status, request: { headers } }) => {
+		resolve: async function roleMiddleware({ status, request: { headers } }) {
 			const session = await auth.api.getSession({ headers })
 
 			if (!session || !isValidRole(session.user.role)) return status(401)
+
+			setAttributes({ 'user.role': session.user.role })
 
 			const context = {
 				user: { ...session.user, role: session.user.role as UserRole },
@@ -98,20 +103,3 @@ export const AuthOpenAPI = {
 	// biome-ignore lint/suspicious/noExplicitAny: need
 	components: getSchema().then(({ components }) => components) as Promise<any>,
 } as const
-
-export const authMacro = new Elysia({ name: 'better-auth' }).mount(auth.handler).macro({
-	auth: {
-		async resolve({ status, request: { headers } }) {
-			const session = await auth.api.getSession({
-				headers,
-			})
-
-			if (!session) return status(401)
-
-			return {
-				user: session.user,
-				session: session.session,
-			}
-		},
-	},
-})

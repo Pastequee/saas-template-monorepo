@@ -8,7 +8,6 @@ import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanst
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import appCss from '~/assets/styles/app.css?url'
 import { ImpersonationBanner } from '~/components/admin/impersonation-banner'
-import { ThemeProvider } from '~/lib/clients/theme-client'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
 import { seo } from '~/lib/utils/seo'
 
@@ -47,7 +46,7 @@ function RootDocument() {
 			<body>
 				<ImpersonationBanner />
 				<Outlet />
-				<ThemeProvider />
+				{/* <ThemeProvider /> */}
 				<Scripts />
 				<TanStackDevtools
 					plugins={[
