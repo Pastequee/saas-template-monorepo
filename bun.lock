@@ -141,14 +141,14 @@
         "@typescript/native-preview": "catalog:",
       },
     },
+    "packages/ts-config": {
+      "name": "@repo/tsconfig",
+    },
     "packages/utils": {
       "name": "@repo/utils",
       "devDependencies": {
         "@repo/tsconfig": "workspace:*",
       },
-    },
-    "tooling/typescript": {
-      "name": "@repo/tsconfig",
     },
   },
   "catalog": {
@@ -544,7 +544,7 @@
 
     "@repo/env": ["@repo/env@workspace:packages/env"],
 
-    "@repo/tsconfig": ["@repo/tsconfig@workspace:tooling/typescript"],
+    "@repo/tsconfig": ["@repo/tsconfig@workspace:packages/ts-config"],
 
     "@repo/utils": ["@repo/utils@workspace:packages/utils"],
 

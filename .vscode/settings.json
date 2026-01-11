@@ -24,9 +24,6 @@
   "[css]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
 
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
