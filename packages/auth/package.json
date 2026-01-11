@@ -15,6 +15,9 @@
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "dotenv-cli": "^11.0.0"
+    "dotenv-cli": "^11.0.0",
+    "@repo/tsconfig": "workspace:*",
+    "@typescript/native-preview": "catalog:",
+    "@types/bun": "catalog:"
   }
 }

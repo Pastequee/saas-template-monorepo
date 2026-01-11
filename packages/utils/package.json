@@ -5,5 +5,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "@repo/tsconfig": "workspace:*"
+  }
 }

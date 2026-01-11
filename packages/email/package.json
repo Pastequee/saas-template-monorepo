@@ -10,5 +10,9 @@
     "@repo/env": "workspace:*",
     "resend": "^6.7.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@repo/tsconfig": "workspace:*",
+    "@typescript/native-preview": "catalog:",
+    "@types/bun": "catalog:"
+  }
 }

@@ -25,6 +25,8 @@
   "devDependencies": {
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^1.0.0-beta.9-e89174b",
-    "elysia": "catalog:"
+    "elysia": "catalog:",
+    "@repo/tsconfig": "workspace:*",
+    "@typescript/native-preview": "catalog:"
   }
 }
