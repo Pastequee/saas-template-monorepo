@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
-    "@typescript/native-preview": "catalog:",
-    "@types/bun": "catalog:"
+    "@types/bun": "catalog:",
+    "@typescript/native-preview": "catalog:"
   }
 }
