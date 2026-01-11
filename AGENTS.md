@@ -10,10 +10,11 @@ This document provides guidelines for AI agents working on this codebase.
 - **Monorepo Tool:** Turborepo
 - **Linting/Formatting:** Biome via Ultracite
 - **Database:** PostgreSQL with Drizzle ORM
-- **Backend:** Elysia (Bun-native web framework)
+- **Backend:** Elysia API server (mounted via TanStack Start server functions)
 - **Frontend:** React + TanStack Router + TanStack Query + TanStack Start
-- **Auth:** better-auth
+- **Auth:** better-auth with Redis secondary storage
 - **Styling:** Tailwind CSS v4 and Shadcn/ui for UI components
+- **API Client:** Eden Treaty (via `@elysiajs/eden`)
 
 ---
 
@@ -21,24 +22,23 @@ This document provides guidelines for AI agents working on this codebase.
 
 ```
 apps/
-  backend/       # Elysia API server (port 3001)
-  web/           # TanStack Start frontend (port 3000)
+  web/           # TanStack Start frontend (port 3000) - includes API server via server functions
 
 packages/
+  server/        # Elysia API server (mounted via TanStack Start server functions)
   auth/          # better-auth configuration (shared)
   db/            # Drizzle ORM client, schemas, generated types
   email/         # Email service (Resend)
   utils/         # Shared utilities
-
-tooling/
+  env/           # Environment variable schemas (server & web)
   typescript/    # Shared tsconfig bases
 ```
 
 ### Workspace Imports
 
-- Use `@repo/<package>` for cross-package imports (e.g., `@repo/db`, `@repo/auth`)
-- Use `#<path>` for internal imports in backend (configured via tsconfig paths)
-- Use `~/<path>` for internal imports in frontend
+- Use `@repo/<package>` for cross-package imports (e.g., `@repo/db`, `@repo/auth`, `@repo/backend`, `@repo/env`)
+- Use `#<path>` for internal imports in backend (configured via tsconfig paths in `packages/server`)
+- Use `~/<path>` for internal imports in frontend (configured via tsconfig paths in `apps/web`)
 
 ---
 
@@ -50,7 +50,7 @@ tooling/
 - **Quotes:** Single quotes and JSX double quote
 - **Indentation:** Tabs
 - **Line width:** 100 characters
-- **No console.log:** Use structured logger (`#lib/logger`) instead (backend only)
+- **No console.log:** Use structured logger (`#lib/dev-logger`) instead (backend only, dev only)
 
 ### Naming Conventions
 
@@ -74,6 +74,15 @@ tooling/
 
 ## Backend Patterns (Elysia)
 
+### Server Architecture
+
+The Elysia API server (`packages/server`) is mounted via TanStack Start server functions rather than running as a standalone server. The API is accessible at `/api/*` routes through the frontend app:
+
+- Server entry: `packages/server/src/index.ts` exports the Elysia app
+- API proxy route: `apps/web/src/routes/api/$.ts` handles all `/api/*` requests
+- The server uses `app.fetch(request)` to handle requests directly without HTTP overhead when running in the same process
+- Auth handler is mounted at `/api/auth` via `.mount(auth.handler)`
+
 ### Router Structure
 
 Each feature has its own folder with:
@@ -82,8 +91,10 @@ Each feature has its own folder with:
 
 ```typescript
 // controller.ts - Routes are thin, delegate to service
+import { authMacro } from '../../lib/auth'
+
 export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
-  .use(betterAuth)
+  .use(authMacro)
   .get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {
     auth: true,
   })
@@ -102,10 +113,21 @@ export const TodosService = {
 
 ### Authentication
 
-- Use `betterAuth` middleware from `#middlewares/auth`
+- Use `authMacro` from `#lib/auth` (import and `.use(authMacro)` in your router)
 - Set `{ auth: true }` in route options to require authentication
-- Set `{ role: 'admin' }` in route options to require authentication and a specific role
-- Access user via `{ user }` in route handler
+- Use `.role('admin')` or `.role(['admin', 'moderator'])` macro in route options to require specific roles
+- Access user via `{ user }` in route handler (also includes `{ session }`)
+
+```typescript
+import { authMacro } from '../../lib/auth'
+
+export const adminRouter = new Elysia({ name: 'admin', tags: ['Admin'] })
+  .use(authMacro)
+  .get('/users', handler, { role: 'admin' }) // Requires admin role
+  .get('/mods', handler, { role: ['admin', 'moderator'] }) // Requires admin or moderator
+```
+
+**Note:** Admin role automatically has access to all routes. The role macro checks authentication first, then verifies the role.
 
 ### Validation
 
@@ -122,8 +144,9 @@ import { todoInsertSchema } from '@repo/db/types'
 ### Error Handling
 
 - Return status codes using `status()` helper
-- Use `status('Not Found')`, `status('Forbidden')`, etc.
+- Use `status('Not Found')`, `status('Forbidden')`, `status('Created')`, `status('OK')`, `status('No Content')`, etc.
 - Never EVER throw an error, handle every controlled error except for unexpected errors like DB crash or network crash and so on
+- Global error handler in `#lib/utils` obfuscates internal server errors (returns 500 without details)
 
 ---
 
@@ -146,10 +169,14 @@ src/
 
 ### Data Fetching (Eden + TanStack Query)
 
-Use the Eden client with query/mutation option factories:
+Use the Eden client (from `~/lib/server-fn/eden`) with query/mutation option factories:
 
 ```typescript
 // queries/todos.queries.ts
+import { edenQueryOption } from '~/lib/utils/eden-query'
+import { eden } from '~/lib/server-fn/eden'
+import { keys } from './keys'
+
 export const todoListOptions = () =>
   edenQueryOption({
     edenQuery: eden.todos.get,
@@ -157,6 +184,8 @@ export const todoListOptions = () =>
   })
 
 // mutations/todos.mutations.ts
+import { edenMutationOption } from '~/lib/utils/eden-query'
+
 export const createTodoOptions = () =>
   edenMutationOption({
     edenMutation: eden.todos.post,
@@ -166,9 +195,13 @@ export const createTodoOptions = () =>
 
 ```typescript
 // Component usage
+import { useQuery, useMutation } from '@tanstack/react-query'
+
 const { data, isLoading } = useQuery(todoListOptions())
 const mutation = useMutation(createTodoOptions())
 ```
+
+**Note:** The Eden client uses `createIsomorphicFn` from TanStack Start, which allows server-side calls to bypass HTTP overhead when running in the same process.
 
 ### Query Keys
 
@@ -316,10 +349,11 @@ export const env = createEnv({
 ### Common Commands
 
 ```bash
-bun dev              # Start all apps in dev mode
+bun dev              # Start all apps in dev mode (web app includes API server)
 bun build            # Build all packages
 bun lint             # Check for lint errors
-bun format           # Fix lint/format issues
+bun lint:fix         # Fix lint errors automatically
+bun format           # Fix format issues
 bun typecheck        # Run TypeScript checks
 
 # Database
@@ -328,9 +362,13 @@ bun db:migrate       # Run migrations (prod)
 bun db:gen           # Generate Drizzle migrations
 bun db:studio        # Open Drizzle Studio
 
+# Auth
+bun auth:gen         # Generate better-auth types
+
 # Docker
 bun docker:up        # Start PostgreSQL container
 bun docker:down      # Stop and remove containers
+bun docker:reset     # Reset containers (down + up)
 ```
 
 ### Pre-commit Hooks (Lefthook)
@@ -355,14 +393,24 @@ Configuration lives in `packages/auth/src/auth-config.ts`:
 
 ```typescript
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { betterAuth } from 'better-auth/minimal'
+import { admin, lastLoginMethod, openAPI } from 'better-auth/plugins'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
+  secondaryStorage: {
+    // Redis for session storage
+    get: async (key) => await redisClient.get(key),
+    set: async (key, value, ttl) => /* ... */,
+    delete: async (key) => /* ... */,
+  },
+  secret: env.BETTER_AUTH_SECRET,
+  trustedOrigins: [env.FRONTEND_URL],
   emailAndPassword: { enabled: true },
   socialProviders: {
     google: { clientId, clientSecret },
   },
-  plugins: [openAPI(), admin()],
+  plugins: [openAPI(), admin(), lastLoginMethod()],
 })
 ```
 
@@ -392,7 +440,7 @@ const { data: session } = authClient.useSession()
 - Use existing patterns when adding new features
 - Invalidate queries after mutations
 - Handle loading and error states in UI
-- Use the logger package instead of console.log in the backend
+- Use the dev logger (`#lib/dev-logger`) instead of console.log in the backend (dev only)
 - Keep this @AGENTS.md file up to date when adding/changing/removing key parts
 
 ### DON'T
@@ -409,7 +457,7 @@ const { data: session } = authClient.useSession()
 
 | Need | Location |
 |------|----------|
-| Add a new API route | `apps/backend/src/routers/<feature>/` |
+| Add a new API route | `packages/server/src/routers/<feature>/` |
 | Add a new page | `apps/web/src/routes/` |
 | Add a new query | `apps/web/src/lib/queries/` |
 | Add a new mutation | `apps/web/src/lib/mutations/` |
@@ -417,3 +465,5 @@ const { data: session } = authClient.useSession()
 | Add a new UI component | `apps/web/src/components/ui/` |
 | Add shared types | `packages/utils/src/` |
 | Configure auth | `packages/auth/src/auth-config.ts` |
+| Server entry point | `packages/server/src/index.ts` |
+| API proxy route | `apps/web/src/routes/api/$.ts` |

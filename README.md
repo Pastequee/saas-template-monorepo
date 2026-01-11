@@ -1,6 +1,6 @@
 # SaaS Template Monorepo
 
-A modern, full-stack SaaS template built with Bun, Elysia, React, and TanStack Start. This monorepo provides a solid foundation for building scalable SaaS applications with authentication, database management, and a beautiful UI.
+A modern, full-stack SaaS template built with Bun, Elysia, React, and TanStack Start. This monorepo provides a solid foundation for building scalable SaaS applications with authentication, database management, and a beautiful UI. The API server is integrated via TanStack Start server functions for optimal performance.
 
 ## 📋 Table of Contents
 
@@ -12,7 +12,7 @@ A modern, full-stack SaaS template built with Bun, Elysia, React, and TanStack S
 - [Database](#database)
 - [Building](#building)
 - [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
+- [Architecture Notes](#architecture-notes)
 
 ## Prerequisites
 
@@ -58,7 +58,7 @@ bun docker:up
 
 This starts:
 - **PostgreSQL** on port `5400` (mapped from container port 5432)
-- **Redis** on port `6379`
+- **Redis** on port `6379` (used for better-auth session storage)
 - **RustFS** (S3-compatible file storage) on ports `9000` (API) and `9001` (Console)
 
 To stop these services:
@@ -77,9 +77,9 @@ bun docker:reset
 
 Copy the example environment files to create your local configuration:
 
-**Backend:**
+**Server:**
 ```bash
-cp apps/backend/.env.example apps/backend/.env.local
+cp packages/server/.env.example packages/server/.env.local
 ```
 
 **Frontend:**
@@ -90,6 +90,7 @@ cp apps/web/.env.example apps/web/.env.local
 Then edit the `.env.local` files and fill in the required values. Make sure to:
 
 - Set `DATABASE_URL` to match your local PostgreSQL connection (default: `postgresql://postgres:postgres@localhost:5400/main`)
+- Set `REDIS_URL` to match your local Redis connection (default: `redis://localhost:6379`)
 - Generate a secure `BETTER_AUTH_SECRET` (minimum 32 characters):
   ```bash
   openssl rand -base64 32
@@ -115,9 +116,9 @@ bun db:studio
 
 This opens a web UI at `http://localhost:4983` where you can view and edit your database.
 
-### 6. Start Development Servers
+### 6. Start Development Server
 
-Run both frontend and backend in development mode:
+Run the application in development mode:
 
 ```bash
 bun dev
@@ -125,36 +126,35 @@ bun dev
 
 This starts:
 - **Frontend** at `http://localhost:3000`
-- **Backend API** at `http://localhost:3001`
+- **API Server** integrated via TanStack Start server functions (accessible at `/api/*`)
 
-The frontend will automatically reload on file changes, and the backend will restart on changes.
+The frontend will automatically reload on file changes. The API server is mounted via server functions, eliminating HTTP overhead when running in the same process.
 
 ## Project Structure
 
 ```
 saas-template-monorepo/
 ├── apps/
-│   ├── backend/          # Elysia API server (port 3001)
-│   │   ├── src/
-│   │   │   ├── routers/   # API route controllers
-│   │   │   ├── services/ # Business logic
-│   │   │   ├── middlewares/
-│   │   │   └── lib/
-│   │   └── Dockerfile
 │   └── web/              # TanStack Start frontend (port 3000)
 │       ├── src/
-│       │   ├── routes/    # File-based routing
+│       │   ├── routes/    # File-based routing (includes /api/* proxy)
 │       │   ├── components/
 │       │   ├── lib/
 │       │   └── assets/
 │       └── Dockerfile
 ├── packages/
+│   ├── server/           # Elysia API server (mounted via server functions)
+│   │   ├── src/
+│   │   │   ├── routers/   # API route controllers
+│   │   │   ├── services/ # Business logic
+│   │   │   └── lib/
+│   │   └── Dockerfile
 │   ├── auth/             # better-auth configuration
 │   ├── db/               # Drizzle ORM schemas and client
 │   ├── email/            # Email service (Resend)
-│   └── utils/            # Shared utilities
-├── tooling/
-│   └── typescript/       # Shared TypeScript configs
+│   ├── env/              # Environment variable schemas
+│   ├── utils/            # Shared utilities
+│   └── ts-config/        # Shared TypeScript configs
 └── infra/
     └── docker/
         └── docker-compose.dev.yml
@@ -164,10 +164,12 @@ saas-template-monorepo/
 
 Environment variables are configured via `.env.local` files. Copy the example files to get started:
 
-- **Backend:** `apps/backend/.env.example` → `apps/backend/.env.local`
+- **Server:** `packages/server/.env.example` → `packages/server/.env.local`
 - **Frontend:** `apps/web/.env.example` → `apps/web/.env.local`
 
 See the `.env.example` files for detailed documentation of each variable. All variables marked as required must be set before running the application.
+
+**Note:** The project uses `@t3-oss/env-core` for type-safe environment variable validation. Environment schemas are defined in `packages/env/`.
 
 ## Development
 
@@ -177,9 +179,10 @@ See the `.env.example` files for detailed documentation of each variable. All va
 
 ```bash
 # Development
-bun dev                   # Start all apps in dev mode
+bun dev                   # Start all apps in dev mode (web app includes API server)
 bun lint                  # Check for lint errors
-bun format                # Fix lint/format issues
+bun lint:fix              # Fix lint errors automatically
+bun format                # Fix format issues
 bun typecheck             # Run TypeScript checks
 
 # Database
@@ -187,6 +190,9 @@ bun db:push               # Push schema changes (dev)
 bun db:migrate            # Run migrations (prod)
 bun db:gen                # Generate Drizzle migrations
 bun db:studio             # Open Drizzle Studio
+
+# Auth
+bun auth:gen              # Generate better-auth types
 
 # Docker
 bun docker:up             # Start PostgreSQL/Redis containers
@@ -199,13 +205,13 @@ bun build:web             # Build frontend only
 bun build:backend         # Build backend only
 ```
 
-#### Backend (`apps/backend`)
+#### Server (`packages/server`)
 
 ```bash
-bun dev                   # Start dev server with hot reload
-bun build                 # Compile to standalone binary
 bun typecheck             # Type check only
 ```
+
+**Note:** The server doesn't run standalone in development. It's mounted via TanStack Start server functions in the web app.
 
 #### Frontend (`apps/web`)
 
@@ -218,7 +224,7 @@ bun typecheck             # Type check only
 
 ### Code Quality
 
-The project uses **Biome** for linting and formatting. Pre-commit hooks (via Lefthook) automatically run:
+The project uses **Biome** (via Ultracite) for linting and formatting. Pre-commit hooks (via Lefthook) automatically run:
 
 1. `bun install --frozen-lockfile` - Verify lockfile
 2. `bun format` - Lint and format
@@ -227,7 +233,8 @@ The project uses **Biome** for linting and formatting. Pre-commit hooks (via Lef
 To manually format code:
 
 ```bash
-bun format
+bun format      # Fix formatting issues
+bun lint:fix    # Fix lint errors automatically
 ```
 
 ## Database
@@ -273,37 +280,39 @@ bun build
 ```
 
 This builds:
-- Backend (compiled binary)
-- Frontend (static assets)
+- Server package (TypeScript compilation)
+- Frontend (static assets + server functions)
 - All shared packages
 
 ### Build Individual Apps
 
 ```bash
-bun build:backend  # Build backend only
+bun build:backend  # Build server package only
 bun build:web       # Build frontend only
 ```
 
-### Backend Build Output
+### Server Build Output
 
-The backend compiles to a standalone binary at `apps/backend/dist/server`. This binary includes all dependencies and can run without Bun installed.
+The server package compiles TypeScript to JavaScript. The server is integrated into the frontend build via TanStack Start server functions.
 
 ### Frontend Build Output
 
 The frontend builds to `apps/web/dist/` with:
 - Static assets (HTML, CSS, JS)
-- Server entry point at `dist/server/index.mjs`
+- Server entry point at `dist/server/index.mjs` (includes API server via server functions)
 
 ## Deployment
 
-The project includes Dockerfiles for both backend and frontend that can be built using the provided commands:
+The project includes Dockerfiles for both server and frontend that can be built using the provided commands:
 
-**Build backend image:**
+**Build server image:**
 ```bash
 bun build:docker:backend
 # Or manually:
-docker build -f apps/backend/Dockerfile -t backend-image .
+docker build -f packages/server/Dockerfile -t server-image .
 ```
+
+**Note:** The `build:docker:backend` script may reference the old path. The actual Dockerfile is at `packages/server/Dockerfile`.
 
 **Build frontend image:**
 ```bash
@@ -312,7 +321,7 @@ bun build:docker:web
 docker build -f apps/web/Dockerfile -t web-image .
 ```
 
-Both Dockerfiles use multi-stage builds optimized for production. Configure environment variables as needed when running the containers.
+Both Dockerfiles use multi-stage builds optimized for production. The frontend image includes the API server via TanStack Start server functions. Configure environment variables as needed when running the containers.
 
 ### Environment-Specific Notes
 
@@ -338,10 +347,32 @@ bun db:gen
 bun db:migrate
 ```
 
+## Architecture Notes
+
+### Server Integration
+
+The Elysia API server (`packages/server`) is mounted via TanStack Start server functions rather than running as a standalone server. This provides:
+
+- **Zero HTTP overhead** when running in the same process
+- **Unified deployment** - frontend and API deploy together
+- **Type-safe API calls** via Eden Treaty with isomorphic functions
+
+The API is accessible at `/api/*` routes. The proxy route is defined in `apps/web/src/routes/api/$.ts`.
+
+### Authentication
+
+The project uses **better-auth** with:
+- PostgreSQL for primary storage (users, sessions, accounts)
+- Redis for secondary storage (session caching)
+- Email/password authentication
+- Google OAuth2 support
+- Admin plugin for user management
+
 ## Additional Resources
 
 - [Bun Documentation](https://bun.sh/docs)
 - [Elysia Documentation](https://elysiajs.com)
-- [TanStack Start Documentation](https://tanstack.com/router)
+- [TanStack Start Documentation](https://tanstack.com/start)
+- [TanStack Router Documentation](https://tanstack.com/router)
 - [Drizzle ORM Documentation](https://orm.drizzle.team)
 - [better-auth Documentation](https://www.better-auth.com)
