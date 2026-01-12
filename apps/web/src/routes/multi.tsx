@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { MultiStepForm } from '~/components/multi-step-demo/multi'
+import { MultiStepForm } from '~/components/routes/multi-step-demo/multi'
 import { Card } from '~/components/ui/card'
 
 export const Route = createFileRoute('/multi')({

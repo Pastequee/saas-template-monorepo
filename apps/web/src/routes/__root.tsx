@@ -7,7 +7,7 @@ import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import appCss from '~/assets/styles/app.css?url'
-import { ImpersonationBanner } from '~/components/admin/impersonation-banner'
+import { ImpersonationBanner } from '~/components/routes/admin/impersonation-banner'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
 import { seo } from '~/lib/utils/seo'
 

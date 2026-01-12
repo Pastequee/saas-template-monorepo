@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Footer } from '~/components/footer'
+import { Footer } from '~/components/navigation/footer'
 import { Navbar } from '~/components/navigation/navbar'
-import { TodoListCard } from '~/components/todo/todo-list-card'
+import { TodoListCard } from '~/components/routes/todo/todo-list-card'
 
 export const Route = createFileRoute('/')({
 	component: Home,

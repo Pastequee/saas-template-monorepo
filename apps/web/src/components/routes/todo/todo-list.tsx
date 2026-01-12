@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { Loader } from '~/components/ui/loader'
 import { todoListOptions } from '~/lib/queries/todos.queries'
-import { Loader } from '../ui/loader'
 import { TodoItem } from './todo-item'
 
 export const TodoList = () => {

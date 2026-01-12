@@ -5,39 +5,38 @@ import { useState } from 'react'
 import z from 'zod'
 import googleIcon from '~/assets/google.svg'
 import { Alert, AlertTitle } from '~/components/ui/alert'
+import { Button } from '~/components/ui/button'
+import { PasswordInput } from '~/components/ui/password-input'
+import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
-import { Button } from '../ui/button'
-import { PasswordInput } from '../ui/password-input'
-import { Separator } from '../ui/separator'
 
 const formSchema = z.object({
-	email: z.email('Invalid email address').nonempty('Name is required'),
-	name: z.string().nonempty('Name is required'),
-	password: z.string().nonempty('Name is required').min(8, 'Must be at least 8 characters long'),
+	email: z.string().nonempty('Email is required'),
+	password: z.string().nonempty('Password is required'),
 })
 
-export const RegisterForm = () => {
+export const LoginForm = () => {
 	const router = useRouter()
-	const [signUpResponseError, setSignUpResponseError] = useState<string>()
+	const [errorMessage, setErrorMessage] = useState<string>()
 
 	const form = useAppForm({
-		defaultValues: { email: '', name: '', password: '' },
+		defaultValues: { email: '', password: '' },
 		onSubmit: async ({ value }) => {
-			const { error } = await authClient.signUp.email({
+			const { error } = await authClient.signIn.email({
 				email: value.email,
 				password: value.password,
-				name: value.name,
 			})
 
 			if (error) {
-				setSignUpResponseError(
-					error.message ?? 'An unknown error occurred, please try again later.'
-				)
+				setErrorMessage(error.message ?? 'An unknown error occurred, please try again later.')
 				return
 			}
 
-			router.navigate({ to: '/login', replace: true })
+			router.navigate({ to: '/', replace: true })
+		},
+		defaultState: {
+			canSubmit: false,
 		},
 		validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
 	})
@@ -49,7 +48,7 @@ export const RegisterForm = () => {
 		})
 
 		if (error) {
-			setSignUpResponseError(error.message ?? 'An unknown error occurred, please try again later.')
+			setErrorMessage(error.message ?? 'An unknown error occurred, please try again later.')
 			return
 		}
 	}
@@ -57,23 +56,19 @@ export const RegisterForm = () => {
 	return (
 		<form
 			className="flex flex-col gap-4"
+			noValidate
 			onSubmit={(e) => {
 				e.preventDefault()
 				e.stopPropagation()
 				form.handleSubmit()
 			}}
 		>
-			{signUpResponseError && (
+			{errorMessage && (
 				<Alert variant="destructive">
 					<AlertCircle />
-					<AlertTitle>{signUpResponseError}</AlertTitle>
+					<AlertTitle>{errorMessage}</AlertTitle>
 				</Alert>
 			)}
-
-			<form.AppField
-				children={(field) => <field.TextField autoComplete="name" label="Name" />}
-				name="name"
-			/>
 
 			<form.AppField
 				children={(field) => <field.TextField autoComplete="email" label="Email" type="email" />}
@@ -81,12 +76,14 @@ export const RegisterForm = () => {
 			/>
 
 			<form.AppField
-				children={(field) => <field.TextField input={PasswordInput} label="Password" />}
+				children={(field) => (
+					<field.TextField autoComplete="current-password" input={PasswordInput} label="Password" />
+				)}
 				name="password"
 			/>
 
 			<form.AppForm>
-				<form.SubmitButton label="Create account" />
+				<form.SubmitButton label="Sign in" />
 			</form.AppForm>
 
 			<div className="my-2 flex items-center gap-4">

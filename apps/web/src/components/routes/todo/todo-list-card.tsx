@@ -1,7 +1,7 @@
+import { Card, CardContent } from '~/components/ui/card'
+import { Separator } from '~/components/ui/separator'
 import { LoggedIn } from '../auth/logged-in'
 import { LoggedOut } from '../auth/logged-out'
-import { Card, CardContent } from '../ui/card'
-import { Separator } from '../ui/separator'
 import { AddTodoForm } from './add-todo-form'
 import { TodoList } from './todo-list'
 

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
+import { LoggedIn } from '~/components/routes/auth/logged-in'
+import { LoggedOut } from '~/components/routes/auth/logged-out'
 import { useAuth } from '~/lib/hooks/use-auth'
-import { LoggedIn } from '../auth/logged-in'
-import { LoggedOut } from '../auth/logged-out'
 import { NavbarLink } from './navbar-link'
 
 export const Navbar = () => {

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 
-import { LoginForm } from '~/components/auth/login-form'
+import { LoginForm } from '~/components/routes/auth/login-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 
 export const Route = createFileRoute('/_auth/login')({

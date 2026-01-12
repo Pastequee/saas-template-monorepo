@@ -1,7 +1,7 @@
 import { useFormContext } from '~/lib/hooks/form-hook'
 
-import { Button, type ButtonProps } from '../button'
-import { Loader } from '../loader'
+import { Button, type ButtonProps } from '../ui/button'
+import { Loader } from '../ui/loader'
 
 export type SubmitButtonProps = ButtonProps & {
 	label: string

@@ -1,5 +1,5 @@
 import { useFieldContext } from '~/lib/hooks/form-hook'
-import { InputLabel } from '../input-label'
+import { InputLabel } from '../ui/input-label'
 
 type TextFieldProps = React.ComponentProps<typeof InputLabel>
 

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
 import { Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Button } from '~/components/ui/button'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Label } from '~/components/ui/label'
 import { deleteTodoOptions, updateTodoOptions } from '~/lib/mutations/todos.mutations'
-import { Button } from '../ui/button'
-import { Checkbox } from '../ui/checkbox'
-import { Label } from '../ui/label'
 
 type TodoItemProps = {
 	todo: { id: string; content: string; status: 'completed' | 'pending' }

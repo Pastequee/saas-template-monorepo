@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { UsersTable } from '~/components/admin/users-table'
-import { Footer } from '~/components/footer'
+import { Footer } from '~/components/navigation/footer'
 import { Navbar } from '~/components/navigation/navbar'
+import { UsersTable } from '~/components/routes/admin/users-table'
 
 export const Route = createFileRoute('/admin/users')({
 	component: AdminUsersPage,

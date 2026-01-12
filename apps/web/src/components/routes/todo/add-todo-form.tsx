@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Loader } from '~/components/ui/loader'
 import { useAuth } from '~/lib/hooks/use-auth'
 import { createTodoOptions } from '~/lib/mutations/todos.mutations'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Loader } from '../ui/loader'
 
 export const AddTodoForm = () => {
 	const [newTodo, setNewTodo] = useState('')
