@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { Loader } from '~/components/ui/loader'
+import { Spinner } from '~/components/ui/spinner'
 import { useAuth } from '~/lib/hooks/use-auth'
 import { createTodoOptions } from '~/lib/mutations/todos.mutations'
 
@@ -44,7 +44,7 @@ export const AddTodoForm = () => {
 			/>
 			<Button disabled={!auth || isCreatingTodo || newTodo.length === 0} type="submit">
 				Add
-				{isCreatingTodo && <Loader />}
+				{isCreatingTodo && <Spinner />}
 			</Button>
 		</form>
 	)

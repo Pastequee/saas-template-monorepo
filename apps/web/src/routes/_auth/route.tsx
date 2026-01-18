@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import z from 'zod'
 import { Navbar } from '~/components/navigation/navbar'
 
 export const Route = createFileRoute('/_auth')({
@@ -9,6 +10,9 @@ export const Route = createFileRoute('/_auth')({
 			throw redirect({ to: '/' })
 		}
 	},
+	validateSearch: z.object({
+		redirect: z.string().optional(),
+	}),
 })
 
 function AuthLayout() {

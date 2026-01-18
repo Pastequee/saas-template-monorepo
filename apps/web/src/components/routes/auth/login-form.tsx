@@ -1,12 +1,11 @@
 import { env } from '@repo/env/web'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import z from 'zod'
 import googleIcon from '~/assets/google.svg'
 import { Alert, AlertTitle } from '~/components/ui/alert'
 import { Button } from '~/components/ui/button'
-import { PasswordInput } from '~/components/ui/password-input'
 import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
@@ -18,6 +17,8 @@ const formSchema = z.object({
 
 export const LoginForm = () => {
 	const router = useRouter()
+	const { redirect } = useSearch({ from: '/_auth' })
+
 	const [errorMessage, setErrorMessage] = useState<string>()
 
 	const form = useAppForm({
@@ -33,7 +34,7 @@ export const LoginForm = () => {
 				return
 			}
 
-			router.navigate({ to: '/', replace: true })
+			router.navigate({ to: redirect ?? '/', replace: true })
 		},
 		defaultState: {
 			canSubmit: false,
@@ -76,14 +77,12 @@ export const LoginForm = () => {
 			/>
 
 			<form.AppField
-				children={(field) => (
-					<field.TextField autoComplete="current-password" input={PasswordInput} label="Password" />
-				)}
+				children={(field) => <field.TextField autoComplete="current-password" label="Password" />}
 				name="password"
 			/>
 
 			<form.AppForm>
-				<form.SubmitButton label="Sign in" />
+				<form.SubmitButton>Sign in</form.SubmitButton>
 			</form.AppForm>
 
 			<div className="my-2 flex items-center gap-4">

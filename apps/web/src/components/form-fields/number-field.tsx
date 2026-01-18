@@ -1,11 +1,12 @@
-import { Input } from '~/components/ui/input'
+import { NumberInput } from '~/components/ui/number-input'
 import { useFieldContext } from '~/lib/hooks/form-hook'
 import { Field, type FieldProps } from './field'
 
-type TextFieldProps = React.ComponentProps<typeof Input> & Omit<FieldProps, 'children' | 'error'>
+type TextFieldProps = React.ComponentProps<typeof NumberInput> &
+	Omit<FieldProps, 'children' | 'error'>
 
 export function TextField({ label, id, optional, className, ...props }: TextFieldProps) {
-	const field = useFieldContext<string>()
+	const field = useFieldContext<number>()
 
 	const errorMessage = (field.state.meta.errors as { message: string }[]).at(0)?.message
 
@@ -18,14 +19,15 @@ export function TextField({ label, id, optional, className, ...props }: TextFiel
 			optional={optional}
 			required={props.required}
 		>
-			<Input
+			<NumberInput
 				{...props}
 				aria-invalid={errorMessage !== undefined}
 				id={field.name}
 				name={field.name}
 				onBlur={field.handleBlur}
-				onChange={(e) => {
-					field.handleChange(e.target.value)
+				onValueChange={(v) => {
+					if (v === null) return
+					field.handleChange(v)
 				}}
 				value={field.state.value}
 			/>

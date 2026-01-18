@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { Loader } from '~/components/ui/loader'
+import { Spinner } from '~/components/ui/spinner'
 import { todoListOptions } from '~/lib/queries/todos.queries'
 import { TodoItem } from './todo-item'
 
 export const TodoList = () => {
 	const { data: todos, isLoading, isSuccess } = useQuery(todoListOptions())
 
-	if (isLoading) return <Loader className="text-muted-foreground" />
+	if (isLoading) return <Spinner className="text-muted-foreground" />
 
 	if (!isSuccess || todos.length === 0) return null
 

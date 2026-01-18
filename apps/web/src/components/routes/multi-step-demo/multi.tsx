@@ -50,10 +50,9 @@ export const MultiStepForm = () => {
 				<form.AppForm>
 					{steps[currentStepNumber]}
 					{hasPreviousStep && <Button onClick={handleBackOrCancel}>Go back</Button>}
-					<form.SubmitButton
-						label={hasNextStep ? 'Go Next' : 'Submit'}
-						onClick={() => handleNextOrSubmit(form)}
-					/>
+					<form.SubmitButton onClick={() => handleNextOrSubmit(form)}>
+						{hasNextStep ? 'Go Next' : 'Submit'}
+					</form.SubmitButton>
 				</form.AppForm>
 			</div>
 		</>

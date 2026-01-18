@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TableRouteImport } from './routes/table'
 import { Route as MultiRouteImport } from './routes/multi'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -18,6 +19,11 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 
+const TableRoute = TableRouteImport.update({
+  id: '/table',
+  path: '/table',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MultiRoute = MultiRouteImport.update({
   id: '/multi',
   path: '/multi',
@@ -62,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/multi': typeof MultiRoute
+  '/table': typeof TableRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/admin/users': typeof AdminUsersRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/multi': typeof MultiRoute
+  '/table': typeof TableRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/admin/users': typeof AdminUsersRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/account': typeof AccountRoute
   '/multi': typeof MultiRoute
+  '/table': typeof TableRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/admin/users': typeof AdminUsersRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/multi'
+    | '/table'
     | '/login'
     | '/register'
     | '/admin/users'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/multi'
+    | '/table'
     | '/login'
     | '/register'
     | '/admin/users'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/account'
     | '/multi'
+    | '/table'
     | '/_auth/login'
     | '/_auth/register'
     | '/admin/users'
@@ -123,12 +135,20 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
   MultiRoute: typeof MultiRoute
+  TableRoute: typeof TableRoute
   AdminUsersRoute: typeof AdminUsersRoute
   ApiSplatRoute: typeof ApiSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/table': {
+      id: '/table'
+      path: '/table'
+      fullPath: '/table'
+      preLoaderRoute: typeof TableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/multi': {
       id: '/multi'
       path: '/multi'
@@ -207,6 +227,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AccountRoute: AccountRoute,
   MultiRoute: MultiRoute,
+  TableRoute: TableRoute,
   AdminUsersRoute: AdminUsersRoute,
   ApiSplatRoute: ApiSplatRoute,
 }

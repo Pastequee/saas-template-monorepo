@@ -10,7 +10,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '~/components/ui/dialog'
-import { PasswordInput } from '~/components/ui/password-input'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 
@@ -95,7 +94,7 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 						{(field) => (
 							<field.TextField
 								autoComplete="new-password"
-								input={PasswordInput}
+								// input={PasswordInput}
 								label="New Password"
 							/>
 						)}
@@ -105,7 +104,7 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 						{(field) => (
 							<field.TextField
 								autoComplete="new-password"
-								input={PasswordInput}
+								// input={PasswordInput}
 								label="Confirm Password"
 							/>
 						)}
@@ -116,7 +115,9 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 							Cancel
 						</Button>
 						<form.AppForm>
-							<form.SubmitButton label={isSubmitting ? 'Saving...' : 'Change Password'} />
+							<form.SubmitButton>
+								{isSubmitting ? 'Saving...' : 'Change Password'}
+							</form.SubmitButton>
 						</form.AppForm>
 					</DialogFooter>
 				</form>

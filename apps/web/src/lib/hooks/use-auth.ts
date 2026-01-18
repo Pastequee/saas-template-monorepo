@@ -1,7 +1,17 @@
-import { useRouteContext } from '@tanstack/react-router'
+import { useNavigate, useRouteContext } from '@tanstack/react-router'
+import { authClient } from '../clients/auth-client'
 
 export const useAuth = () => {
-	const { auth } = useRouteContext({ from: '__root__' })
+	const { auth, queryClient } = useRouteContext({ from: '__root__' })
+	const navigate = useNavigate()
 
-	return auth
+	const logout = async () => {
+		await authClient.signOut()
+		queryClient.clear()
+		navigate({ to: '/login' })
+	}
+
+	if (!auth) return null
+
+	return { ...auth, isAuthenticated: !!auth, logout }
 }

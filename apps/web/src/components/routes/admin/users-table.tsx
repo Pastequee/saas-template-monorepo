@@ -21,7 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
-import { Loader } from '~/components/ui/loader'
+import { Spinner } from '~/components/ui/spinner'
 import { adminUsersOptions, type UserWithRole } from '~/lib/queries/admin.queries'
 import { keys } from '~/lib/queries/keys'
 import { BanUserDialog } from './dialogs/ban-user-dialog'
@@ -235,7 +235,7 @@ export function UsersTable() {
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<Loader />
+				<Spinner />
 			</div>
 		)
 	}

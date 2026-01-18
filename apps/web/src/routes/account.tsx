@@ -8,7 +8,6 @@ import { Navbar } from '~/components/navigation/navbar'
 import { LogoutButton } from '~/components/routes/auth/logout-button'
 import { Alert, AlertTitle } from '~/components/ui/alert'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { PasswordInput } from '~/components/ui/password-input'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 
@@ -114,7 +113,7 @@ function ProfileForm({ defaultName }: { defaultName: string }) {
 					</form.AppField>
 
 					<form.AppForm>
-						<form.SubmitButton label="Update Profile" />
+						<form.SubmitButton>Update Profile</form.SubmitButton>
 					</form.AppForm>
 				</form>
 			</CardContent>
@@ -188,7 +187,7 @@ function EmailForm({ currentEmail }: { currentEmail: string }) {
 					</form.AppField>
 
 					<form.AppForm>
-						<form.SubmitButton label="Change Email" />
+						<form.SubmitButton>Change Email</form.SubmitButton>
 					</form.AppForm>
 				</form>
 			</CardContent>
@@ -260,7 +259,7 @@ function PasswordForm() {
 						{(field) => (
 							<field.TextField
 								autoComplete="current-password"
-								input={PasswordInput}
+								// input={PasswordInput}
 								label="Current Password"
 							/>
 						)}
@@ -270,7 +269,7 @@ function PasswordForm() {
 						{(field) => (
 							<field.TextField
 								autoComplete="new-password"
-								input={PasswordInput}
+								// input={PasswordInput}
 								label="New Password"
 							/>
 						)}
@@ -280,14 +279,14 @@ function PasswordForm() {
 						{(field) => (
 							<field.TextField
 								autoComplete="new-password"
-								input={PasswordInput}
+								// input={PasswordInput}
 								label="Confirm New Password"
 							/>
 						)}
 					</form.AppField>
 
 					<form.AppForm>
-						<form.SubmitButton label="Change Password" />
+						<form.SubmitButton>Change Password</form.SubmitButton>
 					</form.AppForm>
 				</form>
 			</CardContent>
