@@ -9,7 +9,11 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
-		devtools(),
+		devtools({
+			enhancedLogs: {
+				enabled: false,
+			},
+		}),
 		tanstackStart(),
 		nitro({ preset: 'bun', output: { dir: 'dist' } }),
 		tailwindcss(),

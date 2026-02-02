@@ -16,8 +16,8 @@ export const todoInsertSchema = createInsertSchema(todos).omit({ ...omits, userI
 export const todoUpdateSchema = createUpdateSchema(todos).omit({ ...omits, userId: true })
 
 // auth.ts
-export const UserRole = [...roles.enumValues] as const
-export type UserRole = (typeof UserRole)[number]
+export const AuthRole = [...roles.enumValues] as const
+export type AuthRole = (typeof AuthRole)[number]
 
 export type User = typeof users.$inferSelect
 export type UserInsert = typeof users.$inferInsert

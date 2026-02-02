@@ -13,14 +13,12 @@ type Template = keyof TemplateProps
 
 export const mail = {
 	send: async ({ to, subject, text }: { to: string | string[]; subject: string; text: string }) => {
-		const res = await resend.emails.send({
+		await resend.emails.send({
 			from: `${env.FROM_NAME} <${env.FROM_EMAIL}>`,
 			to,
 			subject,
 			text,
 		})
-
-		return res
 	},
 
 	sendTemplate: async <TTemplate extends Template>(
@@ -28,7 +26,7 @@ export const mail = {
 		to: string,
 		variables: TemplateProps[TTemplate]
 	) => {
-		const res = await resend.emails.send({
+		await resend.emails.send({
 			from: `${env.FROM_NAME} <${env.FROM_EMAIL}>`,
 			to,
 			template: {
@@ -36,7 +34,5 @@ export const mail = {
 				variables,
 			},
 		})
-
-		return res
 	},
 }

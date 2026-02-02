@@ -1,10 +1,10 @@
+import { env } from '@repo/env/server'
 import Elysia from 'elysia'
-import { isProduction } from 'elysia/error'
 import pc from 'picocolors'
 import type { Formatter } from 'picocolors/types'
 
 export const devLogger = () => {
-	if (isProduction) return new Elysia({ name: 'dev-logger' })
+	if (env.NODE_ENV !== 'development') return new Elysia({ name: 'dev-logger' })
 
 	return new Elysia({ name: 'dev-logger' })
 		.derive(() => ({ requestStartTime: process.hrtime.bigint() }))

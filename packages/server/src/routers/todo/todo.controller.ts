@@ -1,8 +1,8 @@
 import { todoInsertSchema, todoUpdateSchema } from '@repo/db/types'
 import { Elysia } from 'elysia'
 import z from 'zod'
-import { authMacro } from '../../lib/auth'
-import { TodosService } from './service'
+import { authMacro } from '#lib/auth'
+import { TodosService } from './todo.service'
 
 export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 	.use(authMacro)

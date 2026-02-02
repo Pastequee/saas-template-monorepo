@@ -11,7 +11,7 @@ export const env = createEnv({
 	},
 
 	shared: {
-		NODE_ENV: z.enum(['development', 'production']).default('development'),
+		NODE_ENV: z.enum(['development', 'production', 'staging', 'test']).default('development'),
 	},
 
 	runtimeEnv: import.meta.env,
