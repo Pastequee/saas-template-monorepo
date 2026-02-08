@@ -46,7 +46,6 @@ function RootDocument() {
 			<body>
 				<ImpersonationBanner />
 				<Outlet />
-				{/* <ThemeProvider /> */}
 				<Scripts />
 				<TanStackDevtools
 					plugins={[

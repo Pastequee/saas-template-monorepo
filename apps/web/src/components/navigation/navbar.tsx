@@ -14,7 +14,6 @@ export const Navbar = () => {
 				<Link className="mr-auto font-bold text-2xl" to="/">
 					Awesome Todo App
 				</Link>
-				{/* <ThemeSwitcher /> */}
 				<LoggedOut>
 					<div className="flex gap-2">
 						<NavbarLink to="/login">Login</NavbarLink>

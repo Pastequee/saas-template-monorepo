@@ -6,10 +6,9 @@ import {
 	TriangleAlertIcon,
 } from 'lucide-react'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
-import { useTheme } from '~/lib/clients/theme-client'
 
 const Toaster = ({ ...props }: ToasterProps) => {
-	const { theme } = useTheme()
+	const theme: ToasterProps['theme'] = 'light'
 
 	return (
 		<Sonner
@@ -29,7 +28,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					'--border-radius': 'var(--radius)',
 				} as React.CSSProperties
 			}
-			theme={theme as ToasterProps['theme']}
+			theme={theme}
 			toastOptions={{
 				classNames: {
 					toast: 'cn-toast',
