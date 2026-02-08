@@ -9,10 +9,10 @@
     "./utils": "./src/utils.ts"
   },
   "scripts": {
+    "dev": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "push": "drizzle-kit push",
-    "studio": "drizzle-kit studio",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
