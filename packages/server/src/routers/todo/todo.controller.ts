@@ -24,11 +24,11 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 	.patch(
 		'/todos/:id',
-		async ({ body, params, status, user }) => {
+		async ({ body, params, status, user, statusError }) => {
 			const todo = await TodosService.getTodo(params.id)
 
-			if (!todo) return status('Not Found')
-			if (todo.userId !== user.id) return status('Forbidden')
+			if (!todo) return statusError(404, { message: 'Todo not found' })
+			if (todo.userId !== user.id) return statusError(403, { message: 'This todo is not yours' })
 
 			const emptyBody = !(body.content || body.status)
 			if (emptyBody) return todo
@@ -42,11 +42,11 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 	.delete(
 		'/todos/:id',
-		async ({ params, status, user }) => {
+		async ({ params, status, user, statusError }) => {
 			const todo = await TodosService.getTodo(params.id)
 
-			if (!todo) return status('Not Found')
-			if (todo.userId !== user.id) return status('Forbidden')
+			if (!todo) return statusError('Not Found', { message: 'Todo not found' })
+			if (todo.userId !== user.id) return statusError(403, { message: 'This todo is not yours' })
 
 			await TodosService.deleteTodo(params.id)
 

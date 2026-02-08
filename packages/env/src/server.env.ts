@@ -9,6 +9,7 @@ export const env = createEnv({
 		SERVER_URL: z.url(),
 		NODE_ENV: z.enum(['development', 'production', 'staging', 'test']).default('development'),
 		LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+		COMMIT_HASH: z.string().optional(),
 
 		// Email service
 		RESEND_API_KEY: z.string(),

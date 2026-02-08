@@ -2,7 +2,7 @@ import cors from '@elysiajs/cors'
 import auth from '@repo/auth'
 import { env } from '@repo/env/server'
 import { Elysia } from 'elysia'
-import { devLogger } from '#lib/dev-logger'
+import { logger } from '#lib/logger'
 import { utils } from '#lib/utils'
 import { todosRouter } from '#routers/todo/todo.controller'
 import { userRouter } from '#routers/user/controller'
@@ -16,7 +16,8 @@ export const app = new Elysia({ prefix: '/api' })
 			allowedHeaders: ['Content-Type', 'Authorization'],
 		})
 	)
-	.use(devLogger())
+	// .use(devLogger())
+	.use(logger())
 	.use(utils)
 	.mount(auth.handler)
 	.use(userRouter)
