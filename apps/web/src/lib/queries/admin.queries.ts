@@ -1,4 +1,4 @@
-import type { UserRole } from '@repo/db/types'
+import type { AuthRole } from '@repo/db/types'
 import type { Prettify } from '@repo/utils'
 import { queryOptions } from '@tanstack/react-query'
 import type { UserWithRole as BetterAuthUserWithRole } from 'better-auth/plugins'
@@ -21,6 +21,6 @@ export const adminUsersOptions = () =>
 
 export type UserWithRole = Prettify<
 	BetterAuthUserWithRole & {
-		role: UserRole
+		role: AuthRole
 	}
 >

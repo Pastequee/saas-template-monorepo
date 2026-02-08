@@ -1,4 +1,4 @@
-import { UserRole } from '@repo/db/types'
+import { AuthRole } from '@repo/db/types'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
@@ -78,13 +78,13 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 
 				<div className="space-y-2">
 					<Label htmlFor="role-select">Role</Label>
-					<Select onValueChange={(v) => setSelectedRole(v as UserRole)} value={selectedRole}>
+					<Select onValueChange={(v) => setSelectedRole(v as AuthRole)} value={selectedRole}>
 						<SelectTrigger id="role-select">
 							<SelectValue>Select a role</SelectValue>
 						</SelectTrigger>
 
 						<SelectContent>
-							{UserRole.map((role) => (
+							{AuthRole.map((role) => (
 								<SelectItem key={role} value={role}>
 									{role.charAt(0).toUpperCase() + role.slice(1)}
 								</SelectItem>
