@@ -9,8 +9,10 @@
     "format": "biome format --fix",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:server": "bun -F ./packages/server test",
+    "router:gen": "bun -F ./apps/web router:generate",
     "build:web": "bun -F ./apps/web build",
-    "build:server": "bun -F ./apps/server build",
+    "build:server": "bun -F ./packages/server build",
     "build:docker:web": "docker build -f docker/Dockerfile.web -t web-image .",
     "build:docker:server": "docker build -f docker/Dockerfile.server -t server-image .",
     "db:push": "bun -F ./packages/db push",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
+    "better-auth": "^1.4.18",
     "lefthook": "^2.1.0",
     "turbo": "^2.8.3",
     "typescript": "catalog:",
@@ -44,7 +47,7 @@
       "drizzle-orm": "^1.0.0-beta.9-e89174b",
       "@types/pg": "^8.16.0",
       "better-auth": "^1.4.18",
-      "elysia": "^1.4.22",
+      "elysia": "^1.4.23",
       "zod": "^4.3.6"
     }
   }

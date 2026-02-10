@@ -65,10 +65,10 @@ export const logger = () =>
 
 			log.set({ status: statusCode })
 
-			const context = log.getContext()
-			const sanitizedContext = deepSanitize(context)
+			// const context = log.getContext()
+			// const sanitizedContext = deepSanitize(context)
 
-			log.emit(sanitizedContext)
+			// log.emit(sanitizedContext)
 		})
 		.as('global')
 
@@ -86,7 +86,7 @@ const SENSITIVE_KEYS = [
 	'refreshToken',
 ]
 
-function deepSanitize(obj: Record<string, unknown>): Record<string, unknown> {
+export function deepSanitize(obj: Record<string, unknown>): Record<string, unknown> {
 	const result: Record<string, unknown> = {}
 
 	for (const [key, value] of Object.entries(obj)) {

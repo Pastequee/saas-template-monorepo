@@ -12,7 +12,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "push": "drizzle-kit push",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsgo --noEmit",
+    "withenv": "bun run --env-file=../../apps/web/.env.local --"
   },
   "dependencies": {
     "@repo/env": "workspace:*",

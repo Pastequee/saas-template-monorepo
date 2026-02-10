@@ -3,7 +3,7 @@ import { id } from '../schema-utils'
 
 export const authSchema = pgSchema('auth')
 
-export const roles = authSchema.enum('roles', ['admin', 'user'])
+export const authRoles = authSchema.enum('roles', ['admin', 'user'])
 
 export const users = authSchema.table('users', {
 	id,
@@ -16,7 +16,7 @@ export const users = authSchema.table('users', {
 		.defaultNow()
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
-	role: roles('role').notNull().default('user'),
+	role: authRoles('role').notNull().default('user'),
 	banned: boolean('banned').notNull().default(false),
 	banReason: text('ban_reason'),
 	banExpires: timestamp('ban_expires'),

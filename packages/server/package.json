@@ -11,7 +11,7 @@
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",
-    "test": "bun --env-file=../../apps/web/.env.local test --node --preload ./tests/setup.ts"
+    "test": "bun --env-file=../../apps/web/.env.local test --preload ./tests/setup.ts"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
@@ -27,7 +27,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@elysiajs/eden": "^1.4.6",
+    "@elysiajs/eden": "^1.4.8",
     "@repo/tsconfig": "workspace:*",
     "@types/bun": "catalog:",
     "@types/pg": "catalog:",

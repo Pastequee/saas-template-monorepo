@@ -40,6 +40,6 @@ export const createAuth = () =>
 		plugins: [admin(), lastLoginMethod()],
 	})
 
-const auth = createAuth()
+export const auth = createAuth()
 
 export default auth

@@ -7,7 +7,7 @@ export const todoStatus = pgEnum('todo_status', ['pending', 'completed'])
 export const todos = pgTable('todos', {
 	id,
 
-	userId: uuid('user_id')
+	userId: uuid()
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
 

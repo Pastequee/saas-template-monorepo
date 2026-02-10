@@ -1,15 +1,4 @@
-import { existsSync } from 'node:fs'
-import { resolve } from 'node:path'
-import dotenv from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
-
-const localEnvPath = resolve(import.meta.dirname, '../../apps/web/.env.local')
-
-if (process.env.NODE_ENV !== 'production' && existsSync(localEnvPath)) {
-	dotenv.config({ path: localEnvPath })
-} else {
-	dotenv.config()
-}
 
 const DATABASE_URL = process.env.DATABASE_URL
 if (!DATABASE_URL) {
@@ -17,7 +6,7 @@ if (!DATABASE_URL) {
 }
 
 export default defineConfig({
-	out: './drizzle',
+	out: './migrations',
 	schema: './src/schemas/index.ts',
 
 	dialect: 'postgresql',

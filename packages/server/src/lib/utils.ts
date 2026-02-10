@@ -1,4 +1,8 @@
+import { db } from '@repo/db'
+import { tryCatch } from '@repo/utils'
+import { sql } from 'drizzle-orm'
 import Elysia from 'elysia'
+import { authMacro } from './auth'
 
 export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 	.onError(({ status, code }) => {
@@ -16,10 +20,21 @@ export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 	.as('global')
 
 const utilsEndpoints = new Elysia({ name: 'utils', tags: ['Utils'] })
+	.use(authMacro)
 	.get('/', () => 'Backend API' as const)
 	.get('/health', () => ({
 		status: 'healthy' as const,
 		timestamp: new Date().toISOString(),
 	}))
+	.get('/health/private', async () => {
+		const [, error] = await tryCatch(db.execute(sql`SELECT 1`))
+		const dbStatus = error ? ('unhealthy' as const) : ('healthy' as const)
+
+		return {
+			status: 'healthy' as const,
+			timestamp: new Date().toISOString(),
+			database: dbStatus,
+		}
+	})
 
 export const utils = new Elysia().use(utilsLifecycles).use(utilsEndpoints)
