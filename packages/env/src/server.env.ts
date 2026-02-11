@@ -5,8 +5,8 @@ import { z } from 'zod'
 
 export const env = createEnv({
 	server: {
-		FRONTEND_URL: z.url(),
-		SERVER_URL: z.url(),
+		VITE_FRONTEND_URL: z.url(),
+		VITE_SERVER_URL: z.url(),
 		NODE_ENV: z.enum(['development', 'production', 'staging', 'test']).default('development'),
 		LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
 		COMMIT_HASH: z.string().optional(),

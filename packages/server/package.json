@@ -19,9 +19,8 @@
     "@repo/db": "workspace:*",
     "@repo/env": "workspace:*",
     "@repo/utils": "workspace:*",
-    "drizzle-orm": "catalog:",
     "elysia": "catalog:",
-    "evlog": "^1.6.0",
+    "evlog": "^1.7.0",
     "nanoid": "^5.1.6",
     "picocolors": "^1.1.1",
     "zod": "catalog:"

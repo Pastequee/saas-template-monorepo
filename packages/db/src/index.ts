@@ -4,3 +4,5 @@ import { relations } from './relations'
 import * as schema from './schemas'
 
 export const db = drizzle(env.DATABASE_URL, { relations, schema, casing: 'snake_case' })
+
+export * from 'drizzle-orm'

@@ -39,19 +39,17 @@ jobs:
     environment: test
     env:
       NODE_ENV: test
-      VITE_SERVER_URL: ${{ secrets.SERVER_URL }}
-      VITE_FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-      SERVER_URL: ${{ secrets.SERVER_URL }}
-      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-      FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
-      FROM_NAME: ${{ secrets.FROM_NAME }}
-      AXIOM_API_KEY: ${{ secrets.AXIOM_API_KEY }}
-      AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
+      VITE_FRONTEND_URL: http://localhost:3000
+      VITE_SERVER_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: fake-test-secret-for-better-auth-instance
+      GOOGLE_CLIENT_ID: fake-test-google-client-id
+      GOOGLE_CLIENT_SECRET: fake-test-google-client-secret
+      DATABASE_URL: postgres://fake:fake@localhost:5432/fake-test-db
+      RESEND_API_KEY: fake-test-resend-api-key
+      FROM_EMAIL: fake@example.com
+      FROM_NAME: Fake Example
+      AXIOM_API_KEY: fake-test-axiom-api-key
+      AXIOM_DATASET: fake-test-axiom-dataset
     
     steps:
       - uses: actions/checkout@v6

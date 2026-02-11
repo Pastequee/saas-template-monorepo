@@ -10,8 +10,8 @@ export const createAuth = () =>
 		database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
 
 		secret: env.BETTER_AUTH_SECRET,
-		baseURL: env.SERVER_URL,
-		trustedOrigins: [env.FRONTEND_URL],
+		baseURL: env.VITE_SERVER_URL,
+		trustedOrigins: [env.VITE_FRONTEND_URL],
 
 		experimental: {
 			joins: false,

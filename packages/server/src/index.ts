@@ -9,7 +9,7 @@ import { userRouter } from '#routers/user/controller'
 export const app = new Elysia({ prefix: '/api' })
 	.use(
 		cors({
-			origin: [env.FRONTEND_URL],
+			origin: [env.VITE_FRONTEND_URL],
 			methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'HEAD', 'OPTIONS'],
 			credentials: true,
 			allowedHeaders: ['Content-Type', 'Authorization'],

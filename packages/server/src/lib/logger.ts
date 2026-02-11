@@ -1,12 +1,25 @@
 import { env } from '@repo/env/server'
 import { Elysia, ElysiaCustomStatusResponse, status as elysiaStatus, StatusMap } from 'elysia'
 import type { Prettify } from 'elysia/types'
-import { createRequestLogger, initLogger, type RequestLogger } from 'evlog'
+import { createRequestLogger, type DrainContext, initLogger, type RequestLogger } from 'evlog'
+import { createAxiomDrain } from 'evlog/axiom'
+import { createDrainPipeline } from 'evlog/pipeline'
 import { requestId } from './request-id'
 
+const pipeline = createDrainPipeline<DrainContext>({
+	batch: { size: 25, intervalMs: 5000 },
+})
+
+const axiomDrain = pipeline(
+	createAxiomDrain({ token: env.AXIOM_API_KEY, dataset: env.AXIOM_DATASET })
+)
+
+// if (env.NODE_ENV !== 'test') {
 initLogger({
 	env: { environment: env.NODE_ENV, commitHash: env.COMMIT_HASH, service: 'server' },
+	// drain: env.NODE_ENV == 'development' ? undefined : axiomDrain,
 })
+// }
 
 export const logger = () =>
 	new Elysia({ name: 'logger' })
@@ -65,10 +78,10 @@ export const logger = () =>
 
 			log.set({ status: statusCode })
 
-			// const context = log.getContext()
-			// const sanitizedContext = deepSanitize(context)
+			const context = log.getContext()
+			const sanitizedContext = deepSanitize(context)
 
-			// log.emit(sanitizedContext)
+			log.emit(sanitizedContext)
 		})
 		.as('global')
 
@@ -127,3 +140,11 @@ export function _createError<const TStatus extends Code, const TInfos extends Cr
 
 	return elysiaStatus(status, prettyRest)
 }
+
+process.on('SIGTERM', () => {
+	axiomDrain.flush()
+})
+
+process.on('SIGINT', () => {
+	axiomDrain.flush()
+})

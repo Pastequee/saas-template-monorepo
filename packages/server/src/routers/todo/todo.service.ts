@@ -1,7 +1,6 @@
-import { db } from '@repo/db'
+import { db, eq } from '@repo/db'
 import { todos } from '@repo/db/schemas'
 import type { Todo, TodoInsert, TodoUpdate, User } from '@repo/db/types'
-import { eq } from 'drizzle-orm'
 
 export const TodosService = {
 	getUserTodos: async (userId: User['id']) =>

@@ -1,6 +1,5 @@
-import { db } from '@repo/db'
+import { db, sql } from '@repo/db'
 import { tryCatch } from '@repo/utils'
-import { sql } from 'drizzle-orm'
 import Elysia from 'elysia'
 import { authMacro } from './auth'
 

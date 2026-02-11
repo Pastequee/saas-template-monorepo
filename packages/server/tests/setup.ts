@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, mock } from 'bun:test'
 import { createAuth } from '@repo/auth'
-import { createTestDb, truncateAllTables } from '@repo/db/utils'
+import { createTestDb, truncateAllTables } from '@repo/db/test'
 
 let testDb: Awaited<ReturnType<typeof createTestDb>>
 
