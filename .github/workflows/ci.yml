@@ -6,18 +6,28 @@ on:
     branches: [main, staging, dev]
 
 jobs:
-  checks:
-    name: Typecheck, lint and verify lockfile
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup
         uses: ./.github/actions/setup
 
       - name: Lint
         run: bun lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Typecheck
         run: bun typecheck
@@ -26,9 +36,25 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment: test
+    env:
+      NODE_ENV: test
+      VITE_SERVER_URL: ${{ secrets.SERVER_URL }}
+      VITE_FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+      FROM_NAME: ${{ secrets.FROM_NAME }}
+      AXIOM_API_KEY: ${{ secrets.AXIOM_API_KEY }}
+      AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
     
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -37,16 +63,15 @@ jobs:
         run: bun run test
   
   build:
+    environment: ${{ github.ref_name }}
     name: Build
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup
         uses: ./.github/actions/setup
 
       - name: Build
         run: bun run build
-
-  
