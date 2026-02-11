@@ -36,7 +36,6 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment: test
     env:
       NODE_ENV: test
       VITE_FRONTEND_URL: http://localhost:3000
