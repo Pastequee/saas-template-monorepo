@@ -1,7 +1,7 @@
 import auth from '@repo/auth'
-import { db } from '@repo/db'
 import { AuthRole, type Role } from '@repo/db/types'
 import { Elysia } from 'elysia'
+import { dbService } from '#services/db.service'
 import { logger } from './logger'
 
 const AuthService = {
@@ -16,6 +16,8 @@ const AuthService = {
 
 export const authMacro = new Elysia({ name: 'auth-macro' })
 	.use(logger())
+	.use(dbService)
+
 	.macro('auth', {
 		resolve: async function authMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
@@ -40,6 +42,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 			}
 		},
 	})
+
 	.macro('authAdmin', {
 		resolve: async function authAdminMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
@@ -62,10 +65,11 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 			return { user: { ...session.user, role: session.user.role }, session: session.session }
 		},
 	})
+
 	.macro(
 		'role',
 		(asked: Role | [Omit<Role, 'superadmin'> | [Omit<Role, 'superadmin'>], ...Role[]]) => ({
-			resolve: async function roleMiddleware({ request: { headers }, log, statusError }) {
+			resolve: async function roleMiddleware({ request: { headers }, log, statusError, db }) {
 				const session = await auth.api.getSession({ headers })
 
 				if (!session || !AuthService.isValidAuthRole(session.user.role))

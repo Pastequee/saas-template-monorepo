@@ -78,10 +78,10 @@ export const logger = () =>
 
 			log.set({ status: statusCode })
 
-			const context = log.getContext()
-			const sanitizedContext = deepSanitize(context)
+			// const context = log.getContext()
+			// const sanitizedContext = deepSanitize(context)
 
-			log.emit(sanitizedContext)
+			// log.emit(sanitizedContext)
 		})
 		.as('global')
 

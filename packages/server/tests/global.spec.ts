@@ -1,12 +1,18 @@
 import { beforeEach, describe, expect, it } from 'bun:test'
+import type { Treaty } from '@elysiajs/eden'
+import type { App } from '../src'
 import { createApi, createApiWithAuth, createTestUsers, type TestUsers } from './utils'
 
 describe('Global', () => {
 	const api = createApi()
 	let users: TestUsers
+	let adminApi: Treaty.Create<App>['api']
+	let normalApi: Treaty.Create<App>['api']
 
 	beforeEach(async () => {
 		users = await createTestUsers()
+		adminApi = (await createApiWithAuth(users.admin)).api
+		normalApi = (await createApiWithAuth(users.normal)).api
 	})
 
 	it('Root endpoint works', async () => {
@@ -39,13 +45,11 @@ describe('Global', () => {
 	})
 
 	it('Mock auth setup works', async () => {
-		const adminApi = (await createApiWithAuth(users.admin)).api
 		const adminMeResponse = await adminApi.me.get()
 
 		expect(adminMeResponse.status).toBe(200)
 		expect(adminMeResponse.data?.user?.id).toBe(users.admin.id)
 
-		const normalApi = (await createApiWithAuth(users.normal)).api
 		const normalMeResponse = await normalApi.me.get()
 
 		expect(normalMeResponse.status).toBe(200)

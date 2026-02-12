@@ -1,11 +1,11 @@
-import { db } from '@repo/db'
+import { type DbInstance, dbInstance } from '@repo/db'
 import { mail } from '@repo/email'
 import { env } from '@repo/env/server'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod } from 'better-auth/plugins'
 
-export const createAuth = () =>
+export const createAuth = ({ db }: { db: DbInstance }) =>
 	betterAuth({
 		database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
 
@@ -40,6 +40,6 @@ export const createAuth = () =>
 		plugins: [admin(), lastLoginMethod()],
 	})
 
-export const auth = createAuth()
+export const auth = createAuth({ db: dbInstance })
 
 export default auth

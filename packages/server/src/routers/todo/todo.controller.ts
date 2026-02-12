@@ -2,20 +2,21 @@ import { todoInsertSchema, todoUpdateSchema } from '@repo/db/types'
 import { Elysia } from 'elysia'
 import z from 'zod'
 import { authMacro } from '#lib/auth'
-import { TodosService } from './todo.service'
+import { todoService } from './todo.service'
 
 export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 	.use(authMacro)
+	.use(todoService)
 	.model('uuidParam', z.object({ id: z.uuidv7() }))
 
-	.get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {
+	.get('/todos', ({ user, todoService }) => todoService.getUserTodos(user.id), {
 		auth: true,
 	})
 
 	.post(
 		'/todos',
-		async ({ body, status, user }) => {
-			const createdTodo = await TodosService.createTodos({ userId: user.id, ...body })
+		async ({ body, status, user, todoService }) => {
+			const createdTodo = await todoService.createTodos({ userId: user.id, ...body })
 
 			return status('Created', createdTodo)
 		},
@@ -24,8 +25,8 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 	.patch(
 		'/todos/:id',
-		async ({ body, params, status, user, statusError }) => {
-			const todo = await TodosService.getTodo(params.id)
+		async ({ body, params, status, user, statusError, todoService }) => {
+			const todo = await todoService.getTodo(params.id)
 
 			if (!todo) return statusError(404, { message: 'Todo not found' })
 			if (todo.userId !== user.id) return statusError(403, { message: 'This todo is not yours' })
@@ -33,7 +34,7 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 			const emptyBody = !(body.content || body.status)
 			if (emptyBody) return todo
 
-			const updatedTodo = await TodosService.updateTodo(params.id, body)
+			const updatedTodo = await todoService.updateTodo(params.id, body)
 
 			return status('OK', updatedTodo)
 		},
@@ -42,13 +43,13 @@ export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
 
 	.delete(
 		'/todos/:id',
-		async ({ params, status, user, statusError }) => {
-			const todo = await TodosService.getTodo(params.id)
+		async ({ params, status, user, statusError, todoService }) => {
+			const todo = await todoService.getTodo(params.id)
 
 			if (!todo) return statusError('Not Found', { message: 'Todo not found' })
 			if (todo.userId !== user.id) return statusError(403, { message: 'This todo is not yours' })
 
-			await TodosService.deleteTodo(params.id)
+			await todoService.deleteTodo(params.id)
 
 			return status('No Content')
 		},

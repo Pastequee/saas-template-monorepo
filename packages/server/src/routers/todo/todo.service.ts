@@ -1,8 +1,10 @@
-import { db, eq } from '@repo/db'
+import { type DbInstance, eq } from '@repo/db'
 import { todos } from '@repo/db/schemas'
 import type { Todo, TodoInsert, TodoUpdate, User } from '@repo/db/types'
+import Elysia from 'elysia'
+import { dbService } from '#services/db.service'
 
-export const TodosService = {
+const TodoService = ({ db }: { db: DbInstance }) => ({
 	getUserTodos: async (userId: User['id']) =>
 		db.query.todos.findMany({
 			where: { userId },
@@ -34,4 +36,8 @@ export const TodosService = {
 	deleteTodo: async (id: Todo['id']) => {
 		await db.delete(todos).where(eq(todos.id, id))
 	},
-}
+})
+
+export const todoService = new Elysia({ name: 'todo-service' })
+	.use(dbService)
+	.decorate(({ db }) => ({ todoService: TodoService({ db }) }))

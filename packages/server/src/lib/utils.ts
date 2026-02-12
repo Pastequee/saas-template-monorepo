@@ -1,7 +1,9 @@
-import { db, sql } from '@repo/db'
+import { sql } from '@repo/db'
 import { tryCatch } from '@repo/utils'
 import Elysia from 'elysia'
+import { dbService } from '#services/db.service'
 import { authMacro } from './auth'
+import { logger } from './logger'
 
 export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 	.onError(({ status, code }) => {
@@ -20,12 +22,18 @@ export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 
 const utilsEndpoints = new Elysia({ name: 'utils', tags: ['Utils'] })
 	.use(authMacro)
+	.use(dbService)
+	.use(logger())
+
 	.get('/', () => 'Backend API' as const)
+
 	.get('/health', () => ({
 		status: 'healthy' as const,
 		timestamp: new Date().toISOString(),
 	}))
-	.get('/health/private', async () => {
+
+	.get('/health/private', async ({ db }) => {
+		console.log(db.$client.options)
 		const [, error] = await tryCatch(db.execute(sql`SELECT 1`))
 		const dbStatus = error ? ('unhealthy' as const) : ('healthy' as const)
 
