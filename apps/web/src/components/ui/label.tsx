@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noLabelWithoutControl: no need here */
+/** biome-ignore-all lint/a11y/noLabelWithoutControl: no problem here */
 import type * as React from 'react'
 
 import { cn } from '~/lib/utils/cn'

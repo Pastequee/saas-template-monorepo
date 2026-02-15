@@ -1,7 +1,7 @@
 import { ImagePlus, Loader2, X } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import type { UploadingFile } from '~/hooks/use-file-upload'
-import { useFileUpload } from '~/hooks/use-file-upload'
+import type { UploadingFile } from '~/lib/hooks/use-file-upload'
+import { useFileUpload } from '~/lib/hooks/use-file-upload'
 
 export function ImageUploadField({ onImageChange }: { onImageChange: (key: string) => void }) {
 	const [state, actions] = useFileUpload({
