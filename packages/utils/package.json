@@ -6,6 +6,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@repo/tsconfig": "workspace:*"
+    "@repo/tsconfig": "workspace:*",
+    "@types/bun": "catalog:"
   }
 }

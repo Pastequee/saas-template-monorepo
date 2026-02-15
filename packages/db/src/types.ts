@@ -1,5 +1,6 @@
-import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { roles, userRoles } from './schemas'
+import type { assets } from './schemas/assets'
 import {
 	type accounts,
 	authRoles,
@@ -7,9 +8,13 @@ import {
 	type users,
 	type verifications,
 } from './schemas/auth'
-import { todoStatus, todos } from './schemas/todos'
+import { listingImages, listings } from './schemas/listings'
 
 const omits = { id: true, createdAt: true, updatedAt: true } as const
+
+// const { createInsertSchema, createSelectSchema } = createSchemaFactory({
+// 	zodInstance: z,
+// })
 
 // auth.ts
 export const AuthRole = [...authRoles.enumValues] as const
@@ -40,13 +45,28 @@ export const userRoleInsertSchema = createInsertSchema(userRoles).omit({
 	updatedAt: true,
 })
 
-// todos.ts
-export const TodoStatus = [...todoStatus.enumValues] as const
-export type TodoStatus = (typeof TodoStatus)[number]
+// listings.ts
+export type Listing = typeof listings.$inferSelect & {
+	image?: string | null
+	user?: Pick<User, 'id' | 'name'> | null
+}
+export type ListingInsert = typeof listings.$inferInsert
+export type ListingUpdate = Partial<ListingInsert>
+export const listingSchema = createSelectSchema(listings)
+export const listingInsertSchema = createInsertSchema(listings, {
+	title: (s) => s.nonempty(),
+	description: (s) => s.nonempty(),
+}).omit({ ...omits, userId: true })
+export const listingUpdateSchema = listingInsertSchema.partial()
 
-export type Todo = typeof todos.$inferSelect
-export type TodoInsert = typeof todos.$inferInsert
-export type TodoUpdate = Partial<TodoInsert>
-export const todoSchema = createSelectSchema(todos)
-export const todoInsertSchema = createInsertSchema(todos).omit({ ...omits, userId: true })
-export const todoUpdateSchema = createUpdateSchema(todos).omit({ ...omits, userId: true })
+export type ListingImage = typeof listingImages.$inferSelect
+export type ListingImageInsert = typeof listingImages.$inferInsert
+export type ListingImageUpdate = Partial<ListingImageInsert>
+export const listingImageSchema = createSelectSchema(listingImages)
+export const listingImageInsertSchema = createInsertSchema(listingImages).omit({ listingId: true })
+export const listingImageUpdateSchema = listingImageInsertSchema.partial()
+
+// assets.ts
+export type Asset = typeof assets.$inferSelect
+export type AssetInsert = typeof assets.$inferInsert
+export type AssetUpdate = Partial<AssetInsert>

@@ -10,17 +10,17 @@ export const Route = createFileRoute('/_auth/login')({
 
 function LoginPageComponent() {
 	return (
-		<Card className="w-md max-w-[90vw]">
+		<Card className="w-md max-w-[calc(100vw-2rem)]">
 			<CardHeader>
-				<CardTitle>Welcome back</CardTitle>
-				<CardDescription>Please enter your credentials to sign in.</CardDescription>
+				<CardTitle>Connexion</CardTitle>
+				<CardDescription>Connectez-vous pour accéder à vos annonces.</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<LoginForm />
 				<p className="mt-4 flex flex-wrap justify-center gap-1 text-muted-foreground text-sm">
-					Don&apos;t have an account yet?{' '}
-					<Link className="flex items-center gap-1 text-primary" to="/register">
-						Create an account <ArrowRight size={14} />
+					Pas encore de compte?{' '}
+					<Link className="flex items-center gap-1 text-primary" search to="/register">
+						Créer un compte <ArrowRight size={14} />
 					</Link>
 				</p>
 			</CardContent>

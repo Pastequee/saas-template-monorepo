@@ -7,6 +7,7 @@ import {
 	queryOptions,
 	type UndefinedInitialDataOptions,
 	type UseMutationOptions,
+	type UseQueryOptions,
 } from '@tanstack/react-query'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
@@ -25,6 +26,18 @@ type ExtractOptions<TEdenQueryFn extends EdenQueryFn> =
 		? Parameters<TEdenQueryFn>[0]
 		: Parameters<TEdenQueryFn>[1]
 
+type IsOptional<T> = undefined extends T ? true : false
+
+type EdenQueryOptionsProps<
+	TEdenQueryFn extends EdenQueryFn,
+	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
+	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
+> = UndefinedInitialDataOptions<TData, TError, TData, QueryKey> & {
+	edenQuery: TEdenQueryFn
+} & (IsOptional<ExtractOptions<TEdenQueryFn>> extends true
+		? { edenOptions?: ExtractOptions<TEdenQueryFn> }
+		: { edenOptions: ExtractOptions<TEdenQueryFn> })
+
 export function edenQueryOption<
 	TEdenQueryFn extends EdenQueryFn,
 	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
@@ -33,10 +46,12 @@ export function edenQueryOption<
 	edenQuery,
 	edenOptions,
 	...options
-}: Omit<UndefinedInitialDataOptions<TData, TError, TData, QueryKey>, 'queryFn'> & {
-	edenQuery: TEdenQueryFn
-	edenOptions?: ExtractOptions<TEdenQueryFn>
-}) {
+}: EdenQueryOptionsProps<TEdenQueryFn, TData, TError>): UseQueryOptions<
+	TData,
+	TError,
+	TData,
+	QueryKey
+> {
 	return queryOptions({
 		...options,
 		queryFn: async () => {

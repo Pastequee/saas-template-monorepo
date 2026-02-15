@@ -1,21 +1,28 @@
 import { treaty } from '@elysiajs/eden'
 import { auth } from '@repo/auth'
+import { db } from '@repo/db'
+import type { AuthRole } from '@repo/db/types'
+import { typedObjectEntries } from '@repo/utils'
 import { app } from '../src'
 
-const testUsers = [
-	{
+type TestUser = { id: string; email: string; name: string; role: AuthRole; password: string }
+
+export const testUsers: Record<'admin' | 'user', TestUser> = {
+	admin: {
+		id: '1',
 		email: 'admin@test.com',
 		name: 'Admin',
 		role: 'admin',
 		password: 'test-admin-password',
 	},
-	{
+	user: {
+		id: '2',
 		email: 'user@test.com',
 		name: 'User',
 		role: 'user',
 		password: 'test-user-password',
 	},
-] as const
+}
 
 export const createApi = () => {
 	const api = treaty(app).api
@@ -23,13 +30,7 @@ export const createApi = () => {
 	return api
 }
 
-export const createApiWithAuth = async (user: { email: string }) => {
-	const testUser = testUsers.find((u) => u.email === user.email)
-
-	if (!testUser) {
-		throw new Error(`User with email ${user.email} not found`)
-	}
-
+export const createApiWithAuth = async (testUser: TestUser) => {
 	const res = await auth.api.signInEmail({
 		body: { email: testUser.email, password: testUser.password },
 		asResponse: true,
@@ -43,15 +44,21 @@ export const createApiWithAuth = async (user: { email: string }) => {
 }
 
 export const createTestUsers = async () => {
-	const { user: admin } = await auth.api.createUser({
-		body: testUsers[0],
-	})
+	const existingUsers = await db.query.users.findMany()
 
-	const { user: normal } = await auth.api.createUser({
-		body: testUsers[1],
-	})
-
-	return { admin, normal }
+	await Promise.all(
+		typedObjectEntries(testUsers).map(async ([_, value]) => {
+			const existingUser = existingUsers.find((u) => u.email === value.email)
+			if (existingUser) {
+				value.id = existingUser.id
+			} else {
+				const { user } = await auth.api.createUser({
+					body: value,
+				})
+				value.id = user.id
+			}
+		})
+	)
 }
 
 export type TestUsers = Awaited<ReturnType<typeof createTestUsers>>

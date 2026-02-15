@@ -1,19 +1,24 @@
-import { env } from '@repo/env/web'
+import { formOptions } from '@tanstack/react-form'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import z from 'zod'
-import googleIcon from '~/assets/google.svg'
 import { Alert, AlertTitle } from '~/components/ui/alert'
-import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
+import { DEFAULT_ERROR_MESSAGE } from '~/lib/utils/constants'
+import { GoogleSignInButton } from './google-sign-in-button'
 
 const formSchema = z.object({
 	email: z.email('Invalid email address').nonempty('Name is required'),
 	name: z.string().nonempty('Name is required'),
 	password: z.string().nonempty('Name is required').min(8, 'Must be at least 8 characters long'),
+})
+
+const registerFormOptions = formOptions({
+	defaultValues: { email: '', name: '', password: '' },
+	validators: { onSubmit: formSchema },
 })
 
 export const RegisterForm = () => {
@@ -23,7 +28,7 @@ export const RegisterForm = () => {
 	const [signUpResponseError, setSignUpResponseError] = useState<string>()
 
 	const form = useAppForm({
-		defaultValues: { email: '', name: '', password: '' },
+		...registerFormOptions,
 		onSubmit: async ({ value }) => {
 			const { error } = await authClient.signUp.email({
 				email: value.email,
@@ -32,28 +37,13 @@ export const RegisterForm = () => {
 			})
 
 			if (error) {
-				setSignUpResponseError(
-					error.message ?? 'An unknown error occurred, please try again later.'
-				)
+				setSignUpResponseError(error.message ?? DEFAULT_ERROR_MESSAGE)
 				return
 			}
 
 			router.navigate({ to: redirect ?? '/login', replace: true })
 		},
-		validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
 	})
-
-	const handleSocialSignIn = async ({ provider }: { provider: 'google' }) => {
-		const { error } = await authClient.signIn.social({
-			provider,
-			callbackURL: env.VITE_FRONTEND_URL,
-		})
-
-		if (error) {
-			setSignUpResponseError(error.message ?? 'An unknown error occurred, please try again later.')
-			return
-		}
-	}
 
 	return (
 		<form
@@ -72,35 +62,40 @@ export const RegisterForm = () => {
 			)}
 
 			<form.AppField
-				children={(field) => <field.TextField autoComplete="name" label="Name" />}
+				children={(field) => (
+					<field.TextField autoComplete="name" label="Nom" placeholder="Votre nom" />
+				)}
 				name="name"
 			/>
 
 			<form.AppField
-				children={(field) => <field.TextField autoComplete="email" label="Email" type="email" />}
+				children={(field) => (
+					<field.TextField
+						autoComplete="email"
+						label="Email"
+						placeholder="votre@email.com"
+						type="email"
+					/>
+				)}
 				name="email"
 			/>
 
-			<form.AppField children={(field) => <field.TextField label="Password" />} name="password" />
+			<form.AppField
+				children={(field) => <field.TextField label="Mot de passe" placeholder="••••••••" />}
+				name="password"
+			/>
 
 			<form.AppForm>
-				<form.SubmitButton>Create account</form.SubmitButton>
+				<form.SubmitButton>Créer un compte</form.SubmitButton>
 			</form.AppForm>
 
 			<div className="my-2 flex items-center gap-4">
 				<Separator className="flex-1" />
-				<span className="text-muted-foreground text-sm">OR</span>
+				<span className="text-muted-foreground text-sm">OU</span>
 				<Separator className="flex-1" />
 			</div>
 
-			<Button
-				className="w-full"
-				onClick={() => handleSocialSignIn({ provider: 'google' })}
-				variant="outline"
-			>
-				<img alt="Google" className="size-4" height={16} src={googleIcon} width={16} />
-				Continue with Google
-			</Button>
+			<GoogleSignInButton onError={setSignUpResponseError} />
 		</form>
 	)
 }

@@ -1,9 +1,10 @@
 import cors from '@elysiajs/cors'
 import auth from '@repo/auth'
-import { env } from '@repo/env/server'
+import { env } from '@repo/env/web'
 import { Elysia } from 'elysia'
 import { utils } from '#lib/utils'
-import { todosRouter } from '#routers/todo/todo.controller'
+import { filesRouter } from '#routers/files/files.controller'
+import { listingsRouter } from '#routers/listings/listings.controller'
 import { userRouter } from '#routers/user/controller'
 
 export const app = new Elysia({ prefix: '/api' })
@@ -19,7 +20,8 @@ export const app = new Elysia({ prefix: '/api' })
 	.use(utils)
 	.mount(auth.handler)
 	.use(userRouter)
-	.use(todosRouter)
+	.use(listingsRouter)
+	.use(filesRouter)
 
 // Only for standalone server version
 // app.listen(3001, ({ url }) => {

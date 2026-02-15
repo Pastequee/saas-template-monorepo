@@ -11,19 +11,16 @@ function RegisterPage() {
 	return (
 		<Card className="w-md max-w-[90vw]">
 			<CardHeader>
-				<CardTitle>Create an account</CardTitle>
-				<CardDescription>
-					We are happy that you want to join us. Please fill in the form below to create your
-					account.
-				</CardDescription>
+				<CardTitle>Créer un compte</CardTitle>
+				<CardDescription>Créez un compte pour publier vos annonces.</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<RegisterForm />
 
 				<p className="mt-4 flex flex-wrap justify-center gap-1 text-muted-foreground text-sm">
-					Already have an account?{' '}
-					<Link className="flex items-center gap-1 text-primary" to="/login">
-						Sign in <ArrowRight size={14} />
+					Déjà un compte?{' '}
+					<Link className="flex items-center gap-1 text-primary" search to="/login">
+						Se connecter <ArrowRight size={14} />
 					</Link>
 				</p>
 			</CardContent>

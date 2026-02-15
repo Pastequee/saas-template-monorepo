@@ -18,9 +18,11 @@
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/env": "workspace:*",
+    "@repo/file-storage": "workspace:*",
     "@repo/utils": "workspace:*",
+    "date-fns": "catalog:",
     "elysia": "catalog:",
-    "evlog": "^1.7.0",
+    "evlog": "^1.9.0",
     "nanoid": "^5.1.6",
     "picocolors": "^1.1.1",
     "zod": "catalog:"

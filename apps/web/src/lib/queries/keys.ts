@@ -1,8 +1,9 @@
 export const keys = {
-	todos: {
+	listings: {
 		all: ['todos'] as const,
-		list: () => [...keys.todos.all, 'list'] as const,
-		item: (id: string) => [...keys.todos.all, 'item', id] as const,
+		list: () => [...keys.listings.all, 'list'] as const,
+		search: (query: string) => [...keys.listings.all, 'search', query] as const,
+		one: (id: string) => [...keys.listings.all, 'one', id] as const,
 	},
 	admin: {
 		all: ['admin'] as const,

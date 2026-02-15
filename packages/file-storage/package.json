@@ -1,0 +1,17 @@
+{
+  "name": "@repo/file-storage",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./test": "./src/test-mock.ts"
+  },
+  "dependencies": {
+    "@repo/utils": "workspace:*",
+    "@repo/env": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/tsconfig": "workspace:*",
+    "@types/bun": "catalog:"
+  }
+}

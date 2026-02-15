@@ -12,7 +12,7 @@
     "@repo/email": "workspace:*",
     "@repo/env": "workspace:*",
     "better-auth": "catalog:",
-    "dotenv": "^17.2.4"
+    "dotenv": "^17.3.1"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",

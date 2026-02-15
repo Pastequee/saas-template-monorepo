@@ -1,4 +1,4 @@
-import { env } from '@repo/env/server'
+import { env } from '@repo/env/web'
 import { Elysia, ElysiaCustomStatusResponse, status as elysiaStatus, StatusMap } from 'elysia'
 import type { Prettify } from 'elysia/types'
 import { createRequestLogger, type DrainContext, initLogger, type RequestLogger } from 'evlog'
@@ -14,12 +14,11 @@ const axiomDrain = pipeline(
 	createAxiomDrain({ token: env.AXIOM_API_KEY, dataset: env.AXIOM_DATASET })
 )
 
-// if (env.NODE_ENV !== 'test') {
 initLogger({
 	env: { environment: env.NODE_ENV, commitHash: env.COMMIT_HASH, service: 'server' },
-	// drain: env.NODE_ENV == 'development' ? undefined : axiomDrain,
+	drain: env.NODE_ENV === 'development' ? undefined : axiomDrain,
+	enabled: env.NODE_ENV !== 'test',
 })
-// }
 
 export const logger = () =>
 	new Elysia({ name: 'logger' })

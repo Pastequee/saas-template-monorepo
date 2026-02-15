@@ -1,5 +1,5 @@
-import { pgEnum, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core'
-import { timestamps } from '../schema-utils'
+import { pgEnum, pgTable, unique, uuid } from 'drizzle-orm/pg-core'
+import { id, timestamps } from '../schema-utils'
 import { users } from './auth'
 
 export const roles = pgEnum('roles', ['superadmin', 'admin', 'user'])
@@ -7,6 +7,7 @@ export const roles = pgEnum('roles', ['superadmin', 'admin', 'user'])
 export const userRoles = pgTable(
 	'user_roles',
 	{
+		id,
 		userId: uuid()
 			.references(() => users.id, { onDelete: 'cascade' })
 			.notNull(),
@@ -15,5 +16,5 @@ export const userRoles = pgTable(
 
 		...timestamps,
 	},
-	(table) => [primaryKey({ columns: [table.userId, table.role] })]
+	(table) => [unique('user_roles_userId_role_unique').on(table.userId, table.role)]
 )

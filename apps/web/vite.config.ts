@@ -13,6 +13,9 @@ export default defineConfig({
 			enhancedLogs: {
 				enabled: false,
 			},
+			consolePiping: {
+				enabled: false,
+			},
 		}),
 		tanstackStart(),
 		nitro({ preset: 'bun', output: { dir: 'dist' } }),

@@ -1,13 +1,8 @@
-import { beforeEach, describe, expect, it } from 'bun:test'
-import { createApi, createApiWithAuth, createTestUsers, type TestUsers } from './utils'
+import { describe, expect, it } from 'bun:test'
+import { createApi, createApiWithAuth, testUsers } from './utils'
 
 describe('Global', () => {
 	const api = createApi()
-	let users: TestUsers
-
-	beforeEach(async () => {
-		users = await createTestUsers()
-	})
 
 	it('Root endpoint works', async () => {
 		const rootResponse = await api.get()
@@ -39,16 +34,16 @@ describe('Global', () => {
 	})
 
 	it('Mock auth setup works', async () => {
-		const adminApi = (await createApiWithAuth(users.admin)).api
+		const adminApi = (await createApiWithAuth(testUsers.admin)).api
 		const adminMeResponse = await adminApi.me.get()
 
 		expect(adminMeResponse.status).toBe(200)
-		expect(adminMeResponse.data?.user?.id).toBe(users.admin.id)
+		expect(adminMeResponse.data?.user?.id).toBe(testUsers.admin.id)
 
-		const normalApi = (await createApiWithAuth(users.normal)).api
+		const normalApi = (await createApiWithAuth(testUsers.user)).api
 		const normalMeResponse = await normalApi.me.get()
 
 		expect(normalMeResponse.status).toBe(200)
-		expect(normalMeResponse.data?.user?.id).toBe(users.normal.id)
+		expect(normalMeResponse.data?.user?.id).toBe(testUsers.user.id)
 	})
 })

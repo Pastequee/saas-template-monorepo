@@ -1,29 +1,29 @@
 import { Link } from '@tanstack/react-router'
-import { LoggedIn } from '~/components/routes/auth/logged-in'
-import { LoggedOut } from '~/components/routes/auth/logged-out'
+import { LogOut, User } from 'lucide-react'
 import { useAuth } from '~/lib/hooks/use-auth'
-import { NavbarLink } from './navbar-link'
+import { Button } from '../ui/button'
 
 export const Navbar = () => {
 	const auth = useAuth()
-	const isAdmin = auth?.user.role === 'admin'
+
+	if (!auth) return null
 
 	return (
-		<header className="sticky top-0 z-10 flex items-center justify-center gap-4 bg-background p-4">
+		<header className="sticky top-0 z-10 flex items-center justify-center gap-4 border-b bg-background p-4">
 			<nav className="flex max-w-7xl flex-1 items-center justify-end gap-4">
-				<Link className="mr-auto font-bold text-2xl" to="/">
-					Awesome Todo App
+				<Link className="mr-auto font-bold text-2xl text-primary" to="/">
+					BonnesAffaires
 				</Link>
-				<LoggedOut>
-					<div className="flex gap-2">
-						<NavbarLink to="/login">Login</NavbarLink>
-						<NavbarLink to="/register">Register</NavbarLink>
-					</div>
-				</LoggedOut>
-				<LoggedIn>
-					{isAdmin && <NavbarLink to="/admin/users">Admin</NavbarLink>}
-					<NavbarLink to="/account">Account</NavbarLink>
-				</LoggedIn>
+
+				<Button nativeButton={false} render={<Link to="/account" />} variant="ghost">
+					<User />
+					{auth.user.name}
+				</Button>
+
+				<Button onClick={auth.logout} variant="ghost">
+					<LogOut />
+					Se déconnecter
+				</Button>
 			</nav>
 		</header>
 	)

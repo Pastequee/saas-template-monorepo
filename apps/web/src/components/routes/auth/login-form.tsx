@@ -1,18 +1,23 @@
-import { env } from '@repo/env/web'
+import { formOptions } from '@tanstack/react-form'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import z from 'zod'
-import googleIcon from '~/assets/google.svg'
 import { Alert, AlertTitle } from '~/components/ui/alert'
-import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
+import { DEFAULT_ERROR_MESSAGE } from '~/lib/utils/constants'
+import { GoogleSignInButton } from './google-sign-in-button'
 
 const formSchema = z.object({
 	email: z.string().nonempty('Email is required'),
 	password: z.string().nonempty('Password is required'),
+})
+
+const loginFormOptions = formOptions({
+	defaultValues: { email: '', password: '' },
+	validators: { onSubmit: formSchema },
 })
 
 export const LoginForm = () => {
@@ -22,7 +27,7 @@ export const LoginForm = () => {
 	const [errorMessage, setErrorMessage] = useState<string>()
 
 	const form = useAppForm({
-		defaultValues: { email: '', password: '' },
+		...loginFormOptions,
 		onSubmit: async ({ value }) => {
 			const { error } = await authClient.signIn.email({
 				email: value.email,
@@ -30,29 +35,13 @@ export const LoginForm = () => {
 			})
 
 			if (error) {
-				setErrorMessage(error.message ?? 'An unknown error occurred, please try again later.')
+				setErrorMessage(error.message ?? DEFAULT_ERROR_MESSAGE)
 				return
 			}
 
 			router.navigate({ to: redirect ?? '/', replace: true })
 		},
-		defaultState: {
-			canSubmit: false,
-		},
-		validators: { onChange: formSchema, onMount: formSchema, onSubmit: formSchema },
 	})
-
-	const handleSocialSignIn = async ({ provider }: { provider: 'google' }) => {
-		const { error } = await authClient.signIn.social({
-			provider,
-			callbackURL: env.VITE_FRONTEND_URL,
-		})
-
-		if (error) {
-			setErrorMessage(error.message ?? 'An unknown error occurred, please try again later.')
-			return
-		}
-	}
 
 	return (
 		<form
@@ -72,12 +61,26 @@ export const LoginForm = () => {
 			)}
 
 			<form.AppField
-				children={(field) => <field.TextField autoComplete="email" label="Email" type="email" />}
+				children={(field) => (
+					<field.TextField
+						autoComplete="email"
+						label="Email"
+						placeholder="votre@email.com"
+						type="email"
+					/>
+				)}
 				name="email"
 			/>
 
 			<form.AppField
-				children={(field) => <field.TextField autoComplete="current-password" label="Password" />}
+				children={(field) => (
+					<field.TextField
+						autoComplete="current-password"
+						label="Mot de passe"
+						placeholder="••••••••"
+						type="password"
+					/>
+				)}
 				name="password"
 			/>
 
@@ -87,18 +90,11 @@ export const LoginForm = () => {
 
 			<div className="my-2 flex items-center gap-4">
 				<Separator className="flex-1" />
-				<span className="text-muted-foreground text-sm">OR</span>
+				<span className="text-muted-foreground text-sm">OU</span>
 				<Separator className="flex-1" />
 			</div>
 
-			<Button
-				className="w-full"
-				onClick={() => handleSocialSignIn({ provider: 'google' })}
-				variant="outline"
-			>
-				<img alt="Google" className="size-4" height={16} src={googleIcon} width={16} />
-				Continue with Google
-			</Button>
+			<GoogleSignInButton onError={setErrorMessage} />
 		</form>
 	)
 }

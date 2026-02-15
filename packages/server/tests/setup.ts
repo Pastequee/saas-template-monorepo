@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, mock } from 'bun:test'
 import { createAuth } from '@repo/auth'
 import { createTestDb, truncateAllTables } from '@repo/db/test'
+import { fileStorageMock } from '@repo/file-storage/test'
 
 let testDb: Awaited<ReturnType<typeof createTestDb>>
 
@@ -15,6 +16,12 @@ beforeAll(async () => {
 		}
 	})
 
+	mock.module('@repo/file-storage', () => {
+		return {
+			fileStorage: fileStorageMock,
+		}
+	})
+
 	const testAuth = createAuth()
 
 	mock.module('@repo/auth', () => {
@@ -24,10 +31,11 @@ beforeAll(async () => {
 
 afterAll(async () => {
 	// Close DB after all tests complete.
-	await testDb.$client.close()
+	await testDb.$client.end()
 })
 
 beforeEach(async () => {
 	// Reset state between tests for deterministic results.
 	await truncateAllTables(testDb)
+	fileStorageMock._cleanFiles()
 })

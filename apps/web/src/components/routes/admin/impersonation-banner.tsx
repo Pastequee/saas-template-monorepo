@@ -36,7 +36,7 @@ export function ImpersonationBanner() {
 
 		toast.success('Stopped impersonating')
 
-		router.navigate({ to: '/admin/users' })
+		router.navigate({ to: '/' })
 	}
 
 	return (

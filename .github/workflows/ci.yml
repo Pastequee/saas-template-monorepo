@@ -1,9 +1,6 @@
 name: CI
 
-on:
-  pull_request:
-  push:
-    branches: [main, staging, dev]
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -36,6 +33,17 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+
     env:
       NODE_ENV: test
       VITE_FRONTEND_URL: http://localhost:3000
@@ -43,12 +51,13 @@ jobs:
       BETTER_AUTH_SECRET: fake-test-secret-for-better-auth-instance
       GOOGLE_CLIENT_ID: fake-test-google-client-id
       GOOGLE_CLIENT_SECRET: fake-test-google-client-secret
-      DATABASE_URL: postgres://fake:fake@localhost:5432/fake-test-db
+      DATABASE_URL: postgres://test:test@localhost:5432/testdb
       RESEND_API_KEY: fake-test-resend-api-key
       FROM_EMAIL: fake@example.com
       FROM_NAME: Fake Example
       AXIOM_API_KEY: fake-test-axiom-api-key
       AXIOM_DATASET: fake-test-axiom-dataset
+      S3_ENDPOINT: http://fake-s3-endpoint.com
     
     steps:
       - uses: actions/checkout@v6

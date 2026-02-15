@@ -26,7 +26,8 @@
           "level": "warn",
           "options": { "style": "type" }
         },
-        "useConsistentObjectDefinitions": "off"
+        "useConsistentObjectDefinitions": "off",
+        "useFilenamingConvention": "off"
       },
       "performance": {
         "noBarrelFile": "off",
@@ -49,18 +50,5 @@
       "!**/_generated",
       "!**/generated"
     ]
-  },
-  "overrides": [
-    // remove file naming convention for tsrouter file routing features
-    {
-      "includes": ["**/$.ts"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useFilenamingConvention": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

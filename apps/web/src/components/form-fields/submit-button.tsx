@@ -10,11 +10,12 @@ export const SubmitButton = ({
 	const form = useFormContext()
 
 	return (
+		// @ts-expect-error - tsgo problem
 		<form.Subscribe selector={(state) => [state.isSubmitting]}>
-			{([isSubmitting]) => (
-				<Button disabled={disabled || isSubmitting} {...props} nativeButton type="submit">
+			{(state) => (
+				<Button disabled={disabled || state.isSubmitting} {...props} nativeButton type="submit">
 					{children}
-					{isSubmitting && <Spinner className="ml-2" />}
+					{state.isSubmitting && <Spinner className="ml-2" />}
 				</Button>
 			)}
 		</form.Subscribe>

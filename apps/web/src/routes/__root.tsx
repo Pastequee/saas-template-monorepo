@@ -43,7 +43,7 @@ function RootDocument() {
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body className="flex min-h-screen flex-col leading-none">
 				<ImpersonationBanner />
 				<Outlet />
 				<Scripts />

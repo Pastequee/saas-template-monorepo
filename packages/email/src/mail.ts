@@ -1,4 +1,4 @@
-import { env } from '@repo/env/server'
+import { env } from '@repo/env/web'
 import { Resend } from 'resend'
 
 const resend = new Resend(env.RESEND_API_KEY)
