@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'bun:test'
-import { createApi, createApiWithAuth, testUsers } from './utils'
+import { beforeAll, describe, expect, it } from 'bun:test'
+import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
 describe('Global', () => {
 	const api = createApi()
+
+	beforeAll(async () => {
+		await createTestUsers()
+	})
 
 	it('Root endpoint works', async () => {
 		const rootResponse = await api.get()
