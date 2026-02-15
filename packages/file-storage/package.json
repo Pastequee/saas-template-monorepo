@@ -7,8 +7,8 @@
     "./test": "./src/test-mock.ts"
   },
   "dependencies": {
-    "@repo/utils": "workspace:*",
-    "@repo/env": "workspace:*"
+    "@repo/env": "workspace:*",
+    "@repo/utils": "workspace:*"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
