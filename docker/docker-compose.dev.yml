@@ -26,6 +26,20 @@ services:
     volumes:
       - files_data:/data
 
+  files-init:
+    image: amazon/aws-cli:latest
+    depends_on:
+      - files
+    entrypoint: >
+      sh -c "
+      sleep 2 &&
+      aws --endpoint-url=http://files:9000 s3 mb s3://super-s3-bucket &&
+      echo 'Bucket created'
+      "
+    environment:
+      AWS_ACCESS_KEY_ID: rustfsadmin
+      AWS_SECRET_ACCESS_KEY: rustfsadmin
+
 volumes:
   postgres_data:
   files_data:
