@@ -6,8 +6,8 @@ describe('Files', () => {
 	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 
 	beforeAll(async () => {
-		userApi = (await createApiWithAuth(testUsers.user)).api
 		await createTestUsers()
+		userApi = (await createApiWithAuth(testUsers.user)).api
 	})
 
 	// ── POST /files/presign ─────────────────────────────────────

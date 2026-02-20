@@ -51,8 +51,8 @@ const badgeVariants = cva(
 )
 
 interface BadgeProps extends useRender.ComponentProps<'span'> {
-	variant?: VariantProps<typeof badgeVariants>['variant']
 	size?: VariantProps<typeof badgeVariants>['size']
+	variant?: VariantProps<typeof badgeVariants>['variant']
 }
 
 function Badge({ className, variant, size, render, ...props }: BadgeProps) {

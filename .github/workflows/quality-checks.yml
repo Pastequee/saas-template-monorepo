@@ -1,0 +1,70 @@
+name: Quality Checks
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubicloud-standard-2
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Lint
+        run: bun lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubicloud-standard-2
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Typecheck
+        run: bun typecheck
+
+  tests:
+    name: Tests
+    runs-on: ubicloud-standard-2
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+
+    env:
+      NODE_ENV: test
+      VITE_FRONTEND_URL: http://localhost:3000
+      VITE_SERVER_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: fake-test-secret-for-better-auth-instance
+      GOOGLE_CLIENT_ID: fake-test-google-client-id
+      GOOGLE_CLIENT_SECRET: fake-test-google-client-secret
+      DATABASE_URL: postgres://test:test@localhost:5432/testdb
+      RESEND_API_KEY: fake-test-resend-api-key
+      FROM_EMAIL: fake@example.com
+      FROM_NAME: Fake Example
+      AXIOM_API_KEY: fake-test-axiom-api-key
+      AXIOM_DATASET: fake-test-axiom-dataset
+      S3_ENDPOINT: http://fake-s3-endpoint.com
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Run tests
+        run: bun run test
