@@ -6,35 +6,37 @@ import type { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import appCss from '~/assets/styles/app.css?url'
+
 import { ImpersonationBanner } from '~/components/routes/admin/impersonation-banner'
 import { fetchAuth } from '~/lib/server-fn/fetch-auth'
 import { seo } from '~/lib/utils/seo'
+
+import appCss from '~/assets/styles/app.css?url'
 
 export type RootRouteContext = {
 	queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
-	head: () => ({
-		meta: [
-			{ charSet: 'utf-8' },
-			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
-			...seo({
-				title: 'TanStack Start, Elysia and better-auth starter',
-				description: 'A starter for TanStack Start, Elysia and better-auth',
-				keywords: 'tanstack, elysia, better-auth, starter',
-				image: 'https://tanstack.com/assets/splash-light-CHqMsyq8.png',
-			}),
-		],
-		links: [{ rel: 'stylesheet', href: appCss }],
-	}),
 	beforeLoad: async () => {
 		const auth = await fetchAuth()
 
 		return { auth }
 	},
 	component: RootDocument,
+	head: () => ({
+		links: [{ href: appCss, rel: 'stylesheet' }],
+		meta: [
+			{ charSet: 'utf8' },
+			{ content: 'width=device-width, initial-scale=1', name: 'viewport' },
+			...seo({
+				description: 'A starter for TanStack Start, Elysia and better-auth',
+				image: 'https://tanstack.com/assets/splash-light-CHqMsyq8.png',
+				keywords: 'tanstack, elysia, better-auth, starter',
+				title: 'TanStack Start, Elysia and better-auth starter',
+			}),
+		],
+	}),
 })
 
 function RootDocument() {

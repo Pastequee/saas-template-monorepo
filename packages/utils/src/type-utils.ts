@@ -1,3 +1,4 @@
+// oxlint-disable typescript/ban-types
 export type TypedExclude<T, U extends T> = T extends U ? never : T
 
 export type Prettify<T> = {

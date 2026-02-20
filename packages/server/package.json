@@ -1,37 +1,38 @@
 {
-  "name": "@repo/backend",
-  "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
-  "imports": {
-    "#routers/*": "./src/routers/*.ts",
-    "#lib/*": "./src/lib/*.ts",
-    "#middlewares/*": "./src/middlewares/*.ts",
-    "#services/*": "./src/services/*.ts"
-  },
-  "scripts": {
-    "typecheck": "tsgo --noEmit",
-    "test": "bun test"
-  },
-  "dependencies": {
-    "@elysiajs/cors": "^1.4.1",
-    "@repo/auth": "workspace:*",
-    "@repo/db": "workspace:*",
-    "@repo/env": "workspace:*",
-    "@repo/file-storage": "workspace:*",
-    "@repo/utils": "workspace:*",
-    "date-fns": "catalog:",
-    "elysia": "catalog:",
-    "evlog": "^1.10.0",
-    "nanoid": "^5.1.6",
-    "picocolors": "^1.1.1",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@elysiajs/eden": "^1.4.8",
-    "@repo/tsconfig": "workspace:*",
-    "@types/bun": "catalog:",
-    "@types/pg": "catalog:",
-    "@typescript/native-preview": "catalog:"
-  }
+	"name": "@repo/backend",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"imports": {
+		"#/*": "./src/*.ts",
+		"#routers/*": "./src/routers/*.ts",
+		"#lib/*": "./src/lib/*.ts",
+		"#middlewares/*": "./src/middlewares/*.ts",
+		"#services/*": "./src/services/*.ts"
+	},
+	"scripts": {
+		"typecheck": "tsgo --noEmit",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@elysiajs/cors": "^1.4.1",
+		"@repo/auth": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/env": "workspace:*",
+		"@repo/file-storage": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"date-fns": "catalog:",
+		"elysia": "catalog:",
+		"evlog": "^1.10.0",
+		"nanoid": "^5.1.6",
+		"picocolors": "^1.1.1",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@elysiajs/eden": "^1.4.8",
+		"@repo/tsconfig": "workspace:*",
+		"@types/bun": "catalog:",
+		"@types/pg": "catalog:",
+		"@typescript/native-preview": "catalog:"
+	}
 }

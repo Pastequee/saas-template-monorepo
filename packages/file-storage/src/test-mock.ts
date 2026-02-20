@@ -6,23 +6,17 @@ export const fileStorageMock: FileStorage & {
 	_setFile: (key: string, url: string) => void
 	_cleanFiles: () => void
 } = {
-	getUrl: (key) => {
-		return `https://${key}.com`
+	_cleanFiles: () => {
+		files.clear()
 	},
-	getUploadUrl: (key) => {
-		return `https://${key}.com`
-	},
-	exists: (key) => {
-		return Promise.resolve(files.has(key))
+	_setFile: (key, url) => {
+		files.set(key, url)
 	},
 	delete: (key) => {
 		files.delete(key)
 		return Promise.resolve()
 	},
-	_setFile: (key, url) => {
-		files.set(key, url)
-	},
-	_cleanFiles: () => {
-		files.clear()
-	},
+	exists: async (key) => await files.has(key),
+	getUploadUrl: (key) => `https://${key}.com`,
+	getUrl: (key) => `https://${key}.com`,
 }

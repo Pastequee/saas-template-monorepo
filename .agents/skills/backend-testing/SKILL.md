@@ -17,4 +17,3 @@ Use this skill for endpoint tests in `packages/server/tests`.
 2. Structure suites by feature and keep cases concise.
 3. Cover unauthenticated, authenticated, role-based, and CRUD behaviors as applicable.
 4. Isolate state with setup hooks and fresh test users.
-

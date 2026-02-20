@@ -17,4 +17,3 @@ Use this skill when editing `packages/db` schemas or DB-related type/validation 
 2. Use shared `id` and `timestamps` helpers.
 3. Keep naming aligned with snake_case and plural table rules.
 4. Consume generated types and zod schemas from `@repo/db/types`.
-

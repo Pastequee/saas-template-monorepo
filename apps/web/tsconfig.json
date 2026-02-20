@@ -1,16 +1,16 @@
 {
-  "extends": "@repo/tsconfig/tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "module": "es2022",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+	"extends": "@repo/tsconfig/tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"module": "es2022",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 
-    "types": ["vite/client"],
+		"types": ["vite/client"],
 
-    "verbatimModuleSyntax": true,
+		"verbatimModuleSyntax": true,
 
-    "paths": {
-      "~/*": ["./src/*"]
-    }
-  }
+		"paths": {
+			"~/*": ["./src/*"]
+		}
+	}
 }

@@ -10,15 +10,15 @@ export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
 		devtools({
-			enhancedLogs: {
+			consolePiping: {
 				enabled: false,
 			},
-			consolePiping: {
+			enhancedLogs: {
 				enabled: false,
 			},
 		}),
 		tanstackStart(),
-		nitro({ preset: 'bun', output: { dir: 'dist' } }),
+		nitro({ output: { dir: 'dist' }, preset: 'bun' }),
 		tailwindcss(),
 		react(),
 	],

@@ -1,6 +1,7 @@
 import { db, sql } from '@repo/db'
 import { tryCatch } from '@repo/utils'
-import Elysia from 'elysia'
+import { Elysia } from 'elysia'
+
 import { authMacro } from './auth'
 
 export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
@@ -14,6 +15,7 @@ export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 			return status(500, { message: 'Internal server error' })
 		}
 
+		// oxlint-disable-next-line no-useless-return
 		return
 	})
 	.as('global')
@@ -30,9 +32,9 @@ const utilsEndpoints = new Elysia({ name: 'utils', tags: ['Utils'] })
 		const dbStatus = error ? ('unhealthy' as const) : ('healthy' as const)
 
 		return {
+			database: dbStatus,
 			status: 'healthy' as const,
 			timestamp: new Date().toISOString(),
-			database: dbStatus,
 		}
 	})
 

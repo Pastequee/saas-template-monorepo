@@ -1,12 +1,14 @@
+// oxlint-disable no-inline-comments
 import { boolean, index, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { id } from '../schema-utils'
+
+import { common } from '#/schema-utils'
 
 export const authSchema = pgSchema('auth')
 
 export const authRoles = authSchema.enum('roles', ['admin', 'user'])
 
 export const users = authSchema.table('users', {
-	id,
+	id: common.id,
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('email_verified').default(false).notNull(),
@@ -25,7 +27,7 @@ export const users = authSchema.table('users', {
 export const sessions = authSchema.table(
 	'sessions',
 	{
-		id,
+		id: common.id,
 		expiresAt: timestamp('expires_at').notNull(),
 		token: text('token').notNull().unique(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -45,7 +47,7 @@ export const sessions = authSchema.table(
 export const accounts = authSchema.table(
 	'accounts',
 	{
-		id,
+		id: common.id,
 		accountId: text('account_id').notNull(),
 		providerId: text('provider_id').notNull(),
 		userId: uuid('user_id')
@@ -69,7 +71,7 @@ export const accounts = authSchema.table(
 export const verifications = authSchema.table(
 	'verifications',
 	{
-		id,
+		id: common.id,
 		identifier: text('identifier').notNull(),
 		value: text('value').notNull(),
 		expiresAt: timestamp('expires_at').notNull(),

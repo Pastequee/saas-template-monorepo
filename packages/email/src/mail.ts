@@ -15,9 +15,9 @@ export const mail = {
 	send: async ({ to, subject, text }: { to: string | string[]; subject: string; text: string }) => {
 		await resend.emails.send({
 			from: `${env.FROM_NAME} <${env.FROM_EMAIL}>`,
-			to,
 			subject,
 			text,
+			to,
 		})
 	},
 
@@ -28,11 +28,11 @@ export const mail = {
 	) => {
 		await resend.emails.send({
 			from: `${env.FROM_NAME} <${env.FROM_EMAIL}>`,
-			to,
 			template: {
 				id: template,
 				variables,
 			},
+			to,
 		})
 	},
 }

@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
 import { cn } from '~/lib/utils/cn'
 
@@ -14,19 +15,19 @@ const alertVariants = cva(
 		'has-[>svg]:gap-x-3',
 	],
 	{
+		defaultVariants: {
+			variant: 'default',
+		},
 		variants: {
 			variant: {
 				default: 'bg-card text-card-foreground',
 				destructive: 'border-destructive/30 bg-destructive/4 [&>svg]:text-destructive',
 				info: 'border-info/30 bg-info/4 [&>svg]:text-info',
-				success: 'border-success/30 bg-success/4 [&>svg]:text-success',
-				warning: 'border-warning/30 bg-warning/4 [&>svg]:text-warning',
 				invert:
 					'border-invert bg-invert text-invert-foreground [&_[data-slot=alert-description]]:text-invert-foreground/70',
+				success: 'border-success/30 bg-success/4 [&>svg]:text-success',
+				warning: 'border-warning/30 bg-warning/4 [&>svg]:text-warning',
 			},
-		},
-		defaultVariants: {
-			variant: 'default',
 		},
 	}
 )

@@ -26,19 +26,19 @@ import { eden } from '~/lib/server-fn/eden'
 import { keys } from './keys'
 
 export const todoListOptions = () =>
-  edenQueryOption({
-    edenQuery: eden().todos.get,
-    queryKey: keys.todos.list(),
-  })
+	edenQueryOption({
+		edenQuery: eden().todos.get,
+		queryKey: keys.todos.list(),
+	})
 
 // mutations/todos.mutations.ts
 import { edenMutationOption } from '~/lib/utils/eden-query'
 
 export const createTodoOptions = () =>
-  edenMutationOption({
-    edenMutation: eden().todos.post,
-    meta: { invalidate: [keys.todos.list()] },
-  })
+	edenMutationOption({
+		edenMutation: eden().todos.post,
+		meta: { invalidate: [keys.todos.list()] },
+	})
 ```
 
 ```typescript
@@ -57,11 +57,11 @@ Centralize query keys in `lib/queries/keys.ts`:
 
 ```typescript
 export const keys = {
-  todos: {
-    all: ['todos'] as const,
-    list: () => [...keys.todos.all, 'list'] as const,
-    item: (id: string) => [...keys.todos.all, 'item', id] as const,
-  },
+	todos: {
+		all: ['todos'] as const,
+		list: () => [...keys.todos.all, 'list'] as const,
+		item: (id: string) => [...keys.todos.all, 'item', id] as const,
+	},
 }
 ```
 
@@ -117,6 +117,7 @@ return (
 ```
 
 **Key patterns:**
+
 - Field components use `useFieldContext()` — see `components/form-fields/text-field.tsx`
 - Form components use `useFormContext()` — see `components/form-fields/submit-button.tsx`
 - Register new components in `lib/hooks/form-hook.ts` under `fieldComponents` or `formComponents`

@@ -1,9 +1,12 @@
-import { MutationCache, QueryClient, type QueryKey } from '@tanstack/react-query'
+import { MutationCache, QueryClient } from '@tanstack/react-query'
+import type { QueryKey } from '@tanstack/react-query'
+
 import { getRouter } from '~/router'
+
 import { authClient } from './auth-client'
 
 declare module '@tanstack/react-query' {
-	// biome-ignore lint/style/useConsistentTypeDefinitions: need interface here
+	// oxlint-disable-next-line typescript/consistent-type-definitions
 	interface Register {
 		mutationMeta: {
 			invalidate?: QueryKey[]
@@ -12,14 +15,8 @@ declare module '@tanstack/react-query' {
 }
 
 export const queryClient = new QueryClient({
+	defaultOptions: { queries: { staleTime: 60 * 1000 } },
 	mutationCache: new MutationCache({
-		onSettled: async (_data, _variables, _error, _mutate, _mutation, context) => {
-			await Promise.all(
-				context.meta?.invalidate?.map((queryKey) =>
-					context.client.invalidateQueries({ queryKey })
-				) ?? []
-			)
-		},
 		onError: (error: unknown) => {
 			if (
 				typeof error === 'object' &&
@@ -33,6 +30,12 @@ export const queryClient = new QueryClient({
 				router.navigate({ to: '/login' })
 			}
 		},
+		onSettled: async (_data, _variables, _error, _mutate, _mutation, context) => {
+			await Promise.all(
+				context.meta?.invalidate?.map((queryKey) =>
+					context.client.invalidateQueries({ queryKey })
+				) ?? []
+			)
+		},
 	}),
-	defaultOptions: { queries: { staleTime: 60 * 1000 } },
 })

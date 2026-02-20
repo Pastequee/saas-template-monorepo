@@ -1,7 +1,6 @@
 name: Setup
 description: Setup the environment for the different CI jobs
 
-
 runs:
   using: composite
   steps:

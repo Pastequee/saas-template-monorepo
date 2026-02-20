@@ -1,5 +1,6 @@
+import { eden } from '~/lib/server-fn/eden'
 import { edenQueryOption } from '~/lib/utils/eden-query'
-import { eden } from '../server-fn/eden'
+
 import { keys } from './keys'
 
 export const getMyListingsOptions = () =>
@@ -16,7 +17,7 @@ export const getOneListingOptions = (id: string) =>
 
 export const searchListingsOptions = (search: string) =>
 	edenQueryOption({
-		edenQuery: eden().listings.search.get,
 		edenOptions: { query: { q: search } },
+		edenQuery: eden().listings.search.get,
 		queryKey: keys.listings.search(search),
 	})

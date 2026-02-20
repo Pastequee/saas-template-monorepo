@@ -1,7 +1,9 @@
-import cors from '@elysiajs/cors'
-import auth from '@repo/auth'
+import { cors } from '@elysiajs/cors'
+import { auth } from '@repo/auth'
 import { env } from '@repo/env/web'
 import { Elysia } from 'elysia'
+
+import { logger } from '#lib/logger'
 import { utils } from '#lib/utils'
 import { filesRouter } from '#routers/files/files.controller'
 import { listingsRouter } from '#routers/listings/listings.controller'
@@ -10,13 +12,13 @@ import { userRouter } from '#routers/user/controller'
 export const app = new Elysia({ prefix: '/api' })
 	.use(
 		cors({
-			origin: [env.VITE_FRONTEND_URL],
-			methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'HEAD', 'OPTIONS'],
-			credentials: true,
 			allowedHeaders: ['Content-Type', 'Authorization'],
+			credentials: true,
+			methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'HEAD', 'OPTIONS'],
+			origin: [env.VITE_FRONTEND_URL],
 		})
 	)
-	// .use(logger())
+	.use(logger())
 	.use(utils)
 	.mount(auth.handler)
 	.use(userRouter)

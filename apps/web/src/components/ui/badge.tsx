@@ -1,40 +1,19 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
 import { cn } from '~/lib/utils/cn'
 
 const badgeVariants = cva(
 	'relative inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-sm border border-transparent font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*=size-])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0',
 	{
+		defaultVariants: {
+			size: 'default',
+			variant: 'default',
+		},
 		variants: {
-			variant: {
-				default: 'bg-primary text-primary-foreground',
-				outline: 'border-border bg-transparent dark:bg-input/32',
-				secondary: 'bg-secondary text-secondary-foreground',
-				info: 'bg-info text-white',
-				success: 'bg-success text-white',
-				warning: 'bg-warning text-white',
-				destructive: 'bg-destructive text-white',
-				focus: 'bg-focus text-focus-foreground',
-				invert: 'bg-invert text-invert-foreground',
-				'primary-light': 'border-none bg-primary/10 text-primary dark:bg-primary/20',
-				'warning-light': 'border-none bg-warning/10 text-warning-foreground dark:bg-warning/20',
-				'success-light': 'border-none bg-success/10 text-success-foreground dark:bg-success/20',
-				'info-light': 'border-none bg-info/10 text-info-foreground dark:bg-info/20',
-				'destructive-light':
-					'border-none bg-destructive/10 text-destructive-foreground dark:bg-destructive/20',
-				'invert-light': 'border-none bg-invert/10 text-foreground dark:bg-invert/20',
-				'focus-light': 'border-none bg-focus/10 text-focus-foreground dark:bg-focus/20',
-				'primary-outline': 'border-border bg-background text-primary dark:bg-input/30',
-				'warning-outline': 'border-border bg-background text-warning-foreground dark:bg-input/30',
-				'success-outline': 'border-border bg-background text-success-foreground dark:bg-input/30',
-				'info-outline': 'border-border bg-background text-info-foreground dark:bg-input/30',
-				'destructive-outline':
-					'border-border bg-background text-destructive-foreground dark:bg-input/30',
-				'invert-outline': 'border-border bg-background text-invert-foreground dark:bg-input/30',
-				'focus-outline': 'border-border bg-background text-focus-foreground dark:bg-input/30',
-			},
+			// oxlint-disable-next-line sort-keys
 			size: {
 				xs: 'h-4 min-w-4 gap-1 px-1 py-0.25 text-[0.6rem] leading-none',
 				sm: 'h-4.5 min-w-4.5 gap-1 px-1 py-0.25 text-[0.625rem] leading-none',
@@ -42,29 +21,52 @@ const badgeVariants = cva(
 				lg: 'h-5.5 min-w-5.5 gap-1 px-1.5 py-0.5 text-xs',
 				xl: 'h-6 min-w-6 gap-1.5 px-2 py-0.75 text-sm',
 			},
-		},
-		defaultVariants: {
-			variant: 'default',
-			size: 'default',
+			variant: {
+				default: 'bg-primary text-primary-foreground',
+				destructive: 'bg-destructive text-white',
+				'destructive-light':
+					'border-none bg-destructive/10 text-destructive-foreground dark:bg-destructive/20',
+				'destructive-outline':
+					'border-border bg-background text-destructive-foreground dark:bg-input/30',
+				focus: 'bg-focus text-focus-foreground',
+				'focus-light': 'border-none bg-focus/10 text-focus-foreground dark:bg-focus/20',
+				'focus-outline': 'border-border bg-background text-focus-foreground dark:bg-input/30',
+				info: 'bg-info text-white',
+				'info-light': 'border-none bg-info/10 text-info-foreground dark:bg-info/20',
+				'info-outline': 'border-border bg-background text-info-foreground dark:bg-input/30',
+				invert: 'bg-invert text-invert-foreground',
+				'invert-light': 'border-none bg-invert/10 text-foreground dark:bg-invert/20',
+				'invert-outline': 'border-border bg-background text-invert-foreground dark:bg-input/30',
+				outline: 'border-border bg-transparent dark:bg-input/32',
+				'primary-light': 'border-none bg-primary/10 text-primary dark:bg-primary/20',
+				'primary-outline': 'border-border bg-background text-primary dark:bg-input/30',
+				secondary: 'bg-secondary text-secondary-foreground',
+				success: 'bg-success text-white',
+				'success-light': 'border-none bg-success/10 text-success-foreground dark:bg-success/20',
+				'success-outline': 'border-border bg-background text-success-foreground dark:bg-input/30',
+				warning: 'bg-warning text-white',
+				'warning-light': 'border-none bg-warning/10 text-warning-foreground dark:bg-warning/20',
+				'warning-outline': 'border-border bg-background text-warning-foreground dark:bg-input/30',
+			},
 		},
 	}
 )
 
-interface BadgeProps extends useRender.ComponentProps<'span'> {
+type BadgeProps = {
 	size?: VariantProps<typeof badgeVariants>['size']
 	variant?: VariantProps<typeof badgeVariants>['variant']
-}
+} & useRender.ComponentProps<'span'>
 
 function Badge({ className, variant, size, render, ...props }: BadgeProps) {
 	const defaultProps = {
+		className: cn(badgeVariants({ className, size, variant })),
 		'data-slot': 'badge',
-		className: cn(badgeVariants({ variant, size, className })),
 	}
 
 	return useRender({
 		defaultTagName: 'span',
-		render,
 		props: mergeProps<'span'>(defaultProps, props),
+		render,
 	})
 }
 

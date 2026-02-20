@@ -1,28 +1,31 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: fuck off */
+// oxlint-disable typescript/no-non-null-assertion
+// oxlint-disable unicorn/no-await-expression-member
 import { beforeAll, describe, expect, it } from 'bun:test'
+
 import { fileStorageMock } from '@repo/file-storage/test'
 import { randomUUIDv7 } from 'bun'
+
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
 /** Presign a test image and simulate S3 upload. Returns the asset key. */
 async function presignImage(api: Awaited<ReturnType<typeof createApiWithAuth>>['api']) {
 	const res = await api.files.presign.post({
-		filename: 'test.webp',
 		contentType: 'image/webp',
-		size: 1024,
+		filename: 'test.webp',
 		public: false,
+		size: 1024,
 	})
 
 	if (!res.data) {
 		console.error('presign failed:', res.status, res.error)
 		throw new Error(`presign failed: ${res.status}`)
 	}
-	const key = res.data.asset.key
+	const { key } = res.data.asset
 	fileStorageMock._setFile(key, res.data.url)
 	return key
 }
 
-const validListing = { title: 'Test Listing', description: 'A test description', price: 100 }
+const validListing = { description: 'A test description', price: 100, title: 'Test Listing' }
 
 describe('Listings', () => {
 	const unauthApi = createApi()
@@ -85,7 +88,7 @@ describe('Listings', () => {
 		it('returns listing with image url', async () => {
 			const imageKey = await presignImage(userApi)
 			const created = await userApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).get()
 			expect(res.status).toBe(200)
@@ -124,7 +127,7 @@ describe('Listings', () => {
 		it('updates listing fields', async () => {
 			const imageKey = await presignImage(userApi)
 			const created = await userApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).patch({ title: 'Updated' })
 			expect(res.status).toBe(200)
@@ -134,7 +137,7 @@ describe('Listings', () => {
 		it('updates listing image', async () => {
 			const imageKey = await presignImage(userApi)
 			const created = await userApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const newImageKey = await presignImage(userApi)
 			const res = await userApi.listings({ id }).patch({ imageKey: newImageKey })
@@ -144,7 +147,7 @@ describe('Listings', () => {
 		it('returns 403 when updating another users listing', async () => {
 			const imageKey = await presignImage(adminApi)
 			const created = await adminApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).patch({ title: 'Hacked' })
 			expect(res.status).toBe(403)
@@ -158,7 +161,7 @@ describe('Listings', () => {
 		it('returns unchanged listing when body is empty', async () => {
 			const imageKey = await presignImage(userApi)
 			const created = await userApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).patch({})
 			expect(res.status).toBe(200)
@@ -172,7 +175,7 @@ describe('Listings', () => {
 		it('deletes listing, returns 204', async () => {
 			const imageKey = await presignImage(userApi)
 			const created = await userApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).delete()
 			expect(res.status).toBe(204)
@@ -184,7 +187,7 @@ describe('Listings', () => {
 		it('returns 403 when deleting another users listing', async () => {
 			const imageKey = await presignImage(adminApi)
 			const created = await adminApi.listings.post({ ...validListing, imageKey })
-			const id = created.data!.id
+			const { id } = created.data!
 
 			const res = await userApi.listings({ id }).delete()
 			expect(res.status).toBe(403)
@@ -201,7 +204,7 @@ describe('Listings', () => {
 	describe('GET /listings/search', () => {
 		it('finds listings by title match', async () => {
 			const imageKey = await presignImage(userApi)
-			await userApi.listings.post({ ...validListing, title: 'Vintage Guitar', imageKey })
+			await userApi.listings.post({ ...validListing, imageKey, title: 'Vintage Guitar' })
 
 			const res = await userApi.listings.search.get({ query: { q: 'Guitar' } })
 			expect(res.status).toBe(200)

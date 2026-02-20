@@ -12,6 +12,7 @@ The Elysia API server (`packages/server`) is mounted via TanStack Start server f
 ## Router Structure
 
 Each feature has its own folder with:
+
 - `controller.ts` — Route definitions (thin layer)
 - `service.ts` — Business logic and database operations
 
@@ -20,20 +21,20 @@ Each feature has its own folder with:
 import { authMacro } from '../../lib/auth'
 
 export const todosRouter = new Elysia({ name: 'todos', tags: ['Todo'] })
-  .use(authMacro)
-  .get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {
-    auth: true,
-  })
+	.use(authMacro)
+	.get('/todos', ({ user }) => TodosService.getUserTodos(user.id), {
+		auth: true,
+	})
 ```
 
 ```typescript
 // service.ts - All business logic here
 export const TodosService = {
-  getUserTodos: async (userId: User['id']) =>
-    db.query.todos.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    }),
+	getUserTodos: async (userId: User['id']) =>
+		db.query.todos.findMany({
+			where: { userId },
+			orderBy: { createdAt: 'desc' },
+		}),
 }
 ```
 
@@ -48,9 +49,9 @@ export const TodosService = {
 import { authMacro } from '../../lib/auth'
 
 export const adminRouter = new Elysia({ name: 'admin', tags: ['Admin'] })
-  .use(authMacro)
-  .get('/users', handler, { role: 'admin' }) // Requires admin role
-  .get('/mods', handler, { role: ['admin', 'moderator'] }) // Requires admin or moderator
+	.use(authMacro)
+	.get('/users', handler, { role: 'admin' }) // Requires admin role
+	.get('/mods', handler, { role: ['admin', 'moderator'] }) // Requires admin or moderator
 ```
 
 **Note:** Superadmin role bypasses all role checks. The role macro checks authentication first, then verifies the role from the `user_roles` table. Use `authAdmin` for admin-only routes.

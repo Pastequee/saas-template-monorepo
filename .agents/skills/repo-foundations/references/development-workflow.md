@@ -29,6 +29,7 @@ bun docker:reset     # Reset containers (down + up)
 ## Pre-commit Hooks (Lefthook)
 
 Automatically runs on commit:
+
 1. `bun install --frozen-lockfile` — Verify lockfile
 2. `bun format` — Lint and format
 3. `bun typecheck` — Type checking
@@ -36,6 +37,7 @@ Automatically runs on commit:
 ## CI Pipeline
 
 On PR and push to main/staging/dev:
+
 1. **Checks job:** Lint + Typecheck
 2. **Tests job:** Run test suite
 3. **Build job:** Verify build succeeds

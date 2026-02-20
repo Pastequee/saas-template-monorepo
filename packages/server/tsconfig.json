@@ -1,7 +1,6 @@
 {
-  "extends": "@repo/tsconfig/tsconfig.base.json",
-  "compilerOptions": {
-    "rootDir": "."
-  }
+	"extends": "@repo/tsconfig/tsconfig.base.json",
+	"compilerOptions": {
+		"rootDir": "."
+	}
 }
-  

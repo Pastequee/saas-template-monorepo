@@ -57,6 +57,7 @@ bun docker:up
 ```
 
 This starts:
+
 - **PostgreSQL** on port `5400` (mapped from container port 5432)
 - **Redis** on port `6379` (used for better-auth session storage)
 - **RustFS** (S3-compatible file storage) on ports `9000` (API) and `9001` (Console)
@@ -78,11 +79,13 @@ bun docker:reset
 Copy the example environment files to create your local configuration:
 
 **Server:**
+
 ```bash
 cp packages/server/.env.example packages/server/.env.local
 ```
 
 **Frontend:**
+
 ```bash
 cp apps/web/.env.example apps/web/.env.local
 ```
@@ -125,6 +128,7 @@ bun dev
 ```
 
 This starts:
+
 - **Frontend** at `http://localhost:3000`
 - **API Server** integrated via TanStack Start server functions (accessible at `/api/*`)
 
@@ -224,7 +228,7 @@ bun typecheck             # Type check only
 
 ### Code Quality
 
-The project uses **Biome** (via Ultracite) for linting and formatting. Pre-commit hooks (via Lefthook) automatically run:
+The project uses **OxLint** and **OxFmt** (via Ultracite) for linting and formatting. Pre-commit hooks (via Lefthook) automatically run:
 
 1. `bun install --frozen-lockfile` - Verify lockfile
 2. `bun format` - Lint and format
@@ -257,7 +261,8 @@ bun db:gen
 bun db:migrate
 ```
 
-**Important:** 
+**Important:**
+
 - Use `db:push` for development (auto-syncs schema)
 - Use `db:gen` + `db:migrate` for production (versioned migrations)
 
@@ -280,6 +285,7 @@ bun build
 ```
 
 This builds:
+
 - Server package (TypeScript compilation)
 - Frontend (static assets + server functions)
 - All shared packages
@@ -298,6 +304,7 @@ The server package compiles TypeScript to JavaScript. The server is integrated i
 ### Frontend Build Output
 
 The frontend builds to `apps/web/dist/` with:
+
 - Static assets (HTML, CSS, JS)
 - Server entry point at `dist/server/index.mjs` (includes API server via server functions)
 
@@ -306,6 +313,7 @@ The frontend builds to `apps/web/dist/` with:
 The project includes Dockerfiles for both server and frontend that can be built using the provided commands:
 
 **Build server image:**
+
 ```bash
 bun build:docker:backend
 # Or manually:
@@ -315,6 +323,7 @@ docker build -f packages/server/Dockerfile -t server-image .
 **Note:** The `build:docker:backend` script may reference the old path. The actual Dockerfile is at `packages/server/Dockerfile`.
 
 **Build frontend image:**
+
 ```bash
 bun build:docker:web
 # Or manually:
@@ -362,6 +371,7 @@ The API is accessible at `/api/*` routes. The proxy route is defined in `apps/we
 ### Authentication
 
 The project uses **better-auth** with:
+
 - PostgreSQL for primary storage (users, sessions, accounts)
 - Redis for secondary storage (session caching)
 - Email/password authentication

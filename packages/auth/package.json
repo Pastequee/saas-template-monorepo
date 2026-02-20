@@ -1,23 +1,23 @@
 {
-  "name": "@repo/auth",
-  "private": true,
-  "type": "module",
-  "main": "./src/auth-config.ts",
-  "scripts": {
-    "generate": "dotenv -e ../../apps/backend/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/src/schemas/tmp-auth.ts",
-    "typecheck": "tsgo --noEmit"
-  },
-  "dependencies": {
-    "@repo/db": "workspace:*",
-    "@repo/email": "workspace:*",
-    "@repo/env": "workspace:*",
-    "better-auth": "catalog:",
-    "dotenv": "^17.3.1"
-  },
-  "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "@types/bun": "catalog:",
-    "@typescript/native-preview": "catalog:",
-    "dotenv-cli": "^11.0.0"
-  }
+	"name": "@repo/auth",
+	"private": true,
+	"type": "module",
+	"main": "./src/auth-config.ts",
+	"scripts": {
+		"generate": "dotenv -e ../../apps/backend/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/src/schemas/tmp-auth.ts",
+		"typecheck": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@repo/db": "workspace:*",
+		"@repo/email": "workspace:*",
+		"@repo/env": "workspace:*",
+		"better-auth": "catalog:",
+		"dotenv": "^17.3.1"
+	},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@types/bun": "catalog:",
+		"@typescript/native-preview": "catalog:",
+		"dotenv-cli": "^11.0.0"
+	}
 }

@@ -1,34 +1,37 @@
+// oxlint-disable no-nested-ternary
 import { env } from '@repo/env/web'
 import { Elysia, ElysiaCustomStatusResponse, status as elysiaStatus, StatusMap } from 'elysia'
 import type { Prettify } from 'elysia/types'
-import { createRequestLogger, type DrainContext, initLogger, type RequestLogger } from 'evlog'
+import { createRequestLogger, initLogger } from 'evlog'
+import type { DrainContext, RequestLogger } from 'evlog'
 import { createAxiomDrain } from 'evlog/axiom'
 import { createDrainPipeline } from 'evlog/pipeline'
-import { requestId } from './request-id'
+
+import { requestId as requestIdPlugin } from './request-id'
 
 const pipeline = createDrainPipeline<DrainContext>({
-	batch: { size: 25, intervalMs: 5000 },
+	batch: { intervalMs: 5000, size: 25 },
 })
 
 const axiomDrain = pipeline(
-	createAxiomDrain({ token: env.AXIOM_API_KEY, dataset: env.AXIOM_DATASET })
+	createAxiomDrain({ dataset: env.AXIOM_DATASET, token: env.AXIOM_API_KEY })
 )
 
 initLogger({
-	env: { environment: env.NODE_ENV, commitHash: env.COMMIT_HASH, service: 'server' },
 	drain: env.NODE_ENV === 'development' ? undefined : axiomDrain,
 	enabled: env.NODE_ENV !== 'test',
+	env: { commitHash: env.COMMIT_HASH, environment: env.NODE_ENV, service: 'server' },
 })
 
 export const logger = () =>
 	new Elysia({ name: 'logger' })
-		.use(requestId())
+		.use(requestIdPlugin())
 
 		.derive(({ requestId, request, path }) => ({
 			log: createRequestLogger({
-				requestId,
 				method: request.method,
 				path,
+				requestId,
 			}),
 		}))
 
@@ -44,15 +47,17 @@ export const logger = () =>
 		})
 
 		.onError(({ error, log, code }) => {
-			if (log?.getContext().error) return
+			if (log?.getContext().error) {
+				return
+			}
 
 			if (error instanceof ElysiaCustomStatusResponse) {
 				const message =
 					typeof error.response === 'string'
 						? error.response
 						: typeof error.response === 'object' &&
-								'message' in error.response &&
-								typeof error.response.message === 'string'
+							  'message' in error.response &&
+							  typeof error.response.message === 'string'
 							? error.response.message
 							: 'Unknown error'
 

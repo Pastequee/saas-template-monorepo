@@ -1,16 +1,12 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+
 import { roles, userRoles } from './schemas'
 import type { assets } from './schemas/assets'
-import {
-	type accounts,
-	authRoles,
-	type sessions,
-	type users,
-	type verifications,
-} from './schemas/auth'
+import { authRoles } from './schemas/auth'
+import type { accounts, sessions, users, verifications } from './schemas/auth'
 import { listingImages, listings } from './schemas/listings'
 
-const omits = { id: true, createdAt: true, updatedAt: true } as const
+const omits = { createdAt: true, id: true, updatedAt: true } as const
 
 // const { createInsertSchema, createSelectSchema } = createSchemaFactory({
 // 	zodInstance: z,
@@ -54,8 +50,8 @@ export type ListingInsert = typeof listings.$inferInsert
 export type ListingUpdate = Partial<ListingInsert>
 export const listingSchema = createSelectSchema(listings)
 export const listingInsertSchema = createInsertSchema(listings, {
-	title: (s) => s.nonempty(),
 	description: (s) => s.nonempty(),
+	title: (s) => s.nonempty(),
 }).omit({ ...omits, userId: true })
 export const listingUpdateSchema = listingInsertSchema.partial()
 

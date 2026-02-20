@@ -1,6 +1,6 @@
+import { keys } from '~/lib/queries/keys'
+import { eden } from '~/lib/server-fn/eden'
 import { edenMutationOption } from '~/lib/utils/eden-query'
-import { keys } from '../queries/keys'
-import { eden } from '../server-fn/eden'
 
 export const deleteListingOptions = (id: string) =>
 	edenMutationOption({

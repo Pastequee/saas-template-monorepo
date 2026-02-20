@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router'
 export function ListingCard({ listing }: { listing: Listing }) {
 	return (
 		<div className="flex flex-col overflow-hidden rounded-lg border">
-			<Link className="" params={{ id: listing.id }} to={'/listing/$id'}>
+			<Link className="" params={{ id: listing.id }} to="/listing/$id">
 				{listing.image && (
 					<img
 						alt={listing.title}

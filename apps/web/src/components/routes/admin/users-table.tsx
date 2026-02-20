@@ -1,15 +1,15 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
 	getSortedRowModel,
-	type SortingState,
 	useReactTable,
 } from '@tanstack/react-table'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { ArrowUpDown, Ban, KeyRound, MoreHorizontal, Shield, UserCheck, Users } from 'lucide-react'
 import { useState } from 'react'
+
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -22,8 +22,10 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { Spinner } from '~/components/ui/spinner'
-import { adminUsersOptions, type UserWithRole } from '~/lib/queries/admin.queries'
+import { adminUsersOptions } from '~/lib/queries/admin.queries'
+import type { UserWithRole } from '~/lib/queries/admin.queries'
 import { keys } from '~/lib/queries/keys'
+
 import { BanUserDialog } from './dialogs/ban-user-dialog'
 import { ChangePasswordDialog } from './dialogs/change-password-dialog'
 import { ChangeRoleDialog } from './dialogs/change-role-dialog'
@@ -32,12 +34,6 @@ import { ImpersonateConfirmDialog } from './dialogs/impersonate-confirm-dialog'
 const columns: ColumnDef<UserWithRole>[] = [
 	{
 		accessorKey: 'name',
-		header: ({ column }) => (
-			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
-				Name
-				<ArrowUpDown className="ml-2 size-4" />
-			</Button>
-		),
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">
 				{row.original.image ? (
@@ -56,15 +52,15 @@ const columns: ColumnDef<UserWithRole>[] = [
 				<span className="font-medium">{row.original.name}</span>
 			</div>
 		),
-	},
-	{
-		accessorKey: 'email',
 		header: ({ column }) => (
 			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
-				Email
+				Name
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
 		),
+	},
+	{
+		accessorKey: 'email',
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">
 				<span>{row.original.email}</span>
@@ -75,18 +71,23 @@ const columns: ColumnDef<UserWithRole>[] = [
 				)}
 			</div>
 		),
+		header: ({ column }) => (
+			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+				Email
+				<ArrowUpDown className="ml-2 size-4" />
+			</Button>
+		),
 	},
 	{
 		accessorKey: 'role',
-		header: 'Role',
 		cell: ({ row }) => {
-			const role = row.original.role
+			const { role } = row.original
 			return <Badge variant={role === 'admin' ? 'default' : 'secondary'}>{role}</Badge>
 		},
+		header: 'Role',
 	},
 	{
 		accessorKey: 'banned',
-		header: 'Status',
 		cell: ({ row }) => {
 			const isBanned = row.original.banned
 			return (
@@ -95,24 +96,25 @@ const columns: ColumnDef<UserWithRole>[] = [
 				</Badge>
 			)
 		},
+		header: 'Status',
 	},
 	{
 		accessorKey: 'createdAt',
+		cell: ({ row }) => {
+			const date = new Date(row.original.createdAt)
+			return <span className="text-muted-foreground text-sm">{date.toLocaleDateString()}</span>
+		},
 		header: ({ column }) => (
 			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
 				Created
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
 		),
-		cell: ({ row }) => {
-			const date = new Date(row.original.createdAt)
-			return <span className="text-muted-foreground text-sm">{date.toLocaleDateString()}</span>
-		},
 	},
 	{
-		id: 'actions',
-		header: 'Actions',
 		cell: ({ row }) => <UserActions user={row.original} />,
+		header: 'Actions',
+		id: 'actions',
 	},
 ]
 
@@ -219,16 +221,16 @@ export function UsersTable() {
 	const [globalFilter, setGlobalFilter] = useState('')
 
 	const table = useReactTable({
-		data: users ?? [],
 		columns,
+		data: users ?? [],
 		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
-		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
 		onGlobalFilterChange: setGlobalFilter,
+		onSortingChange: setSorting,
 		state: {
-			sorting,
 			globalFilter,
+			sorting,
 		},
 	})
 

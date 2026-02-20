@@ -1,6 +1,8 @@
 import { Input } from '~/components/ui/input'
 import { useFieldContext } from '~/lib/hooks/form-hook'
-import { Field, type FieldProps } from './field'
+
+import { Field } from './field'
+import type { FieldProps } from './field'
 
 type TextFieldProps = React.ComponentProps<typeof Input> & Omit<FieldProps, 'children' | 'error'>
 

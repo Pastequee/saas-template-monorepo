@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
-import z from 'zod'
+import { z } from 'zod'
+
 import { Button } from '~/components/ui/button'
 import {
 	Dialog,
@@ -29,8 +30,8 @@ type Props = {
 
 const passwordSchema = z
 	.object({
-		newPassword: z.string().min(8, 'Password must be at least 8 characters'),
 		confirmPassword: z.string().nonempty('Please confirm the password'),
+		newPassword: z.string().min(8, 'Password must be at least 8 characters'),
 	})
 	.refine((data) => data.newPassword === data.confirmPassword, {
 		message: 'Passwords do not match',
@@ -41,14 +42,13 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const form = useAppForm({
-		defaultValues: { newPassword: '', confirmPassword: '' },
-		validators: { onChange: passwordSchema, onMount: passwordSchema, onSubmit: passwordSchema },
+		defaultValues: { confirmPassword: '', newPassword: '' },
 		onSubmit: async ({ value }) => {
 			setIsSubmitting(true)
 
 			const result = await authClient.admin.setUserPassword({
-				userId: user.id,
 				newPassword: value.newPassword,
+				userId: user.id,
 			})
 
 			setIsSubmitting(false)
@@ -63,6 +63,7 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 			onOpenChange(false)
 			onSuccess()
 		},
+		validators: { onChange: passwordSchema, onMount: passwordSchema, onSubmit: passwordSchema },
 	})
 
 	// Reset form when dialog closes

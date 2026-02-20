@@ -11,5 +11,5 @@ export const LoggedOut = ({ children }: LoggedOutProps) => {
 		return
 	}
 
-	return <>{children}</>
+	return children
 }

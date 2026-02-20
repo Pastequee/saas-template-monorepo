@@ -3,6 +3,7 @@
 ## Schema Organization
 
 Schemas are split by domain in `packages/db/src/schemas/`:
+
 - `auth.ts` — User, Session, Account tables (handled by better-auth, DO NOT EDIT)
 - `todos.ts` — Todo-related models
 - `schema-utils.ts` — Shared utilities (`id`, `timestamps`)
@@ -15,16 +16,16 @@ import { id, timestamps } from '../schema-utils'
 import { users } from './auth'
 
 export const todos = pgTable('todos', {
-  id,  // UUIDv7 primary key (from schema-utils)
+	id, // UUIDv7 primary key (from schema-utils)
 
-  userId: uuid('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
+	userId: uuid('user_id')
+		.references(() => users.id, { onDelete: 'cascade' })
+		.notNull(),
 
-  content: text().notNull(),
-  status: todoStatus().notNull(),
+	content: text().notNull(),
+	status: todoStatus().notNull(),
 
-  ...timestamps,  // createdAt, updatedAt (from schema-utils)
+	...timestamps, // createdAt, updatedAt (from schema-utils)
 })
 ```
 

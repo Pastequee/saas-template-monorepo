@@ -1,6 +1,7 @@
 import { AuthRole } from '@repo/db/types'
 import { useState } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '~/components/ui/button'
 import {
 	Dialog,
@@ -42,8 +43,8 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 		setIsSubmitting(true)
 
 		const result = await authClient.admin.setRole({
-			userId: user.id,
 			role: selectedRole,
+			userId: user.id,
 		})
 
 		setIsSubmitting(false)

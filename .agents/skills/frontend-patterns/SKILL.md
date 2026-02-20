@@ -17,4 +17,3 @@ Use this skill when implementing UI pages, hooks, queries, mutations, and forms 
 2. Use Eden option factories for queries and mutations.
 3. Keep query keys centralized.
 4. Use `useAppForm` and shared form field/form components for forms.
-

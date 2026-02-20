@@ -1,6 +1,6 @@
 # Code Style
 
-## Biome Configuration
+## OxLint & OxFmt Configuration
 
 - **Semicolons:** As needed (no trailing semicolons)
 - **Quotes:** Single quotes and JSX double quote
@@ -10,14 +10,14 @@
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Files | kebab-case | `todo-item.tsx`, `auth-provider.tsx` |
-| Components | PascalCase | `TodoItem`, `AuthProvider` |
-| Functions | camelCase | `getUserTodos`, `createTodo` |
-| Constants | SCREAMING_SNAKE | `DATABASE_URL`, `API_KEY` |
-| DB tables | snake_case (plural) | `todos`, `user_sessions` |
-| DB columns | snake_case | `user_id`, `created_at` |
+| Type       | Convention          | Example                              |
+| ---------- | ------------------- | ------------------------------------ |
+| Files      | kebab-case          | `todo-item.tsx`, `auth-provider.tsx` |
+| Components | PascalCase          | `TodoItem`, `AuthProvider`           |
+| Functions  | camelCase           | `getUserTodos`, `createTodo`         |
+| Constants  | SCREAMING_SNAKE     | `DATABASE_URL`, `API_KEY`            |
+| DB tables  | snake_case (plural) | `todos`, `user_sessions`             |
+| DB columns | snake_case          | `user_id`, `created_at`              |
 
 ## TypeScript
 

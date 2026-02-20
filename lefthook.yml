@@ -8,7 +8,7 @@ pre-commit:
     - name: Lint
       run: bun lint:fix
       stage_fixed: true
-    
+
     - name: Format
       run: bun format
       stage_fixed: true

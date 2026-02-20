@@ -1,5 +1,7 @@
-import { type Treaty, treaty } from '@elysiajs/eden'
-import { type App, app } from '@repo/backend'
+import { treaty } from '@elysiajs/eden'
+import type { Treaty } from '@elysiajs/eden'
+import { app } from '@repo/backend'
+import type { App } from '@repo/backend'
 import { env } from '@repo/env/web'
 import { createIsomorphicFn } from '@tanstack/react-start'
 

@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useRef } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '~/components/ui/button'
 import {
 	Dialog,
@@ -14,6 +15,7 @@ import {
 } from '~/components/ui/dialog'
 import { useAppForm } from '~/lib/hooks/form-hook'
 import { createListingOptions } from '~/lib/mutations/listings.mutations'
+
 import { ListingForm, listingFormOptions } from './listing-form'
 
 export const NewListingFormDialog = () => {
@@ -35,19 +37,19 @@ export const NewListingFormDialog = () => {
 	)
 }
 
-const NewListingForm = ({ onClose }: { onClose: () => void }) => {
+function NewListingForm({ onClose }: { onClose: () => void }) {
 	const { mutate: createListing } = useMutation(createListingOptions())
 
 	const form = useAppForm({
 		...listingFormOptions,
 		onSubmit: ({ value }) => {
 			createListing(value, {
+				onError: (error) => {
+					toast.error(error.value.message ?? 'Failed to create listing')
+				},
 				onSuccess: () => {
 					toast.success('Annonce créée avec succès')
 					onClose()
-				},
-				onError: (error) => {
-					toast.error(error.value.message ?? 'Failed to create listing')
 				},
 			})
 		},
@@ -68,7 +70,7 @@ const NewListingForm = ({ onClose }: { onClose: () => void }) => {
 					Annuler
 				</DialogClose>
 				<form.AppForm>
-					<form.SubmitButton className="flex-1">Créer l'annonce</form.SubmitButton>
+					<form.SubmitButton className="flex-1">Créer l&apos;annonce</form.SubmitButton>
 				</form.AppForm>
 			</div>
 		</form>

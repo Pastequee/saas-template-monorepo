@@ -13,7 +13,7 @@
 ## DON'T
 
 - Don't mock data outside of tests
-- Don't use `any` type (suppress with biome-ignore if unavoidable)
+- Don't use `any` type (suppress with oxlint-ignore if unavoidable)
 - Don't commit sensitive data or .env files
 - Don't add features beyond what was requested
 - Don't over-engineer or add unnecessary abstractions

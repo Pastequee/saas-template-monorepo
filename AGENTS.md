@@ -5,6 +5,7 @@ Bun monorepo with Elysia API server, TanStack Start frontend, Drizzle ORM, bette
 **Package Manager:** Bun (not npm)
 
 **Essential Commands:**
+
 ```bash
 bun lint             # Check lint
 bun lint:fix         # Auto-fix lint
@@ -32,16 +33,16 @@ bun clean            # Clean up the project (removes node_modules, dist, build, 
 
 ## Documentation
 
-| Topic | File |
-|-------|------|
-| [Backend Patterns](docs/backend-patterns.md) | Elysia routes, auth, validation, error handling |
-| [Frontend Patterns](docs/frontend-patterns.md) | React, data fetching, forms, components |
-| [Database Patterns](docs/database-patterns.md) | Drizzle ORM, schemas, migrations |
-| [Code Style](docs/code-style.md) | Biome config, naming, TypeScript |
-| [Auth Patterns](docs/auth-patterns.md) | better-auth backend & frontend |
-| [Environment Variables](docs/environment-variables.md) | @t3-oss/env-core usage |
-| [Development Workflow](docs/development-workflow.md) | Commands, hooks, CI |
-| [Important Guidelines](docs/important-guidelines.md) | DO/DON'T rules |
-| [Quick Reference](docs/quick-reference.md) | Location lookup table |
-| [Project Structure](docs/project-structure.md) | Monorepo layout, workspace imports |
-| [Backend Testing Patterns](docs/backend-testing-patterns.md) | Test framework, utilities, patterns |
+| Topic                                                        | File                                            |
+| ------------------------------------------------------------ | ----------------------------------------------- |
+| [Backend Patterns](docs/backend-patterns.md)                 | Elysia routes, auth, validation, error handling |
+| [Frontend Patterns](docs/frontend-patterns.md)               | React, data fetching, forms, components         |
+| [Database Patterns](docs/database-patterns.md)               | Drizzle ORM, schemas, migrations                |
+| [Code Style](docs/code-style.md)                             | OxLint/OxFmt config, naming, TypeScript         |
+| [Auth Patterns](docs/auth-patterns.md)                       | better-auth backend & frontend                  |
+| [Environment Variables](docs/environment-variables.md)       | @t3-oss/env-core usage                          |
+| [Development Workflow](docs/development-workflow.md)         | Commands, hooks, CI                             |
+| [Important Guidelines](docs/important-guidelines.md)         | DO/DON'T rules                                  |
+| [Quick Reference](docs/quick-reference.md)                   | Location lookup table                           |
+| [Project Structure](docs/project-structure.md)               | Monorepo layout, workspace imports              |
+| [Backend Testing Patterns](docs/backend-testing-patterns.md) | Test framework, utilities, patterns             |

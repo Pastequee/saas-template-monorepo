@@ -3,6 +3,7 @@
 ## Test Framework
 
 Bun Test is used for backend testing:
+
 - Import: `import { describe, it, expect, beforeEach, afterEach } from 'bun:test'`
 - Files located in: `packages/server/tests/`
 - Run tests: `bun test:server`

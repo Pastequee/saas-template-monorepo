@@ -1,4 +1,5 @@
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
+
 import { cn } from '~/lib/utils/cn'
 
 type TabsVariant = 'default' | 'underline'

@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+
 import { ListingList } from '~/components/routes/listings/listing-list'
 import { NewListingFormDialog } from '~/components/routes/listings/new-listing-form-dialog'
 import { Input } from '~/components/ui/input'

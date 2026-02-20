@@ -22,4 +22,3 @@ Use this skill for baseline repo conventions before implementation.
 2. Use `references/quick-reference.md` and `references/project-structure.md` to place files correctly.
 3. Follow `references/code-style.md` and `references/environment-variables.md` while implementing.
 4. Validate with commands from `references/development-workflow.md`.
-

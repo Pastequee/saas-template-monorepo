@@ -1,4 +1,5 @@
 import { env } from '@repo/env/web'
+
 import googleIcon from '~/assets/google.svg'
 import { Button } from '~/components/ui/button'
 import { authClient } from '~/lib/clients/auth-client'
@@ -11,8 +12,8 @@ type GoogleSignInButtonProps = {
 export const GoogleSignInButton = ({ onError }: GoogleSignInButtonProps) => {
 	const handleSocialSignIn = async ({ provider }: { provider: 'google' }) => {
 		const { error } = await authClient.signIn.social({
-			provider,
 			callbackURL: env.VITE_FRONTEND_URL,
+			provider,
 		})
 
 		if (error) {

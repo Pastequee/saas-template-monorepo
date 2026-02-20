@@ -3,8 +3,8 @@ import { adminClient, lastLoginMethodClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 
 export const authClient = createAuthClient({
-	plugins: [lastLoginMethodClient(), adminClient()],
 	baseURL: env.VITE_SERVER_URL,
+	plugins: [lastLoginMethodClient(), adminClient()],
 })
 
 export type BetterAuthContext = typeof authClient.$Infer.Session

@@ -2,6 +2,7 @@ import { useRouter } from '@tanstack/react-router'
 import { UserCheck } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '~/components/ui/button'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAuth } from '~/lib/hooks/use-auth'
@@ -14,9 +15,11 @@ export function ImpersonationBanner() {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 
-	if (!auth) return null
+	if (!auth) {
+		return null
+	}
 
-	const impersonatedBy = auth.session.impersonatedBy
+	const { impersonatedBy } = auth.session
 
 	if (!impersonatedBy) {
 		return null

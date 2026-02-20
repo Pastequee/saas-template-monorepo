@@ -34,8 +34,8 @@ type Result<T, E = Error> = Failure<E> | Success<T>
  *
  * @template T - Type of the successful result data
  * @template E - Type of the error (defaults to Error)
- * @param promise - The async operation to execute, can be a Promise or a value
- * @returns Promise<Result<T, E>> - A Result object containing either data or error
+ * @param{Promise<T>} promise - The async operation to execute, can be a Promise or a value
+ * @returns {Promise<Result<T, E>>} - A Result object containing either data or error
  */
 export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Result<T, E>> {
 	try {

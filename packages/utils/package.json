@@ -1,12 +1,12 @@
 {
-  "name": "@repo/utils",
-  "private": true,
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "@types/bun": "catalog:"
-  }
+	"name": "@repo/utils",
+	"private": true,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@types/bun": "catalog:"
+	}
 }

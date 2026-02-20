@@ -1,17 +1,21 @@
-import auth from '@repo/auth'
+import { auth } from '@repo/auth'
 import { db } from '@repo/db'
-import { AuthRole, type Role } from '@repo/db/types'
+import { AuthRole } from '@repo/db/types'
+import type { Role } from '@repo/db/types'
 import { Elysia } from 'elysia'
+
 import { logger } from './logger'
 
 const AuthService = {
-	isValidAuthRole: (role: string | null | undefined): role is AuthRole => {
-		if (!role) return false
-		return AuthRole.includes(role as AuthRole)
-	},
-
 	hasAuthRole: <TRole extends AuthRole>(role: AuthRole, askedRole: TRole): role is TRole =>
 		role === askedRole,
+
+	isValidAuthRole: (role: string | null | undefined): role is AuthRole => {
+		if (!role) {
+			return false
+		}
+		return AuthRole.includes(role as AuthRole)
+	},
 }
 
 export const authMacro = new Elysia({ name: 'auth-macro' })
@@ -20,23 +24,26 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 		resolve: async function authMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
 
-			if (!session || !AuthService.isValidAuthRole(session.user.role))
+			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
 				return statusError(401, { message: 'You are not authenticated' })
+			}
 
 			log.set({
 				user: {
-					id: session.user.id,
-					authRole: session.user.role,
 					accountAge: daysSince(session.user.createdAt),
+					authRole: session.user.role,
+					id: session.user.id,
 				},
 			})
 
 			return {
+				session: session.session,
 				user: {
 					...session.user,
-					role: session.user.role as AuthRole, // Need to help type inference here
+
+					// Need to help type inference here
+					role: session.user.role as AuthRole,
 				},
-				session: session.session,
 			}
 		},
 	})
@@ -44,14 +51,15 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 		resolve: async function authAdminMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
 
-			if (!session || !AuthService.isValidAuthRole(session.user.role))
+			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
 				return statusError(401, { message: 'You are not authenticated' })
+			}
 
 			log.set({
 				user: {
-					id: session.user.id,
-					authRole: session.user.role,
 					accountAge: daysSince(session.user.createdAt),
+					authRole: session.user.role,
+					id: session.user.id,
 				},
 			})
 
@@ -59,7 +67,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				return statusError(403, { message: 'You are not authorized to access this resource' })
 			}
 
-			return { user: { ...session.user, role: session.user.role }, session: session.session }
+			return { session: session.session, user: { ...session.user, role: session.user.role } }
 		},
 	})
 	.macro(
@@ -68,17 +76,18 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 			resolve: async function roleMiddleware({ request: { headers }, log, statusError }) {
 				const session = await auth.api.getSession({ headers })
 
-				if (!session || !AuthService.isValidAuthRole(session.user.role))
+				if (!session || !AuthService.isValidAuthRole(session.user.role)) {
 					return statusError(401, { message: 'You are not authenticated' })
+				}
 
 				const userRoles = await db.query.userRoles.findMany({ where: { userId: session.user.id } })
 
 				log.set({
 					user: {
-						id: session.user.id,
-						authRole: session.user.role,
-						roles: userRoles.map((userRole) => userRole.role),
 						accountAge: daysSince(session.user.createdAt),
+						authRole: session.user.role,
+						id: session.user.id,
+						roles: userRoles.map((userRole) => userRole.role),
 					},
 				})
 
@@ -90,7 +99,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				// Superadmin bypasses all role checks and: has all permissions
 				const isSuperadmin = userRoles.some((userRole) => userRole.role === 'superadmin')
 				if (isSuperadmin) {
-					return { user: { ...session.user, role: session.user.role }, session: session.session }
+					return { session: session.session, user: { ...session.user, role: session.user.role } }
 				}
 
 				const askedRoles = Array.isArray(asked) ? asked : [asked]
@@ -102,7 +111,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				}
 
 				// If the user has at least one of the asked roles, return the user and session
-				return { user: { ...session.user, role: session.user.role }, session: session.session }
+				return { session: session.session, user: { ...session.user, role: session.user.role } }
 			},
 		})
 	)

@@ -1,10 +1,12 @@
 import { integer, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core'
-import { id, timestamps } from '../schema-utils'
+
+import { common } from '#/schema-utils'
+
 import { assets } from './assets'
 import { users } from './auth'
 
 export const listings = pgTable('listings', {
-	id,
+	...common,
 	userId: uuid()
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
@@ -12,8 +14,6 @@ export const listings = pgTable('listings', {
 	title: text().notNull(),
 	description: text().notNull(),
 	price: integer().notNull(),
-
-	...timestamps,
 })
 
 export const listingImages = pgTable(

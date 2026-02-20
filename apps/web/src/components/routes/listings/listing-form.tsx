@@ -1,15 +1,16 @@
 import { listingInsertSchema } from '@repo/db/types'
 import { formOptions } from '@tanstack/react-form'
-import z from 'zod'
+import { z } from 'zod'
+
 import { ImageUploadField } from '~/components/routes/listings/image-upload-field'
 import { withForm } from '~/lib/hooks/form-hook'
 
 export const listingFormOptions = formOptions({
 	defaultValues: {
-		title: '',
 		description: '',
-		price: 0,
 		imageKey: '',
+		price: 0,
+		title: '',
 	},
 	validators: { onSubmit: listingInsertSchema.extend({ imageKey: z.string().min(1) }) },
 })

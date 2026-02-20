@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
+
 import { Button } from '~/components/ui/button'
 import {
 	Dialog,
@@ -45,14 +46,19 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 	const [banDuration, setBanDuration] = useState<number>(60 * 60 * 24) // Default: 1 day
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
+	const resetForm = () => {
+		setBanReason('')
+		setBanDuration(60 * 60 * 24)
+	}
+
 	const handleBan = async () => {
 		setIsSubmitting(true)
 
 		const result = await authClient.admin.banUser({
-			userId: user.id,
-			banReason: banReason || undefined,
 			// 0 = permanent ban (no expiry)
 			banExpiresIn: banDuration === 0 ? undefined : banDuration,
+			banReason: banReason || undefined,
+			userId: user.id,
 		})
 
 		setIsSubmitting(false)
@@ -85,11 +91,6 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 		toast.success(`${user.name} has been unblocked`)
 		onOpenChange(false)
 		onSuccess()
-	}
-
-	const resetForm = () => {
-		setBanReason('')
-		setBanDuration(60 * 60 * 24)
 	}
 
 	const handleOpenChange = (newOpen: boolean) => {

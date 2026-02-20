@@ -1,16 +1,19 @@
 import { env } from '@repo/env/web'
 import { sql } from 'drizzle-orm/sql'
+
 import { db } from '.'
 import * as schema from './schemas'
 
 // In memory database for testing
 export const createTestDb = async () => {
+	// oxlint-disable-next-line import/no-nodejs-modules
 	const { createRequire } = await import('node:module')
 	const require = createRequire(import.meta.url)
 	const { pushSchema } =
+		// oxlint-disable-next-line typescript/consistent-type-imports
 		require('drizzle-kit/api-postgres') as typeof import('drizzle-kit/api-postgres')
 
-	// biome-ignore lint/suspicious/noExplicitAny: needed somehow
+	// oxlint-disable-next-line typescript/no-explicit-any
 	const { apply } = await pushSchema(schema, db as any, 'snake_case')
 	await apply()
 
@@ -19,7 +22,9 @@ export const createTestDb = async () => {
 
 export const truncateAllTables = async (instance: Awaited<ReturnType<typeof createTestDb>>) => {
 	// Test only functionality, safeguard against running in production
-	if (env.NODE_ENV !== 'test') return
+	if (env.NODE_ENV !== 'test') {
+		return
+	}
 
 	const tables = await instance.execute<{ tablename: string; schemaname: string }>(sql`
     SELECT schemaname, tablename 
@@ -28,7 +33,9 @@ export const truncateAllTables = async (instance: Awaited<ReturnType<typeof crea
     AND tablename NOT IN ('schema_migrations', '__drizzle_migrations')
   `)
 
-	if (tables.rows.length === 0) return
+	if (tables.rows.length === 0) {
+		return
+	}
 
 	for (const table of tables.rows) {
 		await instance.execute(

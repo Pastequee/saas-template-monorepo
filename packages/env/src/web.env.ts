@@ -1,14 +1,18 @@
-/** biome-ignore-all lint/style/useNamingConvention: needed for env vars */
+// oxlint-disable sort-keys
 
 import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
 export const env = createEnv({
-	clientPrefix: 'VITE_',
 	client: {
-		VITE_SERVER_URL: z.url(),
 		VITE_FRONTEND_URL: z.url(),
+		VITE_SERVER_URL: z.url(),
 	},
+	clientPrefix: 'VITE_',
+
+	emptyStringAsUndefined: true,
+
+	runtimeEnv: { ...process.env, ...import.meta.env },
 
 	server: {
 		LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
@@ -40,8 +44,4 @@ export const env = createEnv({
 	shared: {
 		NODE_ENV: z.enum(['development', 'production', 'staging', 'test']).default('development'),
 	},
-
-	runtimeEnv: { ...process.env, ...import.meta.env },
-
-	emptyStringAsUndefined: true,
 })

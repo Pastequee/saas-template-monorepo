@@ -1,4 +1,6 @@
+// oxlint-disable unicorn/no-await-expression-member
 import { beforeAll, describe, expect, it } from 'bun:test'
+
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
 describe('Files', () => {
@@ -15,8 +17,8 @@ describe('Files', () => {
 	describe('POST /files/presign', () => {
 		it('returns 401 unauthenticated', async () => {
 			const res = await unauthApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
+				filename: 'test.webp',
 				size: 1024,
 			})
 			expect(res.status).toBe(401)
@@ -24,8 +26,8 @@ describe('Files', () => {
 
 		it('returns presigned url and asset', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'photo.webp',
 				contentType: 'image/webp',
+				filename: 'photo.webp',
 				size: 2048,
 			})
 			expect(res.status).toBe(200)
@@ -39,8 +41,8 @@ describe('Files', () => {
 
 		it('creates asset with correct owner', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
+				filename: 'test.webp',
 				size: 512,
 			})
 
@@ -49,8 +51,8 @@ describe('Files', () => {
 
 		it('generates key with user id prefix', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
+				filename: 'test.webp',
 				size: 512,
 			})
 			expect(res.data?.asset.key).toStartWith(`${testUsers.user.id}/`)
@@ -59,8 +61,8 @@ describe('Files', () => {
 
 		it('defaults public to false', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
+				filename: 'test.webp',
 				size: 512,
 			})
 			expect(res.status).toBe(200)
@@ -69,15 +71,16 @@ describe('Files', () => {
 
 		it('accepts public flag', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
-				size: 512,
+				filename: 'test.webp',
 				public: true,
+				size: 512,
 			})
 			expect(res.status).toBe(200)
 		})
 
 		it('rejects invalid content type', async () => {
+			// oxlint-disable-next-line sort-keys
 			const res = await userApi.files.presign.post({
 				filename: 'test.png',
 				// @ts-expect-error - intentionally invalid
@@ -89,8 +92,8 @@ describe('Files', () => {
 
 		it('rejects empty filename', async () => {
 			const res = await userApi.files.presign.post({
-				filename: '',
 				contentType: 'image/webp',
+				filename: '',
 				size: 1024,
 			})
 			expect(res.status).toBe(422)
@@ -98,8 +101,8 @@ describe('Files', () => {
 
 		it('rejects zero size', async () => {
 			const res = await userApi.files.presign.post({
-				filename: 'test.webp',
 				contentType: 'image/webp',
+				filename: 'test.webp',
 				size: 0,
 			})
 			expect(res.status).toBe(422)

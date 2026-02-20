@@ -1,4 +1,5 @@
 import { ImagePlus, Loader2, X } from 'lucide-react'
+
 import { Button } from '~/components/ui/button'
 import type { UploadingFile } from '~/lib/hooks/use-file-upload'
 import { useFileUpload } from '~/lib/hooks/use-file-upload'
@@ -6,14 +7,18 @@ import { useFileUpload } from '~/lib/hooks/use-file-upload'
 export function ImageUploadField({ onImageChange }: { onImageChange: (key: string) => void }) {
 	const [state, actions] = useFileUpload({
 		onFileUploaded: (file) => {
-			if (file.assetKey) onImageChange(file.assetKey)
+			if (file.assetKey) {
+				onImageChange(file.assetKey)
+			}
 		},
 	})
 
 	const file = state.files.at(0)
 
 	const handleRemove = () => {
-		if (file) actions.removeFile(file.id)
+		if (file) {
+			actions.removeFile(file.id)
+		}
 		onImageChange('')
 	}
 

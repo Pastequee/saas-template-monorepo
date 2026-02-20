@@ -14,23 +14,29 @@ export function useCopyToClipboard({
 			return
 		}
 
-		if (!value) return
+		if (!value) {
+			return
+		}
 
-		navigator.clipboard.writeText(value).then(() => {
-			setIsCopied(true)
+		navigator.clipboard
+			.writeText(value)
+			// oxlint-disable-next-line promise/prefer-await-to-then
+			.then(() => {
+				setIsCopied(true)
 
-			if (onCopy) {
-				onCopy()
-			}
+				if (onCopy) {
+					onCopy()
+				}
 
-			if (timeout !== 0) {
-				setTimeout(() => {
-					setIsCopied(false)
-				}, timeout)
-			}
-			// biome-ignore lint/suspicious/noConsole: no problem here
-		}, console.error)
+				if (timeout !== 0) {
+					setTimeout(() => {
+						setIsCopied(false)
+					}, timeout)
+				}
+			})
+			// oxlint-disable-next-line promise/prefer-await-to-then
+			.catch(console.error)
 	}
 
-	return { isCopied, copyToClipboard }
+	return { copyToClipboard, isCopied }
 }

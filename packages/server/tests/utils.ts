@@ -3,37 +3,38 @@ import { auth } from '@repo/auth'
 import { db } from '@repo/db'
 import type { AuthRole } from '@repo/db/types'
 import { typedObjectEntries } from '@repo/utils'
-import { app } from '../src'
+
+import { app } from '#/index'
 
 type TestUser = { id: string; email: string; name: string; role: AuthRole; password: string }
 
 export const testUsers: Record<'admin' | 'user', TestUser> = {
 	admin: {
-		id: '1',
 		email: 'admin@test.com',
+		id: '1',
 		name: 'Admin',
-		role: 'admin',
 		password: 'test-admin-password',
+		role: 'admin',
 	},
 	user: {
-		id: '2',
 		email: 'user@test.com',
+		id: '2',
 		name: 'User',
-		role: 'user',
 		password: 'test-user-password',
+		role: 'user',
 	},
 }
 
 export const createApi = () => {
-	const api = treaty(app).api
+	const { api } = treaty(app)
 
 	return api
 }
 
 export const createApiWithAuth = async (testUser: TestUser) => {
 	const res = await auth.api.signInEmail({
-		body: { email: testUser.email, password: testUser.password },
 		asResponse: true,
+		body: { email: testUser.email, password: testUser.password },
 	})
 
 	const betterAuthCookie = res.headers.get('set-cookie')?.split(';')[0]

@@ -1,13 +1,12 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: needed for complex types */
+// oxlint-disable typescript/no-explicit-any
 
 import type { Treaty } from '@elysiajs/eden'
-import {
-	mutationOptions,
-	type QueryKey,
-	queryOptions,
-	type UndefinedInitialDataOptions,
-	type UseMutationOptions,
-	type UseQueryOptions,
+import { mutationOptions, queryOptions } from '@tanstack/react-query'
+import type {
+	QueryKey,
+	UndefinedInitialDataOptions,
+	UseMutationOptions,
+	UseQueryOptions,
 } from '@tanstack/react-query'
 
 type TreatyResponse = Treaty.TreatyResponse<Record<number, any>>
@@ -56,7 +55,9 @@ export function edenQueryOption<
 		...options,
 		queryFn: async () => {
 			const { data, error } = await edenQuery(edenOptions)
-			if (error) throw error
+			if (error) {
+				throw error
+			}
 			return data
 		},
 	})
@@ -82,7 +83,9 @@ export function edenMutationOption<
 		...options,
 		mutationFn: async (body: Parameters<TEdenQueryFn>[0]) => {
 			const { data, error } = await edenMutation(body, edenOptions)
-			if (error) throw error
+			if (error) {
+				throw error
+			}
 			return data
 		},
 	})

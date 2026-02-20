@@ -1,5 +1,6 @@
 import { useNavigate, useRouteContext } from '@tanstack/react-router'
-import { authClient } from '../clients/auth-client'
+
+import { authClient } from '~/lib/clients/auth-client'
 
 export const useAuth = () => {
 	const { auth, queryClient } = useRouteContext({ from: '__root__' })
@@ -11,7 +12,9 @@ export const useAuth = () => {
 		navigate({ to: '/login' })
 	}
 
-	if (!auth) return null
+	if (!auth) {
+		return null
+	}
 
 	return { ...auth, isAuthenticated: !!auth, logout }
 }

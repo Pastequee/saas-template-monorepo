@@ -1,4 +1,5 @@
-/** biome-ignore-all lint/a11y/noLabelWithoutControl: no problem here */
+// oxlint-disable jsx_a11y/label-has-associated-control
+
 import type * as React from 'react'
 
 import { cn } from '~/lib/utils/cn'

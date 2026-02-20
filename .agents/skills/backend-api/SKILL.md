@@ -18,4 +18,3 @@ Use this skill when implementing backend endpoints in `packages/server`.
 2. Apply auth requirements with `authMacro`, route options, and role checks.
 3. Use validation schemas from `@repo/db/types`.
 4. Confirm auth behavior against `references/auth-patterns.md` when touching signin/session flows.
-

@@ -11,5 +11,5 @@ export const LoggedIn = ({ children }: LoggedInProps) => {
 		return
 	}
 
-	return <>{children}</>
+	return { children }
 }

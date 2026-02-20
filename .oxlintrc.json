@@ -1,0 +1,27 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"extends": [
+		"./node_modules/ultracite/config/oxlint/core/.oxlintrc.json",
+		"./node_modules/ultracite/config/oxlint/remix/.oxlintrc.json",
+		"./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
+	],
+	"rules": {
+		"typescript/consistent-type-definitions": ["error", "type"],
+		"eslint/func-style": "off",
+		"eslint/no-use-before-define": ["error", { "functions": false }],
+		"react/jsx-handler-names": "off",
+		"react-perf/jsx-no-new-function-as-prop": "off",
+		"eslint/max-statements": "off",
+		"jest/require-hook": "off",
+		"no-inline-comments": "off",
+		"react/no-children-prop": "off"
+	},
+	"overrides": [
+		{
+			"files": ["packages/db/**/schemas/**/*.ts"],
+			"rules": {
+				"eslint/sort-keys": "off"
+			}
+		}
+	]
+}

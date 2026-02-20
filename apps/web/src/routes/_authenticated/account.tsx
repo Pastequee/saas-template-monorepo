@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { LogOut, type LucideIcon, Mail, Package, User } from 'lucide-react'
+import { LogOut, Mail, Package, User } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+
 import { ListingList } from '~/components/routes/listings/listing-list'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
@@ -24,7 +26,9 @@ function AccountInfos() {
 	const auth = useAuth()
 	const { data: listings = [] } = useQuery(getMyListingsOptions())
 
-	if (!auth) return null
+	if (!auth) {
+		return null
+	}
 
 	return (
 		<Card className="h-fit min-w-2xs">

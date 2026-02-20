@@ -1,14 +1,14 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import z from 'zod'
+import { z } from 'zod'
 
 export const Route = createFileRoute('/_auth')({
-	component: AuthLayout,
 	beforeLoad: ({ context }) => {
 		// If user is already authenticated, redirect to home
 		if (context.auth) {
 			throw redirect({ to: '/' })
 		}
 	},
+	component: AuthLayout,
 	validateSearch: z.object({
 		redirect: z.string().optional(),
 	}),

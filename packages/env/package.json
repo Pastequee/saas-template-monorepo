@@ -1,16 +1,16 @@
 {
-  "name": "@repo/env",
-  "private": true,
-  "type": "module",
-  "exports": {
-    "./web": "./src/web.env.ts"
-  },
-  "dependencies": {
-    "@t3-oss/env-core": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "@types/bun": "catalog:"
-  }
+	"name": "@repo/env",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./web": "./src/web.env.ts"
+	},
+	"dependencies": {
+		"@t3-oss/env-core": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@types/bun": "catalog:"
+	}
 }

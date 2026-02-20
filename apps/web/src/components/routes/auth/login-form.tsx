@@ -2,12 +2,14 @@ import { formOptions } from '@tanstack/react-form'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
-import z from 'zod'
+import { z } from 'zod'
+
 import { Alert, AlertTitle } from '~/components/ui/alert'
 import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 import { DEFAULT_ERROR_MESSAGE } from '~/lib/utils/constants'
+
 import { GoogleSignInButton } from './google-sign-in-button'
 
 const formSchema = z.object({
@@ -39,7 +41,7 @@ export const LoginForm = () => {
 				return
 			}
 
-			router.navigate({ to: redirect ?? '/', replace: true })
+			router.navigate({ replace: true, to: redirect ?? '/' })
 		},
 	})
 

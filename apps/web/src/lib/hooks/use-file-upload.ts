@@ -1,11 +1,6 @@
-import {
-	type ChangeEvent,
-	type InputHTMLAttributes,
-	useEffect,
-	useEffectEvent,
-	useRef,
-	useState,
-} from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import type { ChangeEvent, InputHTMLAttributes } from 'react'
+
 import { eden } from '~/lib/server-fn/eden'
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -45,11 +40,12 @@ function processImage(
 	file: File,
 	opts: { maxWidth: number; maxHeight: number; quality: number }
 ): Promise<Blob> {
+	// oxlint-disable-next-line promise/avoid-new
 	return new Promise((resolve, reject) => {
 		const img = new Image()
 		const url = URL.createObjectURL(file)
 
-		img.onload = () => {
+		img.addEventListener('load', () => {
 			URL.revokeObjectURL(url)
 
 			let { width, height } = img
@@ -69,18 +65,21 @@ function processImage(
 
 			canvas.toBlob(
 				(blob) => {
-					if (blob) resolve(blob)
-					else reject(new Error('Impossible de convertir le canvas en blob'))
+					if (blob) {
+						resolve(blob)
+					} else {
+						reject(new Error('Impossible de convertir le canvas en blob'))
+					}
 				},
 				'image/webp',
 				opts.quality
 			)
-		}
+		})
 
-		img.onerror = () => {
+		img.addEventListener('error', () => {
 			URL.revokeObjectURL(url)
 			reject(new Error("Impossible de charger l'image"))
-		}
+		})
 
 		img.src = url
 	})
@@ -94,21 +93,27 @@ function uploadToS3(
 	onProgress: (pct: number) => void,
 	signal: { xhr: XMLHttpRequest | null }
 ): Promise<void> {
+	// oxlint-disable-next-line promise/avoid-new
 	return new Promise((resolve, reject) => {
 		const xhr = new XMLHttpRequest()
 		signal.xhr = xhr
 
-		xhr.upload.onprogress = (e) => {
-			if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100))
-		}
+		xhr.upload.addEventListener('progress', (e) => {
+			if (e.lengthComputable) {
+				onProgress(Math.round((e.loaded / e.total) * 100))
+			}
+		})
 
-		xhr.onload = () => {
-			if (xhr.status >= 200 && xhr.status < 300) resolve()
-			else reject(new Error(`Échec de l'upload S3 : ${xhr.status}`))
-		}
+		xhr.addEventListener('load', () => {
+			if (xhr.status >= 200 && xhr.status < 300) {
+				resolve()
+			} else {
+				reject(new Error(`Échec de l'upload S3 : ${xhr.status}`))
+			}
+		})
 
-		xhr.onerror = () => reject(new Error("Erreur réseau lors de l'upload S3"))
-		xhr.onabort = () => reject(new Error('Upload annulé'))
+		xhr.addEventListener('error', () => reject(new Error("Erreur réseau lors de l'upload S3")))
+		xhr.addEventListener('abort', () => reject(new Error('Upload annulé')))
 
 		xhr.open('PUT', url)
 		xhr.setRequestHeader('Content-Type', 'image/webp')
@@ -133,24 +138,29 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 		onError,
 	} = options
 
-	const [state, setState] = useState<FileUploadState>({ files: [], errors: [] })
+	const [state, setState] = useState<FileUploadState>({ errors: [], files: [] })
 	const inputRef = useRef<HTMLInputElement>(null)
 	const xhrMapRef = useRef(new Map<string, XMLHttpRequest>())
 
 	const cleanup = useEffectEvent(() => {
 		for (const file of state.files) {
-			if (file.preview) URL.revokeObjectURL(file.preview)
+			if (file.preview) {
+				URL.revokeObjectURL(file.preview)
+			}
 		}
 		// Abort any in-flight XHR requests
-		for (const xhr of xhrMapRef.current.values()) xhr.abort()
+		for (const xhr of xhrMapRef.current.values()) {
+			xhr.abort()
+		}
 	})
 
 	// Revoke preview URLs on unmount
-	useEffect(() => {
-		return () => {
+	useEffect(
+		() => () => {
 			cleanup()
-		}
-	}, [])
+		},
+		[]
+	)
 
 	// ── Helpers ──────────────────────────────────────────────────────────
 
@@ -166,16 +176,15 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 		try {
 			// 1. Process image
 			updateFile(entry.id, { status: 'processing' })
-			const blob = await processImage(entry.file, { maxWidth, maxHeight, quality })
+			const blob = await processImage(entry.file, { maxHeight, maxWidth, quality })
 
 			// 2. Presign
-			// biome-ignore lint/performance/useTopLevelRegex: not needed
 			const webpFilename = entry.file.name.replace(/\.[^.]+$/, '.webp')
 			const { data, error } = await eden().files.presign.post({
-				filename: webpFilename,
 				contentType: 'image/webp',
-				size: blob.size,
+				filename: webpFilename,
 				public: isPublic,
+				size: blob.size,
 			})
 
 			if (error || !data) {
@@ -183,7 +192,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			}
 
 			// 3. Upload to S3
-			updateFile(entry.id, { status: 'uploading', progress: 0 })
+			updateFile(entry.id, { progress: 0, status: 'uploading' })
 			const signal = { xhr: null as XMLHttpRequest | null }
 
 			// uploadToS3 sets signal.xhr synchronously before returning the promise
@@ -195,18 +204,22 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			)
 
 			// Store xhr ref right after creation
-			if (signal.xhr) xhrMapRef.current.set(entry.id, signal.xhr)
+			if (signal.xhr) {
+				xhrMapRef.current.set(entry.id, signal.xhr)
+			}
 
 			await uploadPromise
 
 			// 4. Complete
-			updateFile(entry.id, { status: 'complete', progress: 100, assetKey: data.asset.key })
-			onFileUploaded?.({ ...entry, status: 'complete', progress: 100, assetKey: data.asset.key })
+			updateFile(entry.id, { assetKey: data.asset.key, progress: 100, status: 'complete' })
+			onFileUploaded?.({ ...entry, assetKey: data.asset.key, progress: 100, status: 'complete' })
 			xhrMapRef.current.delete(entry.id)
-		} catch (err) {
-			const message = err instanceof Error ? err.message : "Échec de l'upload"
-			if (message === 'Upload annulé') return
-			updateFile(entry.id, { status: 'error', error: message })
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Échec de l'upload"
+			if (message === 'Upload annulé') {
+				return
+			}
+			updateFile(entry.id, { error: message, status: 'error' })
 		} finally {
 			xhrMapRef.current.delete(entry.id)
 		}
@@ -215,9 +228,11 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 	// ── Public API ───────────────────────────────────────────────────────
 
 	const addFiles = (files: FileList | File[]) => {
-		if (!files || (files instanceof FileList && files.length === 0)) return
+		if (!files || (files instanceof FileList && files.length === 0)) {
+			return
+		}
 
-		const arr = Array.from(files)
+		const arr = [...files]
 		const errors: string[] = []
 
 		if (
@@ -242,8 +257,8 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 				file,
 				id: crypto.randomUUID(),
 				preview: URL.createObjectURL(file),
-				status: 'processing',
 				progress: 0,
+				status: 'processing',
 			})
 		}
 
@@ -262,20 +277,26 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			// Revoke old previews when replacing in single mode
 			if (!multiple) {
 				for (const f of prev.files) {
-					if (f.preview) URL.revokeObjectURL(f.preview)
+					if (f.preview) {
+						URL.revokeObjectURL(f.preview)
+					}
 				}
 				// Abort old uploads
 				xhrMapRef.current.clear()
 			}
 
 			onFilesChange?.(newFiles)
-			return { files: newFiles, errors }
+			return { errors, files: newFiles }
 		})
 
 		// Kick off uploads
-		for (const entry of entries) uploadFile(entry)
+		for (const entry of entries) {
+			uploadFile(entry)
+		}
 
-		if (inputRef.current) inputRef.current.value = ''
+		if (inputRef.current) {
+			inputRef.current.value = ''
+		}
 	}
 
 	const removeFile = (id: string) => {
@@ -284,7 +305,9 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 		setState((prev) => {
 			const target = prev.files.find((f) => f.id === id)
-			if (target?.preview) URL.revokeObjectURL(target.preview)
+			if (target?.preview) {
+				URL.revokeObjectURL(target.preview)
+			}
 
 			const files = prev.files.filter((f) => f.id !== id)
 			onFilesChange?.(files)
@@ -297,13 +320,17 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 		setState((prev) => {
 			for (const f of prev.files) {
-				if (f.preview) URL.revokeObjectURL(f.preview)
+				if (f.preview) {
+					URL.revokeObjectURL(f.preview)
+				}
 			}
 			onFilesChange?.([])
-			return { files: [], errors: [] }
+			return { errors: [], files: [] }
 		})
 
-		if (inputRef.current) inputRef.current.value = ''
+		if (inputRef.current) {
+			inputRef.current.value = ''
+		}
 	}
 
 	const clearErrors = () => setState((prev) => ({ ...prev, errors: [] }))
@@ -312,24 +339,26 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 	const getInputProps = (props: InputHTMLAttributes<HTMLInputElement> = {}) => ({
 		...props,
-		type: 'file' as const,
-		onChange: (e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files ?? []),
 		accept: props.accept || accept,
-		multiple: props.multiple !== undefined ? props.multiple : multiple,
+		multiple: props.multiple === undefined ? multiple : props.multiple,
+		onChange: (e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files ?? []),
 		ref: inputRef,
+		type: 'file' as const,
 	})
 
 	return [
 		state,
-		{ getInputProps, openFileDialog, clearErrors, clearFiles, removeFile, addFiles },
+		{ addFiles, clearErrors, clearFiles, getInputProps, openFileDialog, removeFile },
 	] as const
 }
 
 function formatBytes(bytes: number, decimals = 2): string {
-	if (bytes === 0) return '0 Octets'
+	if (bytes === 0) {
+		return '0 Octets'
+	}
 
 	const k = 1024
-	const dm = decimals < 0 ? 0 : decimals
+	const dm = Math.max(0, decimals)
 	const sizes = ['Octets', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo']
 
 	const i = Math.floor(Math.log(bytes) / Math.log(k))

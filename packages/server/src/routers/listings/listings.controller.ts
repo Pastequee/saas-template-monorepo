@@ -2,8 +2,10 @@ import { db } from '@repo/db'
 import { listingInsertSchema, listingUpdateSchema } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { Elysia } from 'elysia'
-import z from 'zod'
+import { z } from 'zod'
+
 import { authMacro } from '#lib/auth'
+
 import { ListingsService } from './listings.service'
 
 export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] })
@@ -30,7 +32,9 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 		'/listings/:id',
 		async ({ params, listingsService, statusError }) => {
 			const listing = await listingsService.getListing(params.id)
-			if (!listing) return statusError(404, { message: 'Listing not found' })
+			if (!listing) {
+				return statusError(404, { message: 'Listing not found' })
+			}
 
 			return {
 				...listing,
@@ -55,12 +59,18 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 		async ({ body, params, user, statusError, listingsService }) => {
 			const listing = await listingsService.getListing(params.id)
 
-			if (!listing) return statusError(404, { message: 'Listing not found' })
-			if (listing.userId !== user.id)
+			if (!listing) {
+				return statusError(404, { message: 'Listing not found' })
+			}
+
+			if (listing.userId !== user.id) {
 				return statusError(403, { message: 'This listing is not yours' })
+			}
 
 			const emptyBody = Object.keys(body).length === 0
-			if (emptyBody) return listing
+			if (emptyBody) {
+				return listing
+			}
 
 			const updatedListing = await listingsService.updateListing(params.id, body)
 
@@ -78,9 +88,13 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 		async ({ params, status, user, statusError, listingsService }) => {
 			const listing = await listingsService.getListing(params.id)
 
-			if (!listing) return statusError('Not Found', { message: 'Listing not found' })
-			if (listing.userId !== user.id)
+			if (!listing) {
+				return statusError('Not Found', { message: 'Listing not found' })
+			}
+
+			if (listing.userId !== user.id) {
 				return statusError(403, { message: 'This listing is not yours' })
+			}
 
 			await listingsService.deleteListing(params.id)
 

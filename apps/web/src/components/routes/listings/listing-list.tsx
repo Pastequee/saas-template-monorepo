@@ -1,4 +1,5 @@
 import type { Listing } from '@repo/db/types'
+
 import { ListingCard } from './listing-card'
 
 export function ListingList({ listings }: { listings: Listing[] }) {
