@@ -39,26 +39,11 @@ jobs:
       postgres:
         image: postgres:18
         env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
         ports:
-          - 5432:5432
-
-    env:
-      NODE_ENV: test
-      VITE_FRONTEND_URL: http://localhost:3000
-      VITE_SERVER_URL: http://localhost:3000
-      BETTER_AUTH_SECRET: fake-test-secret-for-better-auth-instance
-      GOOGLE_CLIENT_ID: fake-test-google-client-id
-      GOOGLE_CLIENT_SECRET: fake-test-google-client-secret
-      DATABASE_URL: postgres://test:test@localhost:5432/testdb
-      RESEND_API_KEY: fake-test-resend-api-key
-      FROM_EMAIL: fake@example.com
-      FROM_NAME: Fake Example
-      AXIOM_API_KEY: fake-test-axiom-api-key
-      AXIOM_DATASET: fake-test-axiom-dataset
-      S3_ENDPOINT: http://fake-s3-endpoint.com
+          - 5400:5432
 
     steps:
       - uses: actions/checkout@v6

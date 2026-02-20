@@ -1,7 +1,6 @@
 import { integer, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core'
 
-import { common } from '#/schema-utils'
-
+import { common } from '../schema-utils'
 import { assets } from './assets'
 import { users } from './auth'
 

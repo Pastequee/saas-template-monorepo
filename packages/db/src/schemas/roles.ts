@@ -1,7 +1,6 @@
 import { pgEnum, pgTable, unique, uuid } from 'drizzle-orm/pg-core'
 
-import { common } from '#/schema-utils'
-
+import { common } from '../schema-utils'
 import { users } from './auth'
 
 export const roles = pgEnum('roles', ['superadmin', 'admin', 'user'])

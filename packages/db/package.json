@@ -2,9 +2,6 @@
 	"name": "@repo/db",
 	"private": true,
 	"type": "module",
-	"imports": {
-		"#/*": "./src/*.ts"
-	},
 	"exports": {
 		".": "./src/index.ts",
 		"./schemas": "./src/schemas/index.ts",

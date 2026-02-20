@@ -1,8 +1,7 @@
 // oxlint-disable no-inline-comments
 import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-import { common } from '#/schema-utils'
-
+import { common } from '../schema-utils'
 import { users } from './auth'
 
 export const assetStatus = pgEnum('asset_status', [

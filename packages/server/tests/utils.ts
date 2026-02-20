@@ -4,7 +4,7 @@ import { db } from '@repo/db'
 import type { AuthRole } from '@repo/db/types'
 import { typedObjectEntries } from '@repo/utils'
 
-import { app } from '#/index'
+import { app } from '../src'
 
 type TestUser = { id: string; email: string; name: string; role: AuthRole; password: string }
 

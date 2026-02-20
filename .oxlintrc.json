@@ -14,7 +14,8 @@
 		"eslint/max-statements": "off",
 		"jest/require-hook": "off",
 		"no-inline-comments": "off",
-		"react/no-children-prop": "off"
+		"react/no-children-prop": "off",
+		"import/no-relative-parent-imports": "off"
 	},
 	"overrides": [
 		{

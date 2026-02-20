@@ -1,7 +1,7 @@
 // oxlint-disable no-inline-comments
 import { boolean, index, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-import { common } from '#/schema-utils'
+import { common } from '../schema-utils'
 
 export const authSchema = pgSchema('auth')
 
