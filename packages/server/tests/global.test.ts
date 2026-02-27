@@ -14,22 +14,16 @@ describe('Global', () => {
 		const rootResponse = await api.get()
 
 		expect(rootResponse.status).toBe(200)
-		expect(rootResponse.data).toBe('Backend API')
+		expect(rootResponse.data).toBe('Application API')
 	})
 
 	it('Health endpoint works', async () => {
 		const healthResponse = await api.health.get()
 
 		expect(healthResponse.status).toBe(200)
+		expect(healthResponse.data?.database).toBe('healthy')
+		expect(healthResponse.data?.environment).toBe('test')
 		expect(healthResponse.data?.status).toBe('healthy')
-	})
-
-	it('Private health endpoint works', async () => {
-		const privateHealthResponse = await api.health.private.get()
-
-		expect(privateHealthResponse.status).toBe(200)
-		expect(privateHealthResponse.data?.status).toBe('healthy')
-		expect(privateHealthResponse.data?.database).toBe('healthy')
 	})
 
 	it('404 endpoint works', async () => {

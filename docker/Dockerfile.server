@@ -1,49 +1,31 @@
-# ================================
-# Build Stage
-# ================================
-FROM oven/bun:latest AS build
-
+FROM oven/bun:alpine AS base
 WORKDIR /app
 
-COPY /package.json package.json
-COPY /bun.lock bun.lock
+FROM base AS prepare
 
-COPY /apps/backend/package.json ./apps/backend/package.json
-COPY /apps/web/package.json ./apps/web/package.json
+RUN bun add -g turbo@^2
+COPY . .
+RUN turbo prune @repo/server --docker
 
-COPY /packages/db/package.json ./packages/db/package.json
-COPY /packages/auth/package.json ./packages/auth/package.json
-COPY /packages/utils/package.json ./packages/utils/package.json
-COPY /packages/email/package.json ./packages/email/package.json
+FROM base AS builder
 
-COPY /tooling/typescript/package.json ./tooling/typescript/package.json
+COPY --from=prepare /app/out/json/ .
+RUN bun install --frozen-lockfile --silent
 
-RUN bun install --frozen-lockfile
+COPY --from=prepare /app/out/full/ .
+RUN bun build:server
 
-COPY /apps/backend ./apps/backend
+FROM base AS runner
 
-COPY /packages/db ./packages/db
-COPY /packages/auth ./packages/auth
-COPY /packages/utils ./packages/utils
-COPY /packages/email ./packages/email
+RUN addgroup --system --gid 1001 bunjs
+RUN adduser --system --uid 1001 elysia
+USER elysia
 
-COPY /tooling/typescript ./tooling/typescript
+COPY --from=builder --chown=elysia:bunjs /app/apps/server/dist/server.js ./
+
+ARG COMMIT_HASH
+ENV COMMIT_HASH=$COMMIT_HASH
 
 ENV NODE_ENV=production
 
-RUN bun build:backend
-
-# ================================
-# Production Stage
-# ================================
-FROM gcr.io/distroless/base
-
-WORKDIR /app
-
-COPY --from=build /app/apps/backend/dist/server server
-
-ENV NODE_ENV=production
-
-EXPOSE 3001
-
-CMD ["./server"]
+CMD ["bun", "run", "./server.js"]

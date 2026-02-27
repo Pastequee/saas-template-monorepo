@@ -1,52 +1,31 @@
-# ================================
-# Build Stage
-# ================================
-FROM oven/bun:latest AS build
-
+FROM oven/bun:alpine AS base
 WORKDIR /app
 
-COPY /package.json package.json
-COPY /bun.lock bun.lock
+FROM base AS prepare
 
-COPY /apps/web/package.json ./apps/web/package.json
+RUN bun add -g turbo@^2
+COPY . .
+RUN turbo prune @repo/web --docker
 
-COPY /packages/db/package.json ./packages/db/package.json
-COPY /packages/auth/package.json ./packages/auth/package.json
-COPY /packages/utils/package.json ./packages/utils/package.json
-COPY /packages/email/package.json ./packages/email/package.json
+FROM base AS builder
 
-COPY /apps/backend/package.json ./apps/backend/package.json
-
-COPY /tooling/typescript/package.json ./tooling/typescript/package.json
-
+COPY --from=prepare /app/out/json/ .
 RUN bun install --frozen-lockfile --silent
 
-COPY /apps/web ./apps/web
-COPY /apps/backend ./apps/backend
-
-COPY /packages/db ./packages/db
-COPY /packages/auth ./packages/auth
-COPY /packages/utils ./packages/utils
-COPY /packages/email ./packages/email
-
-COPY /tooling/typescript ./tooling/typescript
-
-ENV NODE_ENV=production
-
+COPY --from=prepare /app/out/full/ .
 RUN bun build:web
 
-# ================================
-# Production Stage
-# ================================
-FROM oven/bun:slim AS production
+FROM base AS runner
 
-WORKDIR /app
+RUN addgroup --system --gid 1001 bunjs
+RUN adduser --system --uid 1001 tanstack
+USER tanstack
 
-COPY --from=build /app/apps/web/dist ./
+COPY --from=builder --chown=tanstack:bunjs /app/apps/web/.output ./
+
+ARG COMMIT_HASH
+ENV COMMIT_HASH=$COMMIT_HASH
 
 ENV NODE_ENV=production
 
-EXPOSE 3000
-
 CMD ["bun", "run", "./server/index.mjs"]
-

@@ -12,6 +12,7 @@ services:
       - 5400:5432
     volumes:
       - postgres_data:/var/lib/postgresql
+      - ./create-test-db.sql:/docker-entrypoint-initdb.d/create-test-db.sql:ro
 
   files:
     image: rustfs/rustfs:latest

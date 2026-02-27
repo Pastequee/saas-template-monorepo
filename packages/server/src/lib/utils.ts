@@ -1,4 +1,5 @@
 import { db, sql } from '@repo/db'
+import { env } from '@repo/env/web'
 import { tryCatch } from '@repo/utils'
 import { Elysia } from 'elysia'
 
@@ -22,17 +23,15 @@ export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 
 const utilsEndpoints = new Elysia({ name: 'utils', tags: ['Utils'] })
 	.use(authMacro)
-	.get('/', () => 'Backend API' as const)
-	.get('/health', () => ({
-		status: 'healthy' as const,
-		timestamp: new Date().toISOString(),
-	}))
-	.get('/health/private', async () => {
+	.get('/', () => 'Application API' as const)
+	.get('/health', async () => {
 		const [, error] = await tryCatch(db.execute(sql`SELECT 1`))
 		const dbStatus = error ? ('unhealthy' as const) : ('healthy' as const)
 
 		return {
+			commitHash: env.COMMIT_HASH,
 			database: dbStatus,
+			environment: env.NODE_ENV,
 			status: 'healthy' as const,
 			timestamp: new Date().toISOString(),
 		}

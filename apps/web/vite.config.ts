@@ -10,16 +10,13 @@ export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
 		devtools({
-			consolePiping: {
-				enabled: false,
-			},
-			enhancedLogs: {
-				enabled: false,
-			},
+			consolePiping: { enabled: false },
+			enhancedLogs: { enabled: false },
 		}),
 		tanstackStart(),
-		nitro({ output: { dir: 'dist' }, preset: 'bun' }),
+		nitro({ preset: 'bun' }),
 		tailwindcss(),
 		react(),
 	],
+	// ssr: { external: ['@repo/backend'] },
 })

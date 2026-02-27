@@ -3,10 +3,10 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "bunx --bun vite dev --port 3000",
-		"build": "bunx --bun vite build",
-		"start": "vite start",
-		"preview": "bunx --bun vite preview",
+		"dev": "bun --bun vite dev --port 3000",
+		"build": "bun --bun vite build",
+		"start": "bun --bun vite start",
+		"preview": "bun --bun vite preview",
 		"router:generate": "bun dev & sleep 2; kill $!",
 		"typecheck": "tsgo --noEmit"
 	},
@@ -40,6 +40,7 @@
 		"cmdk": "^1.1.1",
 		"lucide-react": "^0.575.0",
 		"motion": "^12.34.3",
+		"pg": "^8.18.0",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
 		"sonner": "^2.0.7",
