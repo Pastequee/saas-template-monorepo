@@ -1,4 +1,4 @@
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 
 import { roles, userRoles } from './schemas'
 import type { assets } from './schemas/assets'
@@ -7,10 +7,6 @@ import type { accounts, sessions, users, verifications } from './schemas/auth'
 import { listingImages, listings } from './schemas/listings'
 
 const omits = { createdAt: true, id: true, updatedAt: true } as const
-
-// const { createInsertSchema, createSelectSchema } = createSchemaFactory({
-// 	zodInstance: z,
-// })
 
 // auth.ts
 export const AuthRole = [...authRoles.enumValues] as const
