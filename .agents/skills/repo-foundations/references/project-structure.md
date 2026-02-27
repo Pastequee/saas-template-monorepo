@@ -18,6 +18,6 @@ packages/
 
 ## Workspace Imports
 
-- Use `@repo/<package>` for cross-package imports (e.g., `@repo/db`, `@repo/auth`, `@repo/backend`, `@repo/env`)
+- Use `@repo/<package>` for cross-package imports (e.g., `@repo/db`, `@repo/auth`, `@repo/server`, `@repo/env`)
 - Use `#<path>` for internal imports in backend (configured via tsconfig paths in `packages/server`)
 - Use `~/<path>` for internal imports in frontend (configured via tsconfig paths in `apps/web`)

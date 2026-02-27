@@ -1,4 +1,4 @@
-import { app } from '@repo/backend'
+import { app } from '@repo/server'
 import { createFileRoute } from '@tanstack/react-router'
 
 const handler = ({ request }: { request: Request }) => app.fetch(request)

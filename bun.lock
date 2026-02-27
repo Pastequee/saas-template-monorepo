@@ -24,7 +24,7 @@
         "@dnd-kit/utilities": "^3.2.2",
         "@elysiajs/eden": "^1.4.8",
         "@fontsource/raleway": "^5.2.8",
-        "@repo/backend": "workspace:*",
+        "@repo/server": "workspace:*",
         "@repo/db": "workspace:*",
         "@repo/env": "workspace:*",
         "@repo/utils": "workspace:*",
@@ -139,7 +139,7 @@
       },
     },
     "packages/server": {
-      "name": "@repo/backend",
+      "name": "@repo/server",
       "dependencies": {
         "@elysiajs/cors": "^1.4.1",
         "@repo/auth": "workspace:*",
@@ -592,7 +592,7 @@
 
     "@repo/auth": ["@repo/auth@workspace:packages/auth"],
 
-    "@repo/backend": ["@repo/backend@workspace:packages/server"],
+    "@repo/server": ["@repo/server@workspace:packages/server"],
 
     "@repo/db": ["@repo/db@workspace:packages/db"],
 
