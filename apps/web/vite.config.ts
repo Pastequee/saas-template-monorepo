@@ -14,9 +14,8 @@ export default defineConfig({
 			enhancedLogs: { enabled: false },
 		}),
 		tanstackStart(),
-		nitro({ preset: 'bun' }),
 		tailwindcss(),
+		nitro({ preset: 'bun' }),
 		react(),
 	],
-	// ssr: { external: ['@repo/backend'] },
 })
