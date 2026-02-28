@@ -6,7 +6,7 @@ on:
 jobs:
   lint:
     name: Lint
-    runs-on: ubicloud-standard-2
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6
@@ -19,7 +19,7 @@ jobs:
 
   typecheck:
     name: Typecheck
-    runs-on: ubicloud-standard-2
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6
@@ -32,7 +32,7 @@ jobs:
 
   tests:
     name: Tests
-    runs-on: ubicloud-standard-2
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     services:
