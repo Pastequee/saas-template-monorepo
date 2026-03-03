@@ -4,10 +4,10 @@ import { useFieldContext } from '~/lib/hooks/form-hook'
 import { Field } from './field'
 import type { FieldProps } from './field'
 
-type TextFieldProps = React.ComponentProps<typeof NumberInput> &
+type NumberFieldProps = React.ComponentProps<typeof NumberInput> &
 	Omit<FieldProps, 'children' | 'error'>
 
-export function TextField({ label, id, optional, className, ...props }: TextFieldProps) {
+export function NumberField({ label, id, optional, className, ...props }: NumberFieldProps) {
 	const field = useFieldContext<number>()
 
 	const errorMessage = (field.state.meta.errors as { message: string }[]).at(0)?.message

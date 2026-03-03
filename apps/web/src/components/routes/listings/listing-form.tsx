@@ -23,7 +23,7 @@ export const ListingForm = withForm({
 			<form.AppField name="description">
 				{(field) => <field.TextField label="Description" />}
 			</form.AppField>
-			<form.AppField name="price">{(field) => <field.TextField label="Price" />}</form.AppField>
+			<form.AppField name="price">{(field) => <field.NumberField label="Price" />}</form.AppField>
 			<ImageUploadField onImageChange={(key) => form.setFieldValue('imageKey', key)} />
 		</>
 	),

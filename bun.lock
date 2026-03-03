@@ -149,7 +149,7 @@
         "@repo/utils": "workspace:*",
         "date-fns": "catalog:",
         "elysia": "catalog:",
-        "evlog": "^2.0.0",
+        "evlog": "^2.1.0",
         "nanoid": "^5.1.6",
         "picocolors": "^1.1.1",
         "zod": "catalog:",
@@ -964,7 +964,7 @@
 
     "events": ["events@3.3.0", "", {}, "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="],
 
-    "evlog": ["evlog@2.0.0", "", { "peerDependencies": { "@nuxt/kit": "^4.3.1", "h3": "^1.15.5", "next": ">=16.1.6", "nitro": "^3.0.1-alpha.2", "nitropack": "^2.13.1", "ofetch": "^1.5.1", "react": ">=19.2.4" }, "optionalPeers": ["@nuxt/kit", "h3", "next", "nitro", "nitropack", "ofetch", "react"] }, "sha512-mI24vtYijRWJMGuwQMYr6LfZ7Xbi2cHfkVvQXWDYcWey1swityCgoag/b1/uKRQZM4dIxPJccvtcLD3cv2ZXtg=="],
+    "evlog": ["evlog@2.1.0", "", { "peerDependencies": { "@nuxt/kit": "^4.3.1", "h3": "^1.15.5", "next": ">=16.1.6", "nitro": "^3.0.1-alpha.2", "nitropack": "^2.13.1", "ofetch": "^1.5.1", "react": ">=19.2.4" }, "optionalPeers": ["@nuxt/kit", "h3", "next", "nitro", "nitropack", "ofetch", "react"] }, "sha512-5eQ6RQmSA/o/6r9rCzi8mQ2dSslObi3m4ed1s9cO3nNTLhzz/fGP5aPPuSuVH9Dqn6HZRTqSkAHVdedrzno1kg=="],
 
     "exact-mirror": ["exact-mirror@0.2.7", "", { "peerDependencies": { "@sinclair/typebox": "^0.34.15" }, "optionalPeers": ["@sinclair/typebox"] }, "sha512-+MeEmDcLA4o/vjK2zujgk+1VTxPR4hdp23qLqkWfStbECtAq9gmsvQa3LW6z/0GXZyHJobrCnmy1cdeE7BjsYg=="],
 

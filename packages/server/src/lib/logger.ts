@@ -3,7 +3,7 @@ import { env } from '@repo/env/web'
 import { Elysia, ElysiaCustomStatusResponse, status as elysiaStatus, StatusMap } from 'elysia'
 import type { Prettify } from 'elysia/types'
 import { createRequestLogger, initLogger } from 'evlog'
-import type { DrainContext, RequestLogger } from 'evlog'
+import type { DrainContext, RequestLogger, SamplingConfig } from 'evlog'
 import { createAxiomDrain } from 'evlog/axiom'
 import { createDrainPipeline } from 'evlog/pipeline'
 
@@ -14,13 +14,23 @@ const pipeline = createDrainPipeline<DrainContext>({
 })
 
 const axiomDrain = pipeline(
-	createAxiomDrain({ dataset: env.AXIOM_DATASET, token: env.AXIOM_API_KEY })
+	createAxiomDrain({
+		dataset: env.AXIOM_DATASET,
+		edgeUrl: 'https://eu-central-1.aws.edge.axiom.co',
+		token: env.AXIOM_API_KEY,
+	})
 )
+
+const samplingConfig: SamplingConfig = {
+	keep: [{ status: 400 }, { duration: 1000 }],
+	rates: { debug: 0, error: 100, info: 10, warn: 40 },
+}
 
 initLogger({
 	drain: env.NODE_ENV === 'development' ? undefined : axiomDrain,
 	enabled: env.NODE_ENV !== 'test',
 	env: { commitHash: env.COMMIT_HASH, environment: env.NODE_ENV, service: 'server' },
+	sampling: env.NODE_ENV === 'development' ? undefined : samplingConfig,
 })
 
 export const logger = () =>
