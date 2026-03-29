@@ -18,7 +18,7 @@ export const app = new Elysia({ prefix: '/api' })
 			origin: [env.VITE_FRONTEND_URL],
 		})
 	)
-	.use(logger())
+	.use(logger)
 	.use(utils)
 	.mount(auth.handler)
 	.use(userRouter)

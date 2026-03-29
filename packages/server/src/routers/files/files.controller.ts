@@ -5,7 +5,7 @@ import { randomUUIDv7 } from 'bun'
 import { Elysia } from 'elysia'
 import { z } from 'zod'
 
-import { authMacro } from '#lib/auth'
+import { authMacro } from '#lib/auth.macros'
 
 import { FileService } from './file.service'
 

@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia'
 
-import { authMacro } from '#lib/auth'
+import { authMacro } from '#lib/auth.macros'
 
 export const userRouter = new Elysia({ name: 'user', tags: ['User'] })
 	.use(authMacro)

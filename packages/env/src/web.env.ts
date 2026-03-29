@@ -31,10 +31,6 @@ export const env = createEnv({
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
 
-		// Axiom (logs)
-		AXIOM_API_KEY: z.string(),
-		AXIOM_DATASET: z.string(),
-
 		// S3 Storage
 		S3_ACCESS_KEY: z.string().optional(),
 		S3_SECRET_KEY: z.string().optional(),

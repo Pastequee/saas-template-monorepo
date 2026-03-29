@@ -4,7 +4,7 @@ import { fileStorage } from '@repo/file-storage'
 import { Elysia } from 'elysia'
 import { z } from 'zod'
 
-import { authMacro } from '#lib/auth'
+import { authMacro } from '#lib/auth.macros'
 
 import { ListingsService } from './listings.service'
 

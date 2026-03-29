@@ -19,7 +19,7 @@ const AuthService = {
 }
 
 export const authMacro = new Elysia({ name: 'auth-macro' })
-	.use(logger())
+	.use(logger)
 	.macro('auth', {
 		resolve: async function authMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
@@ -30,7 +30,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 
 			log.set({
 				user: {
-					accountAge: daysSince(session.user.createdAt),
+					accountAgeDays: daysSince(session.user.createdAt),
 					authRole: session.user.role,
 					id: session.user.id,
 				},
@@ -47,6 +47,35 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 			}
 		},
 	})
+
+	.macro('maybeAuth', {
+		resolve: async function maybeAuthMiddleware({ request: { headers }, log }) {
+			const session = await auth.api.getSession({ headers })
+
+			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
+				return
+			}
+
+			log.set({
+				user: {
+					accountAgeDays: daysSince(session.user.createdAt),
+					authRole: session.user.role,
+					id: session.user.id,
+				},
+			})
+
+			return {
+				session: session.session,
+				user: {
+					...session.user,
+
+					// Need to help type inference here
+					role: session.user.role as AuthRole,
+				},
+			}
+		},
+	})
+
 	.macro('authAdmin', {
 		resolve: async function authAdminMiddleware({ request: { headers }, log, statusError }) {
 			const session = await auth.api.getSession({ headers })
@@ -57,7 +86,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 
 			log.set({
 				user: {
-					accountAge: daysSince(session.user.createdAt),
+					accountAgeDays: daysSince(session.user.createdAt),
 					authRole: session.user.role,
 					id: session.user.id,
 				},
@@ -70,6 +99,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 			return { session: session.session, user: { ...session.user, role: session.user.role } }
 		},
 	})
+
 	.macro(
 		'role',
 		(asked: Role | [Omit<Role, 'superadmin'> | [Omit<Role, 'superadmin'>], ...Role[]]) => ({
@@ -84,7 +114,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 
 				log.set({
 					user: {
-						accountAge: daysSince(session.user.createdAt),
+						accountAgeDays: daysSince(session.user.createdAt),
 						authRole: session.user.role,
 						id: session.user.id,
 						roles: userRoles.map((userRole) => userRole.role),

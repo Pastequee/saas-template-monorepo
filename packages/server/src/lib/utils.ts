@@ -3,7 +3,7 @@ import { env } from '@repo/env/web'
 import { tryCatch } from '@repo/utils'
 import { Elysia } from 'elysia'
 
-import { authMacro } from './auth'
+import { authMacro } from './auth.macros'
 
 export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 	.onError(({ status, code }) => {
