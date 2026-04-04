@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
 
-dotenv.config({ path: '../../apps/web/.env.local' })
+dotenv.config({ path: '../../apps/server/.env' })
 
 const { DATABASE_URL } = process.env
 if (!DATABASE_URL) {

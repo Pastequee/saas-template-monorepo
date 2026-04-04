@@ -16,7 +16,6 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedListingIdRouteImport } from './routes/_authenticated/listing.$id'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as ApiSplatRouteImport } from './routes/api/$'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 	id: '/_authenticated',
@@ -30,11 +29,6 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
 	id: '/',
 	path: '/',
 	getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-	id: '/api/$',
-	path: '/api/$',
-	getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
 	id: '/account',
@@ -62,7 +56,6 @@ export interface FileRoutesByFullPath {
 	'/login': typeof AuthLoginRoute
 	'/register': typeof AuthRegisterRoute
 	'/account': typeof AuthenticatedAccountRoute
-	'/api/$': typeof ApiSplatRoute
 	'/listing/$id': typeof AuthenticatedListingIdRoute
 }
 export interface FileRoutesByTo {
@@ -70,7 +63,6 @@ export interface FileRoutesByTo {
 	'/login': typeof AuthLoginRoute
 	'/register': typeof AuthRegisterRoute
 	'/account': typeof AuthenticatedAccountRoute
-	'/api/$': typeof ApiSplatRoute
 	'/listing/$id': typeof AuthenticatedListingIdRoute
 }
 export interface FileRoutesById {
@@ -80,15 +72,14 @@ export interface FileRoutesById {
 	'/_auth/login': typeof AuthLoginRoute
 	'/_auth/register': typeof AuthRegisterRoute
 	'/_authenticated/account': typeof AuthenticatedAccountRoute
-	'/api/$': typeof ApiSplatRoute
 	'/_authenticated/': typeof AuthenticatedIndexRoute
 	'/_authenticated/listing/$id': typeof AuthenticatedListingIdRoute
 }
 export interface FileRouteTypes {
 	fileRoutesByFullPath: FileRoutesByFullPath
-	fullPaths: '/' | '/login' | '/register' | '/account' | '/api/$' | '/listing/$id'
+	fullPaths: '/' | '/login' | '/register' | '/account' | '/listing/$id'
 	fileRoutesByTo: FileRoutesByTo
-	to: '/' | '/login' | '/register' | '/account' | '/api/$' | '/listing/$id'
+	to: '/' | '/login' | '/register' | '/account' | '/listing/$id'
 	id:
 		| '__root__'
 		| '/_auth'
@@ -96,7 +87,6 @@ export interface FileRouteTypes {
 		| '/_auth/login'
 		| '/_auth/register'
 		| '/_authenticated/account'
-		| '/api/$'
 		| '/_authenticated/'
 		| '/_authenticated/listing/$id'
 	fileRoutesById: FileRoutesById
@@ -104,7 +94,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
 	AuthRouteRoute: typeof AuthRouteRouteWithChildren
 	AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-	ApiSplatRoute: typeof ApiSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -129,13 +118,6 @@ declare module '@tanstack/react-router' {
 			fullPath: '/'
 			preLoaderRoute: typeof AuthenticatedIndexRouteImport
 			parentRoute: typeof AuthenticatedRouteRoute
-		}
-		'/api/$': {
-			id: '/api/$'
-			path: '/api/$'
-			fullPath: '/api/$'
-			preLoaderRoute: typeof ApiSplatRouteImport
-			parentRoute: typeof rootRouteImport
 		}
 		'/_authenticated/account': {
 			id: '/_authenticated/account'
@@ -199,7 +181,6 @@ const AuthenticatedRouteRouteWithChildren = AuthenticatedRouteRoute._addFileChil
 const rootRouteChildren: RootRouteChildren = {
 	AuthRouteRoute: AuthRouteRouteWithChildren,
 	AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-	ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport
 	._addFileChildren(rootRouteChildren)

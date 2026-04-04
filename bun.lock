@@ -14,6 +14,30 @@
         "ultracite": "7.2.3",
       },
     },
+    "apps/server": {
+      "name": "@repo/server",
+      "dependencies": {
+        "@elysiajs/cors": "^1.4.1",
+        "@repo/auth": "workspace:*",
+        "@repo/db": "workspace:*",
+        "@repo/env": "workspace:*",
+        "@repo/file-storage": "workspace:*",
+        "@repo/utils": "workspace:*",
+        "date-fns": "catalog:",
+        "elysia": "catalog:",
+        "evlog": "^2.10.0",
+        "nanoid": "^5.1.7",
+        "picocolors": "^1.1.1",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@elysiajs/eden": "^1.4.8",
+        "@repo/tsconfig": "workspace:*",
+        "@types/bun": "catalog:",
+        "@types/pg": "catalog:",
+        "@typescript/native-preview": "catalog:",
+      },
+    },
     "apps/web": {
       "name": "@repo/web",
       "dependencies": {
@@ -136,30 +160,6 @@
       "devDependencies": {
         "@repo/tsconfig": "workspace:*",
         "@types/bun": "catalog:",
-      },
-    },
-    "packages/server": {
-      "name": "@repo/server",
-      "dependencies": {
-        "@elysiajs/cors": "^1.4.1",
-        "@repo/auth": "workspace:*",
-        "@repo/db": "workspace:*",
-        "@repo/env": "workspace:*",
-        "@repo/file-storage": "workspace:*",
-        "@repo/utils": "workspace:*",
-        "date-fns": "catalog:",
-        "elysia": "catalog:",
-        "evlog": "^2.10.0",
-        "nanoid": "^5.1.7",
-        "picocolors": "^1.1.1",
-        "zod": "catalog:",
-      },
-      "devDependencies": {
-        "@elysiajs/eden": "^1.4.8",
-        "@repo/tsconfig": "workspace:*",
-        "@types/bun": "catalog:",
-        "@types/pg": "catalog:",
-        "@typescript/native-preview": "catalog:",
       },
     },
     "packages/ts-config": {
@@ -530,7 +530,7 @@
 
     "@repo/file-storage": ["@repo/file-storage@workspace:packages/file-storage"],
 
-    "@repo/server": ["@repo/server@workspace:packages/server"],
+    "@repo/server": ["@repo/server@workspace:apps/server"],
 
     "@repo/tsconfig": ["@repo/tsconfig@workspace:packages/ts-config"],
 

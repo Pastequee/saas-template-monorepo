@@ -1,4 +1,4 @@
-import { env } from '@repo/env/web'
+import { env } from '@repo/env/server'
 import type { StatusMap } from 'elysia'
 import { Elysia, status as elysiaStatus } from 'elysia'
 import type { Prettify } from 'elysia/types'

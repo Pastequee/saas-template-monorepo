@@ -10,8 +10,8 @@ import { admin, lastLoginMethod } from 'better-auth/plugins'
 export const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
 	secret: env.BETTER_AUTH_SECRET,
-	baseURL: env.VITE_SERVER_URL,
-	trustedOrigins: [env.VITE_FRONTEND_URL],
+	baseURL: env.SERVER_URL,
+	trustedOrigins: [env.WEB_URL],
 	advanced: {
 		database: {
 			generateId: 'uuid',

@@ -1,4 +1,4 @@
-import { env } from '@repo/env/web'
+import { env } from '@repo/env/server'
 import { sql } from 'drizzle-orm/sql'
 
 import { db } from '.'

@@ -1,5 +1,5 @@
 import { db, sql } from '@repo/db'
-import { env } from '@repo/env/web'
+import { env } from '@repo/env/server'
 import { tryCatch } from '@repo/utils'
 import { Elysia } from 'elysia'
 

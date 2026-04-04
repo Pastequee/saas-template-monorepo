@@ -3,7 +3,8 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./web": "./src/web.env.ts"
+		"./web": "./src/web.env.ts",
+		"./server": "./src/server.env.ts"
 	},
 	"dependencies": {
 		"@t3-oss/env-core": "catalog:",

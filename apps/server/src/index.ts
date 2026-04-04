@@ -1,6 +1,6 @@
 import { cors } from '@elysiajs/cors'
 import { auth } from '@repo/auth'
-import { env } from '@repo/env/web'
+import { env } from '@repo/env/server'
 import { Elysia } from 'elysia'
 
 import { logger } from '#lib/logger'
@@ -15,7 +15,7 @@ export const app = new Elysia({ prefix: '/api' })
 			allowedHeaders: ['Content-Type', 'Authorization'],
 			credentials: true,
 			methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'HEAD', 'OPTIONS'],
-			origin: [env.VITE_FRONTEND_URL],
+			origin: [env.WEB_URL],
 		})
 	)
 	.use(logger)
@@ -25,19 +25,16 @@ export const app = new Elysia({ prefix: '/api' })
 	.use(listingsRouter)
 	.use(filesRouter)
 
-// Only for standalone server version
-// app.listen(3001, ({ url }) => {
-// 	console.info(`Server is running on ${url}`)
+app.listen(3001, ({ url }) => {
+	console.info(`Server is running on ${url}`)
 
-// 	process.on('SIGTERM', async () => {
-// 		await app.stop()
-// 		process.exit(0)
-// 	})
+	process.on('SIGTERM', async () => {
+		await app.stop()
+		process.exit(0)
+	})
 
-// 	process.on('SIGINT', async () => {
-// 		await app.stop()
-// 		process.exit(0)
-// 	})
-// })
-
-export type App = typeof app
+	process.on('SIGINT', async () => {
+		await app.stop()
+		process.exit(0)
+	})
+})
