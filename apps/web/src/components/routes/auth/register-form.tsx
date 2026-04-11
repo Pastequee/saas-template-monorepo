@@ -5,12 +5,9 @@ import { useState } from 'react'
 import { z } from 'zod'
 
 import { Alert, AlertTitle } from '~/components/ui/alert'
-import { Separator } from '~/components/ui/separator'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
 import { DEFAULT_ERROR_MESSAGE } from '~/lib/utils/constants'
-
-import { GoogleSignInButton } from './google-sign-in-button'
 
 const formSchema = z.object({
 	email: z.email('Invalid email address').nonempty('Name is required'),
@@ -90,14 +87,6 @@ export const RegisterForm = () => {
 			<form.AppForm>
 				<form.SubmitButton>Créer un compte</form.SubmitButton>
 			</form.AppForm>
-
-			<div className="my-2 flex items-center gap-4">
-				<Separator className="flex-1" />
-				<span className="text-muted-foreground text-sm">OU</span>
-				<Separator className="flex-1" />
-			</div>
-
-			<GoogleSignInButton onError={setSignUpResponseError} />
 		</form>
 	)
 }

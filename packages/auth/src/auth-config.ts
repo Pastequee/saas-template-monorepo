@@ -35,13 +35,6 @@ export const createAuth = () =>
 
 		secret: env.BETTER_AUTH_SECRET,
 
-		socialProviders: {
-			google: {
-				clientId: env.GOOGLE_CLIENT_ID,
-				clientSecret: env.GOOGLE_CLIENT_SECRET,
-			},
-		},
-
 		trustedOrigins: [env.WEB_URL],
 	})
 

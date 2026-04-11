@@ -28,8 +28,6 @@ export const env = createEnv({
 
 		// Better Auth
 		BETTER_AUTH_SECRET: z.string(),
-		GOOGLE_CLIENT_ID: z.string(),
-		GOOGLE_CLIENT_SECRET: z.string(),
 
 		// S3 Storage
 		S3_ACCESS_KEY: z.string().optional(),
