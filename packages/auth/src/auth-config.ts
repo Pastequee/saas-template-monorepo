@@ -1,3 +1,4 @@
+import { expo } from '@better-auth/expo'
 import { db } from '@repo/db'
 import { mail } from '@repo/email'
 import { env } from '@repo/env/server'
@@ -31,7 +32,7 @@ export const createAuth = () =>
 			joins: false,
 		},
 
-		plugins: [admin(), lastLoginMethod()],
+		plugins: [admin(), lastLoginMethod(), expo()],
 
 		secret: env.BETTER_AUTH_SECRET,
 
