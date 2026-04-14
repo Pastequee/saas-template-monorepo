@@ -27,7 +27,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
 	head: () => ({
 		links: [{ href: appCss, rel: 'stylesheet' }],
 		meta: [
-			{ charSet: 'utf8' },
+			{ charSet: 'utf-8' },
 			{ content: 'width=device-width, initial-scale=1', name: 'viewport' },
 			...seo({
 				description: 'A starter for TanStack Start, Elysia and better-auth',

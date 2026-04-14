@@ -8,7 +8,7 @@
 	},
 	"dependencies": {
 		"@repo/env": "workspace:*",
-		"resend": "^6.9.4"
+		"resend": "^6.11.0"
 	},
 	"devDependencies": {
 		"@repo/tsconfig": "workspace:*",
