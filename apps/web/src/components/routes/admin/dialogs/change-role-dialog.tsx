@@ -79,7 +79,16 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 
 				<div className="space-y-2">
 					<Label htmlFor="role-select">Role</Label>
-					<Select onValueChange={(v) => setSelectedRole(v as AuthRole)} value={selectedRole}>
+					<Select
+						onValueChange={(v) => {
+							if (!v) {
+								return
+							}
+							// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+							setSelectedRole(v)
+						}}
+						value={selectedRole}
+					>
 						<SelectTrigger id="role-select">
 							<SelectValue>Select a role</SelectValue>
 						</SelectTrigger>
@@ -99,10 +108,19 @@ export function ChangeRoleDialog({ user, open, onOpenChange, onSuccess }: Props)
 				</div>
 
 				<DialogFooter>
-					<Button onClick={() => handleOpenChange(false)} type="button" variant="outline">
+					<Button
+						onClick={() => {
+							handleOpenChange(false)
+						}}
+						type="button"
+						variant="outline"
+					>
 						Cancel
 					</Button>
-					<Button disabled={isSubmitting || selectedRole === currentRole} onClick={handleSubmit}>
+					<Button
+						disabled={isSubmitting || selectedRole === currentRole}
+						onClick={() => void handleSubmit()}
+					>
 						{isSubmitting ? 'Saving...' : 'Change Role'}
 					</Button>
 				</DialogFooter>

@@ -39,7 +39,7 @@ export function ImpersonationBanner() {
 
 		toast.success('Stopped impersonating')
 
-		router.navigate({ to: '/' })
+		await router.navigate({ to: '/' })
 	}
 
 	return (
@@ -53,7 +53,7 @@ export function ImpersonationBanner() {
 			<Button
 				className="h-7 border-amber-700 bg-amber-600 text-amber-950 hover:bg-amber-400"
 				disabled={isLoading}
-				onClick={handleStopImpersonation}
+				onClick={() => void handleStopImpersonation()}
 				size="sm"
 				variant="outline"
 			>

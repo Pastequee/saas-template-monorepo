@@ -5,6 +5,7 @@ import { Navbar } from '~/components/navigation/navbar'
 export const Route = createFileRoute('/_authenticated')({
 	beforeLoad: ({ context, location }) => {
 		if (!context.auth) {
+			// oxlint-disable-next-line typescript/only-throw-error
 			throw redirect({ search: { redirect: location.pathname }, to: '/login' })
 		}
 		return { auth: context.auth }

@@ -68,10 +68,16 @@ export function ImpersonateConfirmDialog({ user, open, onOpenChange }: Props) {
 				</div>
 
 				<DialogFooter>
-					<Button onClick={() => onOpenChange(false)} type="button" variant="outline">
+					<Button
+						onClick={() => {
+							onOpenChange(false)
+						}}
+						type="button"
+						variant="outline"
+					>
 						Cancel
 					</Button>
-					<Button disabled={isSubmitting} onClick={handleImpersonate}>
+					<Button disabled={isSubmitting} onClick={() => void handleImpersonate()}>
 						{isSubmitting ? 'Starting...' : 'Start Impersonation'}
 					</Button>
 				</DialogFooter>

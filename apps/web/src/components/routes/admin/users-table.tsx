@@ -53,7 +53,12 @@ const columns: ColumnDef<UserWithRole>[] = [
 			</div>
 		),
 		header: ({ column }) => (
-			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+			<Button
+				onClick={() => {
+					column.toggleSorting(column.getIsSorted() === 'asc')
+				}}
+				variant="ghost"
+			>
 				Name
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
@@ -72,7 +77,12 @@ const columns: ColumnDef<UserWithRole>[] = [
 			</div>
 		),
 		header: ({ column }) => (
-			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+			<Button
+				onClick={() => {
+					column.toggleSorting(column.getIsSorted() === 'asc')
+				}}
+				variant="ghost"
+			>
 				Email
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
@@ -105,7 +115,12 @@ const columns: ColumnDef<UserWithRole>[] = [
 			return <span className="text-muted-foreground text-sm">{date.toLocaleDateString()}</span>
 		},
 		header: ({ column }) => (
-			<Button onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} variant="ghost">
+			<Button
+				onClick={() => {
+					column.toggleSorting(column.getIsSorted() === 'asc')
+				}}
+				variant="ghost"
+			>
 				Created
 				<ArrowUpDown className="ml-2 size-4" />
 			</Button>
@@ -130,7 +145,7 @@ function UserActions({ user }: { user: UserWithRole }) {
 
 	// Callback to invalidate users query after action
 	const onActionComplete = () => {
-		queryClient.invalidateQueries({ queryKey: keys.admin.users.list() })
+		void queryClient.invalidateQueries({ queryKey: keys.admin.users.list() })
 	}
 
 	return (
@@ -147,19 +162,31 @@ function UserActions({ user }: { user: UserWithRole }) {
 					<DropdownMenuSeparator />
 
 					{/* Change Password */}
-					<DropdownMenuItem onSelect={() => setPasswordDialogOpen(true)}>
+					<DropdownMenuItem
+						onSelect={() => {
+							setPasswordDialogOpen(true)
+						}}
+					>
 						<KeyRound className="mr-2 size-4" />
 						Change Password
 					</DropdownMenuItem>
 
 					{/* Change Role */}
-					<DropdownMenuItem onSelect={() => setRoleDialogOpen(true)}>
+					<DropdownMenuItem
+						onSelect={() => {
+							setRoleDialogOpen(true)
+						}}
+					>
 						<Shield className="mr-2 size-4" />
 						Change Role
 					</DropdownMenuItem>
 
 					{/* Ban/Unban */}
-					<DropdownMenuItem onSelect={() => setBanDialogOpen(true)}>
+					<DropdownMenuItem
+						onSelect={() => {
+							setBanDialogOpen(true)
+						}}
+					>
 						{user.banned ? (
 							<>
 								<UserCheck className="mr-2 size-4" />
@@ -176,7 +203,11 @@ function UserActions({ user }: { user: UserWithRole }) {
 					<DropdownMenuSeparator />
 
 					{/* Impersonate */}
-					<DropdownMenuItem onSelect={() => setImpersonateDialogOpen(true)}>
+					<DropdownMenuItem
+						onSelect={() => {
+							setImpersonateDialogOpen(true)
+						}}
+					>
 						<Users className="mr-2 size-4" />
 						Impersonate
 					</DropdownMenuItem>
@@ -256,7 +287,9 @@ export function UsersTable() {
 			<div className="flex items-center gap-4">
 				<Input
 					className="max-w-sm"
-					onChange={(e) => setGlobalFilter(e.target.value)}
+					onChange={(e) => {
+						setGlobalFilter(e.target.value)
+					}}
 					placeholder="Search users..."
 					value={globalFilter}
 				/>

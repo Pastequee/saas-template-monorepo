@@ -12,7 +12,7 @@ export const SubmitButton = ({
 	return (
 		<form.Subscribe selector={(state) => [state.isSubmitting]}>
 			{([isSubmitting]) => (
-				<Button disabled={disabled || isSubmitting} {...props} nativeButton type="submit">
+				<Button disabled={disabled ?? isSubmitting} {...props} nativeButton type="submit">
 					{children}
 					{isSubmitting && <Spinner className="ml-2" />}
 				</Button>

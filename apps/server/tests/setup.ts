@@ -11,17 +11,17 @@ beforeAll(async () => {
 	testDb = await createTestDb()
 
 	// Mock the db module so all imports use the test DB instance.
-	mock.module('@repo/db', () => ({
+	await mock.module('@repo/db', () => ({
 		db: testDb,
 	}))
 
-	mock.module('@repo/file-storage', () => ({
+	await mock.module('@repo/file-storage', () => ({
 		fileStorage: fileStorageMock,
 	}))
 
 	const testAuth = createAuth()
 
-	mock.module('@repo/auth', () => ({ auth: testAuth, default: testAuth }))
+	await mock.module('@repo/auth', () => ({ auth: testAuth, default: testAuth }))
 })
 
 beforeEach(async () => {

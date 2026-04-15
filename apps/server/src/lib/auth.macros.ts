@@ -2,6 +2,7 @@ import { auth } from '@repo/auth'
 import { db } from '@repo/db'
 import { AuthRole } from '@repo/db/types'
 import type { Role } from '@repo/db/types'
+import { enumContains } from '@repo/utils'
 import { Elysia } from 'elysia'
 
 import { logger } from './logger'
@@ -14,7 +15,8 @@ const AuthService = {
 		if (!role) {
 			return false
 		}
-		return AuthRole.includes(role as AuthRole)
+
+		return enumContains(AuthRole, role)
 	},
 }
 
@@ -42,7 +44,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 					...session.user,
 
 					// Need to help type inference here
-					role: session.user.role as AuthRole,
+					role: session.user.role,
 				},
 			}
 		},
@@ -68,9 +70,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				session: session.session,
 				user: {
 					...session.user,
-
-					// Need to help type inference here
-					role: session.user.role as AuthRole,
+					role: session.user.role,
 				},
 			}
 		},

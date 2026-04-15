@@ -9,7 +9,7 @@ export const useAuth = () => {
 	const logout = async () => {
 		await authClient.signOut()
 		queryClient.clear()
-		navigate({ to: '/login' })
+		await navigate({ to: '/login' })
 	}
 
 	if (!auth) {

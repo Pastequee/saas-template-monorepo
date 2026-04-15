@@ -43,7 +43,7 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 
 	// Form state for ban action
 	const [banReason, setBanReason] = useState('')
-	const [banDuration, setBanDuration] = useState<number>(60 * 60 * 24) // Default: 1 day
+	const [banDuration, setBanDuration] = useState(60 * 60 * 24) // Default: 1 day
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const resetForm = () => {
@@ -120,10 +120,16 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 					)}
 
 					<DialogFooter>
-						<Button onClick={() => handleOpenChange(false)} type="button" variant="outline">
+						<Button
+							onClick={() => {
+								handleOpenChange(false)
+							}}
+							type="button"
+							variant="outline"
+						>
 							Cancel
 						</Button>
-						<Button disabled={isSubmitting} onClick={handleUnban}>
+						<Button disabled={isSubmitting} onClick={() => void handleUnban()}>
 							{isSubmitting ? 'Unblocking...' : 'Unblock User'}
 						</Button>
 					</DialogFooter>
@@ -147,7 +153,9 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 						<Label htmlFor="ban-reason">Reason (optional)</Label>
 						<Input
 							id="ban-reason"
-							onChange={(e) => setBanReason(e.target.value)}
+							onChange={(e) => {
+								setBanReason(e.target.value)
+							}}
 							placeholder="Enter a reason for blocking..."
 							value={banReason}
 						/>
@@ -155,7 +163,12 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 
 					<div className="space-y-2">
 						<Label htmlFor="ban-duration">Duration</Label>
-						<Select onValueChange={(v) => setBanDuration(Number(v))} value={String(banDuration)}>
+						<Select
+							onValueChange={(v) => {
+								setBanDuration(Number(v))
+							}}
+							value={String(banDuration)}
+						>
 							<SelectTrigger id="ban-duration">
 								<SelectValue>Select duration</SelectValue>
 							</SelectTrigger>
@@ -171,10 +184,16 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 				</div>
 
 				<DialogFooter>
-					<Button onClick={() => handleOpenChange(false)} type="button" variant="outline">
+					<Button
+						onClick={() => {
+							handleOpenChange(false)
+						}}
+						type="button"
+						variant="outline"
+					>
 						Cancel
 					</Button>
-					<Button disabled={isSubmitting} onClick={handleBan} variant="destructive">
+					<Button disabled={isSubmitting} onClick={() => void handleBan()} variant="destructive">
 						{isSubmitting ? 'Blocking...' : 'Block User'}
 					</Button>
 				</DialogFooter>

@@ -60,7 +60,7 @@ function NewListingForm({ onClose }: { onClose: () => void }) {
 			className="flex flex-col gap-4"
 			onSubmit={(e) => {
 				e.preventDefault()
-				form.handleSubmit()
+				void form.handleSubmit()
 			}}
 		>
 			<ListingForm form={form} />

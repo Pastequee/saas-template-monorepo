@@ -3,7 +3,6 @@
 import type { Treaty } from '@elysiajs/eden'
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
 import type {
-	QueryKey,
 	UndefinedInitialDataOptions,
 	UseMutationOptions,
 	UseQueryOptions,
@@ -31,7 +30,7 @@ type EdenQueryOptionsProps<
 	TEdenQueryFn extends EdenQueryFn,
 	TData = ExtractData<Awaited<ReturnType<TEdenQueryFn>>>,
 	TError = ExtractError<Awaited<ReturnType<TEdenQueryFn>>>,
-> = UndefinedInitialDataOptions<TData, TError, TData, QueryKey> & {
+> = UndefinedInitialDataOptions<TData, TError, TData> & {
 	edenQuery: TEdenQueryFn
 } & (IsOptional<ExtractOptions<TEdenQueryFn>> extends true
 		? { edenOptions?: ExtractOptions<TEdenQueryFn> }
@@ -45,20 +44,19 @@ export function edenQueryOption<
 	edenQuery,
 	edenOptions,
 	...options
-}: EdenQueryOptionsProps<TEdenQueryFn, TData, TError>): UseQueryOptions<
-	TData,
-	TError,
-	TData,
-	QueryKey
-> {
+}: EdenQueryOptionsProps<TEdenQueryFn, TData, TError>): UseQueryOptions<TData, TError, TData> {
 	return queryOptions({
 		...options,
 		queryFn: async () => {
-			const { data, error } = await edenQuery(edenOptions)
-			if (error) {
-				throw error
+			const response = await edenQuery(edenOptions)
+
+			if (response.error) {
+				// oxlint-disable-next-line typescript/only-throw-error
+				throw response.error
 			}
-			return data
+
+			// oxlint-disable-next-line typescript/no-unsafe-return
+			return response.data
 		},
 	})
 }
@@ -82,11 +80,15 @@ export function edenMutationOption<
 	return mutationOptions({
 		...options,
 		mutationFn: async (body: Parameters<TEdenQueryFn>[0]) => {
-			const { data, error } = await edenMutation(body, edenOptions)
-			if (error) {
-				throw error
+			const response = await edenMutation(body, edenOptions)
+
+			if (response.error) {
+				// oxlint-disable-next-line typescript/only-throw-error
+				throw response.error
 			}
-			return data
+
+			// oxlint-disable-next-line typescript/no-unsafe-return
+			return response.data
 		},
 	})
 }

@@ -17,22 +17,30 @@ const client = new S3Client({
 })
 
 export const fileStorage: FileStorage = {
-	delete: (key) => client.delete(key),
+	delete: async (key) => client.delete(key),
 
-	exists: (key) => client.exists(key),
+	exists: async (key) => client.exists(key),
 
-	getUploadUrl: (key, options) =>
-		client.presign(key, {
-			acl: options?.public ? 'public-read' : 'private',
-			expiresIn: options?.expiresIn ?? ONE_HOUR_IN_SECONDS,
+	getUploadUrl: (key, options) => {
+		const isPublic = options?.public ?? false
+		const expiresIn = options?.expiresIn ?? ONE_HOUR_IN_SECONDS
+
+		return client.presign(key, {
+			acl: isPublic ? 'public-read' : 'private',
+			expiresIn,
 			method: 'PUT',
-		}),
+		})
+	},
 
 	getUrl: (key, options) => {
-		if (options?.public) {
+		const isPublic = options?.public ?? false
+
+		if (isPublic) {
 			return `${bucketConfig.endpoint}/${key}`
 		}
 
-		return client.presign(key, { expiresIn: options?.expiresIn ?? ONE_HOUR_IN_SECONDS })
+		const expiresIn = options?.expiresIn ?? ONE_HOUR_IN_SECONDS
+
+		return client.presign(key, { expiresIn })
 	},
 }

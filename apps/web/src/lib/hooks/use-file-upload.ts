@@ -36,7 +36,7 @@ export type FileUploadOptions = {
 
 // ── Image processing (Canvas API) ─────────────────────────────────────
 
-function processImage(
+async function processImage(
 	file: File,
 	opts: { maxWidth: number; maxHeight: number; quality: number }
 ): Promise<Blob> {
@@ -58,7 +58,8 @@ function processImage(
 			canvas.height = height
 			const ctx = canvas.getContext('2d')
 			if (!ctx) {
-				return reject(new Error("Impossible d'obtenir le contexte du canvas"))
+				reject(new Error("Impossible d'obtenir le contexte du canvas"))
+				return
 			}
 
 			ctx.drawImage(img, 0, 0, width, height)
@@ -87,7 +88,7 @@ function processImage(
 
 // ── S3 upload via XHR (for progress) ──────────────────────────────────
 
-function uploadToS3(
+async function uploadToS3(
 	url: string,
 	blob: Blob,
 	onProgress: (pct: number) => void,
@@ -112,8 +113,12 @@ function uploadToS3(
 			}
 		})
 
-		xhr.addEventListener('error', () => reject(new Error("Erreur réseau lors de l'upload S3")))
-		xhr.addEventListener('abort', () => reject(new Error('Upload annulé')))
+		xhr.addEventListener('error', () => {
+			reject(new Error("Erreur réseau lors de l'upload S3"))
+		})
+		xhr.addEventListener('abort', () => {
+			reject(new Error('Upload annulé'))
+		})
 
 		xhr.open('PUT', url)
 		xhr.setRequestHeader('Content-Type', 'image/webp')
@@ -144,7 +149,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 	const cleanup = useEffectEvent(() => {
 		for (const file of state.files) {
-			if (file.preview) {
+			if (file.preview !== undefined) {
 				URL.revokeObjectURL(file.preview)
 			}
 		}
@@ -187,7 +192,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 				size: blob.size,
 			})
 
-			if (error || !data) {
+			if (error || data === undefined) {
 				throw new Error("Impossible d'obtenir l'URL signée")
 			}
 
@@ -199,7 +204,9 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			const uploadPromise = uploadToS3(
 				data.url,
 				blob,
-				(pct) => updateFile(entry.id, { progress: pct }),
+				(pct) => {
+					updateFile(entry.id, { progress: pct })
+				},
 				signal
 			)
 
@@ -228,7 +235,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 	// ── Public API ───────────────────────────────────────────────────────
 
 	const addFiles = (files: FileList | File[]) => {
-		if (!files || (files instanceof FileList && files.length === 0)) {
+		if (files === undefined || (files instanceof FileList && files.length === 0)) {
 			return
 		}
 
@@ -277,7 +284,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			// Revoke old previews when replacing in single mode
 			if (!multiple) {
 				for (const f of prev.files) {
-					if (f.preview) {
+					if (f.preview !== undefined) {
 						URL.revokeObjectURL(f.preview)
 					}
 				}
@@ -291,7 +298,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 		// Kick off uploads
 		for (const entry of entries) {
-			uploadFile(entry)
+			void uploadFile(entry)
 		}
 
 		if (inputRef.current) {
@@ -305,7 +312,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 		setState((prev) => {
 			const target = prev.files.find((f) => f.id === id)
-			if (target?.preview) {
+			if (target?.preview !== undefined) {
 				URL.revokeObjectURL(target.preview)
 			}
 
@@ -320,7 +327,7 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 		setState((prev) => {
 			for (const f of prev.files) {
-				if (f.preview) {
+				if (f.preview !== undefined) {
 					URL.revokeObjectURL(f.preview)
 				}
 			}
@@ -333,15 +340,19 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 		}
 	}
 
-	const clearErrors = () => setState((prev) => ({ ...prev, errors: [] }))
+	const clearErrors = () => {
+		setState((prev) => ({ ...prev, errors: [] }))
+	}
 
 	const openFileDialog = () => inputRef.current?.click()
 
 	const getInputProps = (props: InputHTMLAttributes<HTMLInputElement> = {}) => ({
 		...props,
-		accept: props.accept || accept,
-		multiple: props.multiple === undefined ? multiple : props.multiple,
-		onChange: (e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files ?? []),
+		accept: props.accept ?? accept,
+		multiple: props.multiple ?? multiple,
+		onChange: (e: ChangeEvent<HTMLInputElement>) => {
+			addFiles(e.target.files ?? [])
+		},
 		ref: inputRef,
 		type: 'file' as const,
 	})

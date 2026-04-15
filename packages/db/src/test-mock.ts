@@ -10,10 +10,10 @@ export const createTestDb = async () => {
 	const { createRequire } = await import('node:module')
 	const require = createRequire(import.meta.url)
 	const { pushSchema } =
-		// oxlint-disable-next-line typescript/consistent-type-imports
+		// oxlint-disable-next-line typescript/consistent-type-imports, typescript/no-unsafe-type-assertion
 		require('drizzle-kit/api-postgres') as typeof import('drizzle-kit/api-postgres')
 
-	// oxlint-disable-next-line typescript/no-explicit-any
+	// oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unsafe-argument, typescript/no-unsafe-type-assertion
 	const { apply } = await pushSchema(schema, db as any, 'snake_case')
 	await apply()
 

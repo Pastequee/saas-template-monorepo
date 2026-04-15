@@ -28,13 +28,15 @@ export const app = new Elysia({ prefix: '/api' })
 app.listen(3001, ({ url }) => {
 	console.info(`Server is running on ${url}`)
 
-	process.on('SIGTERM', async () => {
-		await app.stop()
-		process.exit(0)
+	process.on('SIGTERM', () => {
+		void app.stop().finally(() => {
+			process.exit(0)
+		})
 	})
 
-	process.on('SIGINT', async () => {
-		await app.stop()
-		process.exit(0)
+	process.on('SIGINT', () => {
+		void app.stop().finally(() => {
+			process.exit(0)
+		})
 	})
 })

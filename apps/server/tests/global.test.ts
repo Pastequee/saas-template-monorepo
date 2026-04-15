@@ -28,8 +28,10 @@ describe('Global', () => {
 
 	it('404 endpoint works', async () => {
 		// @ts-expect-error - This is a test of an unknown endpoint
+		// oxlint-disable-next-line no-unsafe-assignment no-unsafe-member-access no-unsafe-call
 		const notFoundResponse = await api.notFound.get()
 
+		// oxlint-disable-next-line no-unsafe-member-access
 		expect(notFoundResponse.status).toBe(404)
 	})
 

@@ -23,7 +23,9 @@ function Home() {
 			<div className="flex items-center gap-2">
 				<Input
 					className="flex-1"
-					onChange={(e) => setSearch(e.target.value)}
+					onChange={(e) => {
+						setSearch(e.target.value)
+					}}
 					placeholder="Rechercher une annonce"
 					value={search}
 				/>

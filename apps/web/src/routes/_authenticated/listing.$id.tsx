@@ -24,7 +24,7 @@ function RouteComponent() {
 		if (canGoBack) {
 			router.history.back()
 		} else {
-			router.navigate({ to: '/' })
+			void router.navigate({ to: '/' })
 		}
 	}
 

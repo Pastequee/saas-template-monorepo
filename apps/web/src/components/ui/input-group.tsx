@@ -52,6 +52,7 @@ function InputGroupAddon({
 			data-align={align}
 			data-slot="input-group-addon"
 			onClick={(e) => {
+				// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 				if ((e.target as HTMLElement).closest('button')) {
 					return
 				}

@@ -23,7 +23,7 @@ export const Navbar = () => {
 					{auth.user.name}
 				</Button>
 
-				<Button onClick={auth.logout} variant="ghost">
+				<Button onClick={() => void auth.logout()} variant="ghost">
 					<LogOut />
 					Se déconnecter
 				</Button>

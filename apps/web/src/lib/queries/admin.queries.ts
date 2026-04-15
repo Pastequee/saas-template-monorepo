@@ -16,7 +16,8 @@ export const adminUsersOptions = () =>
 				throw new Error(error.message ?? 'Failed to fetch users')
 			}
 
-			return data.users as UserWithRole[]
+			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+			return data.users as unknown as UserWithRole[]
 		},
 		queryKey: keys.admin.users.list(),
 	})

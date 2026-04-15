@@ -5,6 +5,7 @@ export const Route = createFileRoute('/_auth')({
 	beforeLoad: ({ context }) => {
 		// If user is already authenticated, redirect to home
 		if (context.auth) {
+			// oxlint-disable-next-line typescript/only-throw-error
 			throw redirect({ to: '/' })
 		}
 	},

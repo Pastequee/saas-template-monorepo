@@ -17,7 +17,7 @@ declare module '@tanstack/react-query' {
 export const queryClient = new QueryClient({
 	defaultOptions: { queries: { staleTime: 60 * 1000 } },
 	mutationCache: new MutationCache({
-		onError: (error: unknown) => {
+		onError: async (error: unknown) => {
 			if (
 				typeof error === 'object' &&
 				error !== null &&
@@ -25,14 +25,14 @@ export const queryClient = new QueryClient({
 				typeof error.status === 'number' &&
 				error.status === 401
 			) {
-				authClient.signOut()
+				await authClient.signOut()
 				const router = getRouter()
-				router.navigate({ to: '/login' })
+				await router.navigate({ to: '/login' })
 			}
 		},
 		onSettled: async (_data, _variables, _error, _mutate, _mutation, context) => {
 			await Promise.all(
-				context.meta?.invalidate?.map((queryKey) =>
+				context.meta?.invalidate?.map(async (queryKey) =>
 					context.client.invalidateQueries({ queryKey })
 				) ?? []
 			)

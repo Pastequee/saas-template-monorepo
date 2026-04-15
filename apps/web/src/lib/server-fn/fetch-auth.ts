@@ -17,6 +17,7 @@ export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
 		session: data.session,
 		user: {
 			...data.user,
+			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 			role: (data.user.role ?? 'user') as AuthRole,
 		},
 	}

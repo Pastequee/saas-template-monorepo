@@ -22,6 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 				warning: <TriangleAlertIcon className="size-4" />,
 			}}
 			style={
+				// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 				{
 					'--border-radius': 'var(--radius)',
 					'--normal-bg': 'var(--popover)',

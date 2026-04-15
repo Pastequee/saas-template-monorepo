@@ -41,6 +41,7 @@ export const createApiWithAuth = async (testUser: TestUser) => {
 
 	const api = treaty(app, { headers: { Cookie: betterAuthCookie } })
 
+	// oxlint-disable-next-line typescript/return-await
 	return await Promise.resolve(api)
 }
 

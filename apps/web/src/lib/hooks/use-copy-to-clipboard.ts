@@ -10,6 +10,7 @@ export function useCopyToClipboard({
 	const [isCopied, setIsCopied] = useState(false)
 
 	const copyToClipboard = (value: string) => {
+		// oxlint-disable-next-line typescript/strict-boolean-expressions
 		if (typeof window === 'undefined' || !navigator.clipboard.writeText) {
 			return
 		}

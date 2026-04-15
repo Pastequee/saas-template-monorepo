@@ -16,12 +16,11 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 		return asset
 	},
 
-	deleteAssets: async (ids: Asset['id'][]) =>
-		await db.delete(assets).where(inArray(assets.id, ids)),
+	deleteAssets: async (ids: Asset['id'][]) => db.delete(assets).where(inArray(assets.id, ids)),
 
 	getPendingAssets: async () => {
 		const twoDaysAgo = subDays(new Date(), 2)
-		return await db.query.assets.findMany({
+		return db.query.assets.findMany({
 			where: { createdAt: { lt: twoDaysAgo }, status: 'pending' },
 		})
 	},
@@ -33,7 +32,9 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 			throw new Error('Asset not found')
 		}
 
-		if (!fileStorage.exists(asset.key)) {
+		const fileExists = await fileStorage.exists(asset.key)
+
+		if (!fileExists) {
 			throw new Error('Asset not found')
 		}
 

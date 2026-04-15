@@ -3,18 +3,20 @@ import { useFieldContext } from '~/lib/hooks/form-hook'
 
 import { Field } from './field'
 import type { FieldProps } from './field'
+import { getErrorMessage } from './get-error-message'
 
 type TextFieldProps = React.ComponentProps<typeof Input> & Omit<FieldProps, 'children' | 'error'>
 
 export function TextField({ label, id, optional, className, ...props }: TextFieldProps) {
 	const field = useFieldContext<string>()
 
-	const errorMessage = (field.state.meta.errors as { message: string }[]).at(0)?.message
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+	const errorMessage = getErrorMessage(field.state.meta.errors)
 
 	return (
 		<Field
 			className={className}
-			error={errorMessage}
+			error={errorMessage ?? undefined}
 			id={id}
 			label={label}
 			optional={optional}

@@ -21,7 +21,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 			const listings = await listingsService.getUserListings(user.id)
 			const listingsWithImages = listings.map((listing) => ({
 				...listing,
-				image: listing.image?.key ? fileStorage.getUrl(listing.image.key) : null,
+				image: getImageUrl(listing.image?.key),
 			}))
 			return listingsWithImages
 		},
@@ -38,7 +38,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 			return {
 				...listing,
-				image: listing.image?.key ? fileStorage.getUrl(listing.image.key) : null,
+				image: getImageUrl(listing.image?.key),
 			}
 		},
 		{ auth: true, params: 'uuidParam' }
@@ -109,9 +109,17 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 			const listings = await listingsService.searchListings(query.q)
 			const listingsWithImages = listings.map((listing) => ({
 				...listing,
-				image: listing.image?.key ? fileStorage.getUrl(listing.image.key) : null,
+				image: getImageUrl(listing.image?.key),
 			}))
 			return listingsWithImages
 		},
 		{ auth: true, query: z.object({ q: z.string() }) }
 	)
+
+function getImageUrl(imageKey: string | undefined | null) {
+	if (!imageKey) {
+		return null
+	}
+
+	return fileStorage.getUrl(imageKey)
+}

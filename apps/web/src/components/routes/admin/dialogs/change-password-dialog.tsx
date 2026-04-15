@@ -88,7 +88,7 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 					className="flex flex-col gap-4"
 					onSubmit={(e) => {
 						e.preventDefault()
-						form.handleSubmit()
+						void form.handleSubmit()
 					}}
 				>
 					<form.AppField name="newPassword">
@@ -112,7 +112,13 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 					</form.AppField>
 
 					<DialogFooter>
-						<Button onClick={() => handleOpenChange(false)} type="button" variant="outline">
+						<Button
+							onClick={() => {
+								handleOpenChange(false)
+							}}
+							type="button"
+							variant="outline"
+						>
 							Cancel
 						</Button>
 						<form.AppForm>

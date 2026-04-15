@@ -5,6 +5,9 @@ import remix from 'ultracite/oxlint/remix'
 
 export default defineConfig({
 	extends: [core, remix, react],
+	options: {
+		typeAware: true,
+	},
 	overrides: [
 		{
 			files: ['packages/db/**/schemas/**/*.ts'],
@@ -21,9 +24,13 @@ export default defineConfig({
 		'import/no-relative-parent-imports': 'off',
 		'jest/require-hook': 'off',
 		'no-inline-comments': 'off',
+		'prefer-await-to-then': 'off',
 		'react-perf/jsx-no-new-function-as-prop': 'off',
 		'react/jsx-handler-names': 'off',
 		'react/no-children-prop': 'off',
+		'require-await': 'off',
+		'strict-boolean-expressions': 'off',
+		'typescript/consistent-return': 'off',
 		'typescript/consistent-type-definitions': ['error', 'type'],
 	},
 })

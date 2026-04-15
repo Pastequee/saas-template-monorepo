@@ -9,14 +9,16 @@ export const fileStorageMock: FileStorage & {
 	_cleanFiles: () => {
 		files.clear()
 	},
+
 	_setFile: (key, url) => {
 		files.set(key, url)
 	},
-	delete: (key) => {
+
+	delete: async (key) => {
 		files.delete(key)
-		return Promise.resolve()
 	},
-	exists: async (key) => await files.has(key),
+
+	exists: async (key) => files.has(key),
 	getUploadUrl: (key) => `https://${key}.com`,
 	getUrl: (key) => `https://${key}.com`,
 }

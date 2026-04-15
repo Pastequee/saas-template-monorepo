@@ -38,7 +38,7 @@ export const LoginForm = () => {
 				return
 			}
 
-			router.navigate({ replace: true, to: redirect ?? '/' })
+			await router.navigate({ replace: true, to: redirect ?? '/' })
 		},
 	})
 
@@ -49,10 +49,10 @@ export const LoginForm = () => {
 			onSubmit={(e) => {
 				e.preventDefault()
 				e.stopPropagation()
-				form.handleSubmit()
+				void form.handleSubmit()
 			}}
 		>
-			{errorMessage && (
+			{errorMessage !== undefined && (
 				<Alert variant="destructive">
 					<AlertCircle />
 					<AlertTitle>{errorMessage}</AlertTitle>

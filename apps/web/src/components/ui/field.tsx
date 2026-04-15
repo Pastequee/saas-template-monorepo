@@ -146,11 +146,13 @@ function FieldSeparator({
 				'relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2',
 				className
 			)}
+			// oxlint-disable-next-line typescript/strict-boolean-expressions
 			data-content={!!children}
 			data-slot="field-separator"
 			{...props}
 		>
 			<Separator className="absolute inset-0 top-1/2" />
+			{/* oxlint-disable-next-line typescript/strict-boolean-expressions */}
 			{children && (
 				<span
 					className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
@@ -172,11 +174,12 @@ function FieldError({
 	errors?: ({ message?: string } | undefined)[]
 }) {
 	const content = useMemo(() => {
-		if (children) {
+		// oxlint-disable-next-line typescript/strict-boolean-expressions
+		if (!children) {
 			return children
 		}
 
-		if (!errors?.length) {
+		if (errors === undefined || errors.length === 0) {
 			return null
 		}
 
@@ -189,11 +192,14 @@ function FieldError({
 		return (
 			<ul className="ml-4 flex list-disc flex-col gap-1">
 				{/* oxlint-disable-next-line react/no-array-index-key */}
-				{uniqueErrors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}
+				{uniqueErrors.map(
+					(error, index) => error?.message !== undefined && <li key={index}>{error.message}</li>
+				)}
 			</ul>
 		)
 	}, [children, errors])
 
+	// oxlint-disable-next-line typescript/strict-boolean-expressions
 	if (!content) {
 		return null
 	}

@@ -40,7 +40,7 @@ export const RegisterForm = () => {
 				return
 			}
 
-			router.navigate({ replace: true, to: redirect ?? '/login' })
+			await router.navigate({ replace: true, to: redirect ?? '/login' })
 		},
 	})
 
@@ -50,7 +50,7 @@ export const RegisterForm = () => {
 			onSubmit={(e) => {
 				e.preventDefault()
 				e.stopPropagation()
-				form.handleSubmit()
+				void form.handleSubmit()
 			}}
 		>
 			{signUpResponseError && (

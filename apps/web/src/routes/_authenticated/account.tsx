@@ -40,7 +40,7 @@ function AccountInfos() {
 				<AccountInfoItem icon={User} label="Nom" value={auth.user.name ?? ''} />
 				<AccountInfoItem icon={Mail} label="Email" value={auth.user.email ?? ''} />
 				<AccountInfoItem icon={Package} label="Annonces" value={`${listings.length} annonces`} />
-				<Button className="w-full" onClick={auth.logout} variant="destructive">
+				<Button className="w-full" onClick={() => void auth.logout()} variant="destructive">
 					<LogOut />
 					Déconnexion
 				</Button>
