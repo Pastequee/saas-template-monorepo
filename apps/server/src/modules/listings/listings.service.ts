@@ -4,7 +4,7 @@ import type { DatabaseType, TransactionType } from '@repo/db'
 import { assets, listingImages, listings } from '@repo/db/schemas'
 import type { Asset, Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
 
-import { FileService } from '#routers/files/file.service'
+import { FileService } from '#modules/files/file.service'
 
 export const ListingsService = (db: DatabaseType | TransactionType) => ({
 	addListingImage: async (listingId: Listing['id'], assetKey: Asset['key']) => {

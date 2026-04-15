@@ -13,6 +13,7 @@ export const env = createEnv({
 		COMMIT_HASH: z.string().optional(),
 		NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 		APP_ENV: z.enum(['development', 'production', 'test', 'staging']).default('development'),
+		PORT: z.number().default(3001),
 
 		// Server URL
 		SERVER_URL: z.url(),

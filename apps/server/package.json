@@ -2,10 +2,10 @@
 	"name": "@repo/server",
 	"private": true,
 	"type": "module",
-	"main": "./src/types.ts",
+	"main": "./src/index.ts",
 	"imports": {
 		"#/*": "./src/*.ts",
-		"#routers/*": "./src/routers/*.ts",
+		"#modules/*": "./src/modules/*.ts",
 		"#lib/*": "./src/lib/*.ts",
 		"#middlewares/*": "./src/middlewares/*.ts",
 		"#services/*": "./src/services/*.ts"

@@ -1,31 +1,8 @@
-import { cors } from '@elysiajs/cors'
-import { auth } from '@repo/auth'
 import { env } from '@repo/env/server'
-import { Elysia } from 'elysia'
 
-import { logger } from '#lib/logger'
-import { utils } from '#lib/utils'
-import { filesRouter } from '#routers/files/files.controller'
-import { listingsRouter } from '#routers/listings/listings.controller'
-import { userRouter } from '#routers/user/controller'
+import { app } from './api'
 
-export const app = new Elysia({ prefix: '/api' })
-	.use(
-		cors({
-			allowedHeaders: ['Content-Type', 'Authorization'],
-			credentials: true,
-			methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'HEAD', 'OPTIONS'],
-			origin: [env.WEB_URL],
-		})
-	)
-	.use(logger)
-	.use(utils)
-	.mount(auth.handler)
-	.use(userRouter)
-	.use(listingsRouter)
-	.use(filesRouter)
-
-app.listen(3001, ({ url }) => {
+app.listen(env.PORT, ({ url }) => {
 	console.info(`Server is running on ${url}`)
 
 	process.on('SIGTERM', () => {
@@ -40,3 +17,5 @@ app.listen(3001, ({ url }) => {
 		})
 	})
 })
+
+export type App = typeof app
