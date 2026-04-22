@@ -22,7 +22,7 @@ export const mail = {
 	},
 
 	sendTemplate: async <TTemplate extends Template>(
-		template: Template,
+		template: TTemplate,
 		to: string,
 		variables: TemplateProps[TTemplate]
 	) => {

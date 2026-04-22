@@ -24,8 +24,8 @@
 		"@repo/utils": "workspace:*",
 		"date-fns": "catalog:",
 		"elysia": "catalog:",
-		"evlog": "^2.12.0",
-		"nanoid": "^5.1.7",
+		"evlog": "^2.13.0",
+		"nanoid": "^5.1.9",
 		"picocolors": "^1.1.1",
 		"zod": "catalog:"
 	},
