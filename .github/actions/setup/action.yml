@@ -15,6 +15,10 @@ runs:
       with:
         bun-version-file: package.json
 
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: package.json
+
     - name: Install dependencies
       run: bun install --frozen-lockfile --silent
       shell: bash
