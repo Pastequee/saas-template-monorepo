@@ -1,4 +1,4 @@
-import { integer, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core'
+import { integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core'
 
 import { identityId, numericId, timestamps } from '../schema-utils'
 import { assets } from './assets'
@@ -22,7 +22,7 @@ export const listingImages = pgTable(
 		listingId: numericId('listing_id')
 			.references(() => listings.id, { onDelete: 'cascade' })
 			.notNull(),
-		assetId: uuid()
+		assetId: numericId('asset_id')
 			.references(() => assets.id, { onDelete: 'cascade' })
 			.notNull(),
 		sortOrder: integer().notNull().default(0),

@@ -121,6 +121,23 @@ describe('Listings', () => {
 			expect(res.data?.price).toBe(validListing.price)
 		})
 
+		it('stores numeric asset ownership and listing-media relation ids', async () => {
+			const imageKey = await presignImage(userApi)
+			const res = await userApi.listings.post({ ...validListing, imageKey })
+
+			const asset = await db.query.assets.findFirst({ where: { key: imageKey } })
+			const relation = await db.query.listingImages.findFirst({
+				where: { listingId: res.data!.id },
+			})
+
+			expect(asset).toBeDefined()
+			expect(asset?.id).toBeNumber()
+			expect(asset?.ownerId).toBe(testUsers.user.id)
+			expect(relation).toBeDefined()
+			expect(relation?.assetId).toBe(asset?.id)
+			expect(relation?.listingId).toBe(res.data?.id)
+		})
+
 		it('validates required fields', async () => {
 			// @ts-expect-error - intentionally missing fields
 			const res = await userApi.listings.post({})

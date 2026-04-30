@@ -1,7 +1,7 @@
 // oxlint-disable no-inline-comments
 import { integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
-import { common, numericId } from '../schema-utils'
+import { identityId, numericId, timestamps } from '../schema-utils'
 import { users } from './auth'
 
 export const assetStatus = pgEnum('asset_status', [
@@ -12,7 +12,8 @@ export const assetStatus = pgEnum('asset_status', [
 ])
 
 export const assets = pgTable('assets', {
-	...common,
+	id: identityId(),
+	...timestamps,
 
 	// Ownership
 	ownerId: numericId('owner_id')

@@ -17,7 +17,7 @@ describe('Asset lifecycle', () => {
 						...asset,
 						createdAt: new Date(),
 						deletedAt: null,
-						id: 'asset-1',
+						id: 1,
 						updatedAt: new Date(),
 					}
 				},
@@ -79,7 +79,7 @@ describe('Asset lifecycle', () => {
 						...asset,
 						createdAt: new Date(),
 						deletedAt: null,
-						id: 'asset-1',
+						id: 1,
 						updatedAt: new Date(),
 					}
 				},
@@ -124,8 +124,8 @@ describe('Asset lifecycle', () => {
 	})
 
 	it('attaches a pending asset to a listing after upload verification', async () => {
-		const attachedImages: { assetId: string; listingId: number }[] = []
-		const updatedAssets: string[] = []
+		const attachedImages: { assetId: number; listingId: number }[] = []
+		const updatedAssets: number[] = []
 
 		const assetLifecycle = AssetLifecycle({
 			assets: {
@@ -148,7 +148,7 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -157,7 +157,7 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'photo.webp',
-					id: 'asset-1',
+					id: 1,
 					key: '1/upload-123.webp',
 					ownerId: 1,
 					size: 2048,
@@ -189,15 +189,15 @@ describe('Asset lifecycle', () => {
 		})
 
 		expect(asset.status).toBe('active')
-		expect(updatedAssets).toEqual(['asset-1'])
-		expect(attachedImages).toEqual([{ assetId: 'asset-1', listingId: 1 }])
+		expect(updatedAssets).toEqual([1])
+		expect(attachedImages).toEqual([{ assetId: 1, listingId: 1 }])
 	})
 
 	it('replaces a listing image through one lifecycle action', async () => {
-		const attachedImages: { assetId: string; listingId: number }[] = []
-		const replacedImages: { assetId: string; listingId: number }[] = []
-		const retiredAssetIds: string[] = []
-		const updatedAssets: string[] = []
+		const attachedImages: { assetId: number; listingId: number }[] = []
+		const replacedImages: { assetId: number; listingId: number }[] = []
+		const retiredAssetIds: number[] = []
+		const updatedAssets: number[] = []
 
 		const assetLifecycle = AssetLifecycle({
 			assets: {
@@ -220,7 +220,7 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-created',
+					id: 999,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -229,7 +229,7 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'new-photo.webp',
-					id: 'asset-2',
+					id: 2,
 					key: '1/upload-456.webp',
 					ownerId: 1,
 					size: 2048,
@@ -249,7 +249,7 @@ describe('Asset lifecycle', () => {
 				},
 				replace: async ({ assetId, listingId }) => {
 					replacedImages.push({ assetId, listingId })
-					return ['asset-1']
+					return [1]
 				},
 			},
 			storage: {
@@ -268,10 +268,10 @@ describe('Asset lifecycle', () => {
 		})
 
 		expect(asset.status).toBe('active')
-		expect(updatedAssets).toEqual(['asset-2'])
+		expect(updatedAssets).toEqual([2])
 		expect(attachedImages).toEqual([])
-		expect(replacedImages).toEqual([{ assetId: 'asset-2', listingId: 1 }])
-		expect(retiredAssetIds).toEqual(['asset-1'])
+		expect(replacedImages).toEqual([{ assetId: 2, listingId: 1 }])
+		expect(retiredAssetIds).toEqual([1])
 	})
 
 	it('rejects attaching an asset owned by another user', async () => {
@@ -287,7 +287,7 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date(),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: '2/upload-123.webp',
 						ownerId: 2,
 						size: 2048,
@@ -299,7 +299,7 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -308,7 +308,7 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'photo.webp',
-					id: 'asset-1',
+					id: 1,
 					key: '2/upload-123.webp',
 					ownerId: 2,
 					size: 2048,
@@ -364,7 +364,7 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-created',
+					id: 999,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -382,7 +382,7 @@ describe('Asset lifecycle', () => {
 				},
 				replace: async () => {
 					replaced = true
-					return ['asset-1']
+					return [1]
 				},
 			},
 			storage: {
@@ -413,7 +413,7 @@ describe('Asset lifecycle', () => {
 	})
 
 	it('retires listing media through the asset lifecycle seam', async () => {
-		const retiredAssetIds: string[] = []
+		const retiredAssetIds: number[] = []
 		const detachedListingIds: number[] = []
 
 		const assetLifecycle = AssetLifecycle({
@@ -425,7 +425,7 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -443,7 +443,7 @@ describe('Asset lifecycle', () => {
 				},
 				detach: async (listingId) => {
 					detachedListingIds.push(listingId)
-					return ['asset-1']
+					return [1]
 				},
 			},
 			storage: {
@@ -457,13 +457,13 @@ describe('Asset lifecycle', () => {
 
 		const result = await assetLifecycle.retireListingMedia({ listingId: 1 })
 
-		expect(result.retiredAssetIds).toEqual(['asset-1'])
+		expect(result.retiredAssetIds).toEqual([1])
 		expect(detachedListingIds).toEqual([1])
-		expect(retiredAssetIds).toEqual(['asset-1'])
+		expect(retiredAssetIds).toEqual([1])
 	})
 
 	it('cleans up stale pending assets through the asset lifecycle seam', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedAssetIds: number[] = []
 		const deletedStorageKeys: string[] = []
 
 		const assetLifecycle = AssetLifecycle({
@@ -475,10 +475,10 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
+				delete: async (ids) => {
 					deletedAssetIds.push(...ids)
 				},
 				findPendingByKey: async () => null,
@@ -488,7 +488,7 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date('2026-04-27T10:00:00.000Z'),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: '1/stale.webp',
 						ownerId: 1,
 						size: 2048,
@@ -521,11 +521,11 @@ describe('Asset lifecycle', () => {
 
 		expect(result.filesDeleted).toBe(1)
 		expect(deletedStorageKeys).toEqual(['1/stale.webp'])
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedAssetIds).toEqual([1])
 	})
 
 	it('removes stale pending assets even when the blob is already missing', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedAssetIds: number[] = []
 		let storageDeleteCalls = 0
 
 		const assetLifecycle = AssetLifecycle({
@@ -537,10 +537,10 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
+				delete: async (ids) => {
 					deletedAssetIds.push(...ids)
 				},
 				findPendingByKey: async () => null,
@@ -550,7 +550,7 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date('2026-04-27T10:00:00.000Z'),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: '1/missing.webp',
 						ownerId: 1,
 						size: 2048,
@@ -583,11 +583,11 @@ describe('Asset lifecycle', () => {
 
 		expect(result.filesDeleted).toBe(1)
 		expect(storageDeleteCalls).toBe(0)
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedAssetIds).toEqual([1])
 	})
 
 	it('is idempotent across repeated stale cleanup runs', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedAssetIds: number[] = []
 		const deletedStorageKeys: string[] = []
 		const staleAssets = [
 			{
@@ -595,7 +595,7 @@ describe('Asset lifecycle', () => {
 				createdAt: new Date('2026-04-27T10:00:00.000Z'),
 				deletedAt: null,
 				filename: 'photo.webp',
-				id: 'asset-1',
+				id: 1,
 				key: '1/stale.webp',
 				ownerId: 1,
 				size: 2048,
@@ -613,10 +613,10 @@ describe('Asset lifecycle', () => {
 					...asset,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
+				delete: async (ids) => {
 					deletedAssetIds.push(...ids)
 					for (const id of ids) {
 						const index = staleAssets.findIndex((asset) => asset.id === id)
@@ -654,6 +654,6 @@ describe('Asset lifecycle', () => {
 		expect(firstRun.filesDeleted).toBe(1)
 		expect(secondRun.filesDeleted).toBe(0)
 		expect(deletedStorageKeys).toEqual(['1/stale.webp'])
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedAssetIds).toEqual([1])
 	})
 })

@@ -58,6 +58,7 @@ describe('Files', () => {
 				size: 512,
 			})
 
+			expect(res.data?.asset?.id).toBeNumber()
 			expect(res.data?.asset?.ownerId).toBe(testUsers.user.id)
 		})
 
