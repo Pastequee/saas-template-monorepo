@@ -1,5 +1,6 @@
 import type { DatabaseType, TransactionType } from '@repo/db'
-import { assets } from '@repo/db/schemas'
+import { eq } from '@repo/db'
+import { assets, listingImages } from '@repo/db/schemas'
 import type { Asset, AssetInsert } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { randomUUIDv7 } from 'bun'
@@ -8,10 +9,18 @@ type UploadIntentOptions = { public?: boolean }
 
 type AssetLifecycleAdapters = {
 	assets: {
+		activate: (id: Asset['id']) => Promise<Asset>
 		create: (asset: AssetInsert) => Promise<Asset>
+		findPendingByKey: (key: Asset['key'], ownerId: Asset['ownerId']) => Promise<Asset | null>
 	}
 	ids: {
 		create: () => string
+	}
+	listingImages: {
+		attach: (image: { assetId: Asset['id']; listingId: string }) => Promise<void>
+	}
+	storage: {
+		exists: (key: Asset['key']) => Promise<boolean>
 	}
 	uploadIntents: {
 		create: (key: string, options: UploadIntentOptions) => string
@@ -26,7 +35,32 @@ type ReserveUploadInput = {
 	size: AssetInsert['size']
 }
 
+type AttachListingImageInput = {
+	assetKey: Asset['key']
+	listingId: string
+	ownerId: Asset['ownerId']
+}
+
 export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
+	attachListingImage: async ({ assetKey, listingId, ownerId }: AttachListingImageInput) => {
+		const asset = await adapters.assets.findPendingByKey(assetKey, ownerId)
+
+		if (!asset || asset.ownerId !== ownerId) {
+			throw new Error('Asset not found')
+		}
+
+		const fileExists = await adapters.storage.exists(asset.key)
+
+		if (!fileExists) {
+			throw new Error('Asset not found')
+		}
+
+		const activeAsset = await adapters.assets.activate(asset.id)
+		await adapters.listingImages.attach({ assetId: activeAsset.id, listingId })
+
+		return activeAsset
+	},
+
 	reserveUpload: async ({
 		contentType,
 		filename,
@@ -51,6 +85,14 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 
 export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType) => ({
 	assets: {
+		activate: async (id: Asset['id']) =>
+			db
+				.update(assets)
+				.set({ status: 'active' })
+				.where(eq(assets.id, id))
+				.returning()
+				// oxlint-disable-next-line typescript/no-non-null-assertion
+				.then(([asset]) => asset!),
 		create: async (asset: AssetInsert) =>
 			db
 				.insert(assets)
@@ -58,9 +100,19 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([createdAsset]) => createdAsset!),
+		findPendingByKey: async (key: Asset['key'], ownerId: Asset['ownerId']) =>
+			(await db.query.assets.findFirst({ where: { key, ownerId, status: 'pending' } })) ?? null,
 	},
 	ids: {
 		create: () => randomUUIDv7(),
+	},
+	listingImages: {
+		attach: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
+			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
+		},
+	},
+	storage: {
+		exists: async (key: Asset['key']) => fileStorage.exists(key),
 	},
 	uploadIntents: {
 		create: (key: string, options: UploadIntentOptions) => fileStorage.getUploadUrl(key, options),

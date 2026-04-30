@@ -4,6 +4,10 @@ import type { DatabaseType, TransactionType } from '@repo/db'
 import { assets, listingImages, listings } from '@repo/db/schemas'
 import type { Asset, Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
 
+import {
+	AssetLifecycle,
+	createAssetLifecycleAdapters,
+} from '#modules/asset-lifecycle/asset-lifecycle.service'
 import { FileService } from '#modules/files/file.service'
 
 export const ListingsService = (db: DatabaseType | TransactionType) => ({
@@ -16,14 +20,19 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 
 	createListing: async (data: ListingInsert & { imageKey: string }) =>
 		withTransaction(db, async (tx) => {
+			const { imageKey, ...listingData } = data
 			const listing = await tx
 				.insert(listings)
-				.values(data)
+				.values(listingData)
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([l]) => l!)
 
-			await ListingsService(tx).addListingImage(listing.id, data.imageKey)
+			await AssetLifecycle(createAssetLifecycleAdapters(tx)).attachListingImage({
+				assetKey: imageKey,
+				listingId: listing.id,
+				ownerId: listing.userId,
+			})
 			return listing
 		}),
 
