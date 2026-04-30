@@ -1,20 +1,10 @@
-import { eq, inArray } from '@repo/db'
+import { eq } from '@repo/db'
 import type { DatabaseType, TransactionType } from '@repo/db'
 import { assets } from '@repo/db/schemas'
 import type { Asset, AssetUpdate } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
-import { subDays } from 'date-fns'
 
 export const FileService = (db: DatabaseType | TransactionType) => ({
-	deleteAssets: async (ids: Asset['id'][]) => db.delete(assets).where(inArray(assets.id, ids)),
-
-	getPendingAssets: async () => {
-		const twoDaysAgo = subDays(new Date(), 2)
-		return db.query.assets.findMany({
-			where: { createdAt: { lt: twoDaysAgo }, status: 'pending' },
-		})
-	},
-
 	promotePendingAsset: async (key: Asset['key']) => {
 		const asset = await db.query.assets.findFirst({ where: { key, status: 'pending' } })
 

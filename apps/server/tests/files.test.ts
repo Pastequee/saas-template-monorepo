@@ -1,14 +1,20 @@
 // oxlint-disable unicorn/no-await-expression-member
 import { beforeAll, describe, expect, it } from 'bun:test'
 
+import { db } from '@repo/db'
+import { assets, userRoles } from '@repo/db/schemas'
+import { fileStorageMock } from '@repo/file-storage/test'
+
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
 describe('Files', () => {
 	const unauthApi = createApi()
+	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 
 	beforeAll(async () => {
 		await createTestUsers()
+		adminApi = (await createApiWithAuth(testUsers.admin)).api
 		userApi = (await createApiWithAuth(testUsers.user)).api
 	})
 
@@ -120,6 +126,35 @@ describe('Files', () => {
 		it('returns 403 for non-superadmin', async () => {
 			const res = await userApi.files.cleanup.get()
 			expect([401, 403]).toContain(res.status)
+		})
+
+		it('cleans up stale pending assets end to end for superadmins', async () => {
+			await db.insert(userRoles).values({
+				grantedById: testUsers.admin.id,
+				role: 'superadmin',
+				userId: testUsers.admin.id,
+			})
+
+			const staleKey = `${testUsers.user.id}/stale-cleanup.webp`
+			fileStorageMock._setFile(staleKey, `https://upload.test/${staleKey}`)
+
+			await db.insert(assets).values({
+				contentType: 'image/webp',
+				createdAt: new Date('2026-04-27T10:00:00.000Z'),
+				filename: 'stale-cleanup.webp',
+				key: staleKey,
+				ownerId: testUsers.user.id,
+				size: 2048,
+				status: 'pending',
+				updatedAt: new Date('2026-04-27T10:00:00.000Z'),
+			})
+
+			const res = await adminApi.files.cleanup.get()
+
+			expect(res.status).toBe(200)
+			expect(res.data).toEqual({ filesDeleted: 1, message: 'Cleanup complete' })
+			expect(await fileStorageMock.exists(staleKey)).toBeFalse()
+			expect(await db.query.assets.findFirst({ where: { key: staleKey } })).toBeUndefined()
 		})
 	})
 })

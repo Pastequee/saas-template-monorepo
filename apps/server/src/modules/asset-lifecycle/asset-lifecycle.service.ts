@@ -1,9 +1,10 @@
 import type { DatabaseType, TransactionType } from '@repo/db'
-import { eq } from '@repo/db'
+import { eq, inArray } from '@repo/db'
 import { assets, listingImages } from '@repo/db/schemas'
 import type { Asset, AssetInsert } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { randomUUIDv7 } from 'bun'
+import { subDays } from 'date-fns'
 
 type UploadIntentOptions = { public?: boolean }
 
@@ -11,7 +12,12 @@ type AssetLifecycleAdapters = {
 	assets: {
 		activate: (id: Asset['id']) => Promise<Asset>
 		create: (asset: AssetInsert) => Promise<Asset>
+		delete: (ids: Asset['id'][]) => Promise<void>
 		findPendingByKey: (key: Asset['key'], ownerId: Asset['ownerId']) => Promise<Asset | null>
+		findStalePending: (createdBefore: Date) => Promise<Asset[]>
+	}
+	clock: {
+		now: () => Date
 	}
 	ids: {
 		create: () => string
@@ -20,6 +26,7 @@ type AssetLifecycleAdapters = {
 		attach: (image: { assetId: Asset['id']; listingId: string }) => Promise<void>
 	}
 	storage: {
+		delete: (key: Asset['key']) => Promise<void>
 		exists: (key: Asset['key']) => Promise<boolean>
 	}
 	uploadIntents: {
@@ -61,6 +68,33 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 		return activeAsset
 	},
 
+	cleanupStalePendingAssets: async () => {
+		const staleAssets = await adapters.assets.findStalePending(subDays(adapters.clock.now(), 2))
+		const cleanedAssetIds: Asset['id'][] = []
+
+		for (const asset of staleAssets) {
+			const fileExists = await adapters.storage.exists(asset.key)
+
+			if (!fileExists) {
+				cleanedAssetIds.push(asset.id)
+				continue
+			}
+
+			try {
+				await adapters.storage.delete(asset.key)
+				cleanedAssetIds.push(asset.id)
+			} catch {
+				continue
+			}
+		}
+
+		if (cleanedAssetIds.length > 0) {
+			await adapters.assets.delete(cleanedAssetIds)
+		}
+
+		return { filesDeleted: cleanedAssetIds.length }
+	},
+
 	reserveUpload: async ({
 		contentType,
 		filename,
@@ -100,8 +134,18 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([createdAsset]) => createdAsset!),
+		delete: async (ids: Asset['id'][]) => {
+			await db.delete(assets).where(inArray(assets.id, ids))
+		},
 		findPendingByKey: async (key: Asset['key'], ownerId: Asset['ownerId']) =>
 			(await db.query.assets.findFirst({ where: { key, ownerId, status: 'pending' } })) ?? null,
+		findStalePending: async (createdBefore: Date) =>
+			db.query.assets.findMany({
+				where: { createdAt: { lt: createdBefore }, status: 'pending' },
+			}),
+	},
+	clock: {
+		now: () => new Date(),
 	},
 	ids: {
 		create: () => randomUUIDv7(),
@@ -112,6 +156,7 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 		},
 	},
 	storage: {
+		delete: async (key: Asset['key']) => fileStorage.delete(key),
 		exists: async (key: Asset['key']) => fileStorage.exists(key),
 	},
 	uploadIntents: {

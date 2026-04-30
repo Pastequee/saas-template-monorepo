@@ -21,8 +21,11 @@ describe('Asset lifecycle', () => {
 						updatedAt: new Date(),
 					}
 				},
+				delete: async () => {},
 				findPendingByKey: async () => null,
+				findStalePending: async () => [],
 			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -30,6 +33,7 @@ describe('Asset lifecycle', () => {
 				},
 			},
 			storage: {
+				delete: async () => {},
 				exists: async () => true,
 			},
 			uploadIntents: {
@@ -79,8 +83,11 @@ describe('Asset lifecycle', () => {
 						updatedAt: new Date(),
 					}
 				},
+				delete: async () => {},
 				findPendingByKey: async () => null,
+				findStalePending: async () => [],
 			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -88,6 +95,7 @@ describe('Asset lifecycle', () => {
 				},
 			},
 			storage: {
+				delete: async () => {},
 				exists: async () => true,
 			},
 			uploadIntents: {
@@ -143,6 +151,7 @@ describe('Asset lifecycle', () => {
 					id: 'asset-1',
 					updatedAt: new Date(),
 				}),
+				delete: async () => {},
 				findPendingByKey: async () => ({
 					contentType: 'image/webp',
 					createdAt: new Date(),
@@ -155,7 +164,9 @@ describe('Asset lifecycle', () => {
 					status: 'pending',
 					updatedAt: new Date(),
 				}),
+				findStalePending: async () => [],
 			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async ({ assetId, listingId }) => {
@@ -163,6 +174,7 @@ describe('Asset lifecycle', () => {
 				},
 			},
 			storage: {
+				delete: async () => {},
 				exists: async () => true,
 			},
 			uploadIntents: {
@@ -209,6 +221,7 @@ describe('Asset lifecycle', () => {
 					id: 'asset-1',
 					updatedAt: new Date(),
 				}),
+				delete: async () => {},
 				findPendingByKey: async () => ({
 					contentType: 'image/webp',
 					createdAt: new Date(),
@@ -221,7 +234,9 @@ describe('Asset lifecycle', () => {
 					status: 'pending',
 					updatedAt: new Date(),
 				}),
+				findStalePending: async () => [],
 			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -229,6 +244,7 @@ describe('Asset lifecycle', () => {
 				},
 			},
 			storage: {
+				delete: async () => {},
 				exists: async () => true,
 			},
 			uploadIntents: {
@@ -252,5 +268,200 @@ describe('Asset lifecycle', () => {
 		}
 		expect(activated).toBeFalse()
 		expect(attached).toBeFalse()
+	})
+
+	it('cleans up stale pending assets through the asset lifecycle seam', async () => {
+		const deletedAssetIds: string[] = []
+		const deletedStorageKeys: string[] = []
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async () => {
+					throw new Error('not used in cleanup test')
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-1',
+					updatedAt: new Date(),
+				}),
+				delete: async (ids: string[]) => {
+					deletedAssetIds.push(...ids)
+				},
+				findPendingByKey: async () => null,
+				findStalePending: async () => [
+					{
+						contentType: 'image/webp',
+						createdAt: new Date('2026-04-27T10:00:00.000Z'),
+						deletedAt: null,
+						filename: 'photo.webp',
+						id: 'asset-1',
+						key: 'user-1/stale.webp',
+						ownerId: 'user-1',
+						size: 2048,
+						status: 'pending',
+						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
+					},
+				],
+			},
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async () => {
+					throw new Error('not used in cleanup test')
+				},
+			},
+			storage: {
+				delete: async (key: string) => {
+					deletedStorageKeys.push(key)
+				},
+				exists: async () => true,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		const result = await assetLifecycle.cleanupStalePendingAssets()
+
+		expect(result.filesDeleted).toBe(1)
+		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
+		expect(deletedAssetIds).toEqual(['asset-1'])
+	})
+
+	it('removes stale pending assets even when the blob is already missing', async () => {
+		const deletedAssetIds: string[] = []
+		let storageDeleteCalls = 0
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async () => {
+					throw new Error('not used in cleanup test')
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-1',
+					updatedAt: new Date(),
+				}),
+				delete: async (ids: string[]) => {
+					deletedAssetIds.push(...ids)
+				},
+				findPendingByKey: async () => null,
+				findStalePending: async () => [
+					{
+						contentType: 'image/webp',
+						createdAt: new Date('2026-04-27T10:00:00.000Z'),
+						deletedAt: null,
+						filename: 'photo.webp',
+						id: 'asset-1',
+						key: 'user-1/missing.webp',
+						ownerId: 'user-1',
+						size: 2048,
+						status: 'pending',
+						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
+					},
+				],
+			},
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async () => {
+					throw new Error('not used in cleanup test')
+				},
+			},
+			storage: {
+				delete: async () => {
+					storageDeleteCalls += 1
+				},
+				exists: async () => false,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		const result = await assetLifecycle.cleanupStalePendingAssets()
+
+		expect(result.filesDeleted).toBe(1)
+		expect(storageDeleteCalls).toBe(0)
+		expect(deletedAssetIds).toEqual(['asset-1'])
+	})
+
+	it('is idempotent across repeated stale cleanup runs', async () => {
+		const deletedAssetIds: string[] = []
+		const deletedStorageKeys: string[] = []
+		const staleAssets = [
+			{
+				contentType: 'image/webp',
+				createdAt: new Date('2026-04-27T10:00:00.000Z'),
+				deletedAt: null,
+				filename: 'photo.webp',
+				id: 'asset-1',
+				key: 'user-1/stale.webp',
+				ownerId: 'user-1',
+				size: 2048,
+				status: 'pending' as const,
+				updatedAt: new Date('2026-04-27T10:00:00.000Z'),
+			},
+		]
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async () => {
+					throw new Error('not used in cleanup test')
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-1',
+					updatedAt: new Date(),
+				}),
+				delete: async (ids: string[]) => {
+					deletedAssetIds.push(...ids)
+					for (const id of ids) {
+						const index = staleAssets.findIndex((asset) => asset.id === id)
+						if (index !== -1) {
+							staleAssets.splice(index, 1)
+						}
+					}
+				},
+				findPendingByKey: async () => null,
+				findStalePending: async () => staleAssets,
+			},
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async () => {
+					throw new Error('not used in cleanup test')
+				},
+			},
+			storage: {
+				delete: async (key: string) => {
+					deletedStorageKeys.push(key)
+				},
+				exists: async () => true,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		const firstRun = await assetLifecycle.cleanupStalePendingAssets()
+		const secondRun = await assetLifecycle.cleanupStalePendingAssets()
+
+		expect(firstRun.filesDeleted).toBe(1)
+		expect(secondRun.filesDeleted).toBe(0)
+		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
+		expect(deletedAssetIds).toEqual(['asset-1'])
 	})
 })
