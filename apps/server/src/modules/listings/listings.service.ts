@@ -86,15 +86,41 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 
 	updateListing: async (id: Listing['id'], data: ListingUpdate & { imageKey?: string }) =>
 		withTransaction(db, async (tx) => {
-			if (data.imageKey !== undefined) {
-				await ListingsService(tx).deleteListingImage(id)
-				await ListingsService(tx).addListingImage(id, data.imageKey)
+			const { imageKey, ...listingData } = data
+			let listing = null
+
+			if (imageKey !== undefined) {
+				listing = await tx.query.listings.findFirst({ where: { id } })
+
+				if (!listing) {
+					throw new Error('Listing not found')
+				}
+
+				await AssetLifecycle(createAssetLifecycleAdapters(tx)).replaceListingImage({
+					assetKey: imageKey,
+					listingId: id,
+					ownerId: listing.userId,
+				})
+			}
+
+			if (Object.keys(listingData).length === 0) {
+				if (listing) {
+					return listing
+				}
+
+				const currentListing = await tx.query.listings.findFirst({ where: { id } })
+
+				if (!currentListing) {
+					throw new Error('Listing not found')
+				}
+
+				return currentListing
 			}
 
 			return (
 				tx
 					.update(listings)
-					.set(data)
+					.set(listingData)
 					.where(eq(listings.id, id))
 					.returning()
 					// oxlint-disable-next-line typescript/no-non-null-assertion
