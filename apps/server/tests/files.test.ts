@@ -1,5 +1,5 @@
 // oxlint-disable unicorn/no-await-expression-member
-import { beforeAll, describe, expect, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
 import { assets, userRoles } from '@repo/db/schemas'
@@ -12,7 +12,7 @@ describe('Files', () => {
 	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await createTestUsers()
 		adminApi = (await createApiWithAuth(testUsers.admin)).api
 		userApi = (await createApiWithAuth(testUsers.user)).api

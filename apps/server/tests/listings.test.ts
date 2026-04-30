@@ -1,6 +1,6 @@
 // oxlint-disable typescript/no-non-null-assertion
 // oxlint-disable unicorn/no-await-expression-member
-import { beforeAll, describe, expect, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
@@ -34,7 +34,7 @@ describe('Listings', () => {
 	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await createTestUsers()
 		userApi = (await createApiWithAuth(testUsers.user)).api
 		adminApi = (await createApiWithAuth(testUsers.admin)).api

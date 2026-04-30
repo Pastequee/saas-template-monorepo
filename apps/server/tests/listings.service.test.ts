@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
@@ -10,7 +10,7 @@ import { createTestUsers, testUsers } from './utils'
 const validListing = { description: 'A test description', price: 100, title: 'Test Listing' }
 
 describe('Listings service', () => {
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await createTestUsers()
 	})
 
