@@ -1,6 +1,7 @@
 import { db } from '@repo/db'
 import { listingInsertSchema, listingUpdateSchema } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
+import { coercePositiveInt } from '@repo/utils'
 import { Elysia } from 'elysia'
 import { z } from 'zod'
 
@@ -15,7 +16,7 @@ import {
 export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] })
 	.use(authMacro)
 
-	.model('uuidParam', z.object({ id: z.uuid() }))
+	.model('listingIdParam', z.object({ id: positiveIntParam('listing id') }))
 
 	.decorate('listingsService', ListingsService(db))
 
@@ -50,7 +51,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 				throw error
 			}
 		},
-		{ auth: true, params: 'uuidParam' }
+		{ auth: true, params: 'listingIdParam' }
 	)
 
 	.post(
@@ -87,7 +88,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 		{
 			auth: true,
 			body: listingUpdateSchema.extend({ imageKey: z.string().optional() }),
-			params: 'uuidParam',
+			params: 'listingIdParam',
 		}
 	)
 
@@ -109,7 +110,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 				throw error
 			}
 		},
-		{ auth: true, params: 'uuidParam' }
+		{ auth: true, params: 'listingIdParam' }
 	)
 
 	.get(
@@ -131,4 +132,18 @@ function getImageUrl(imageKey: string | undefined | null) {
 	}
 
 	return fileStorage.getUrl(imageKey)
+}
+
+function positiveIntParam(label: string) {
+	return z.string().transform((value, ctx) => {
+		try {
+			return coercePositiveInt(value, label)
+		} catch (error) {
+			ctx.addIssue({
+				code: 'custom',
+				message: error instanceof Error ? error.message : `Invalid ${label}: ${value}`,
+			})
+			return z.NEVER
+		}
+	})
 }

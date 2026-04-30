@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
-import { randomUUIDv7 } from 'bun'
 
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
@@ -98,8 +97,13 @@ describe('Listings', () => {
 			expect(res.data?.image).toBeString()
 		})
 
+		it('rejects invalid numeric route params at the boundary', async () => {
+			const res = await userApi.listings({ id: '0' }).get()
+			expect(res.status).toBe(422)
+		})
+
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).get()
+			const res = await userApi.listings({ id: 999_999 }).get()
 			expect(res.status).toBe(404)
 		})
 	})
@@ -112,6 +116,7 @@ describe('Listings', () => {
 			const res = await userApi.listings.post({ ...validListing, imageKey })
 
 			expect(res.status).toBe(201)
+			expect(res.data?.id).toBeNumber()
 			expect(res.data?.title).toBe(validListing.title)
 			expect(res.data?.price).toBe(validListing.price)
 		})
@@ -156,7 +161,7 @@ describe('Listings', () => {
 		})
 
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).patch({ title: 'Nope' })
+			const res = await userApi.listings({ id: 999_999 }).patch({ title: 'Nope' })
 			expect(res.status).toBe(404)
 		})
 
@@ -227,7 +232,7 @@ describe('Listings', () => {
 		})
 
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).delete()
+			const res = await userApi.listings({ id: 999_999 }).delete()
 			expect(res.status).toBe(404)
 		})
 	})

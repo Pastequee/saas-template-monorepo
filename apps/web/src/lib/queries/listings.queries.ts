@@ -9,7 +9,7 @@ export const getMyListingsOptions = () =>
 		queryKey: keys.listings.list(),
 	})
 
-export const getOneListingOptions = (id: string) =>
+export const getOneListingOptions = (id: number) =>
 	edenQueryOption({
 		edenQuery: eden().listings({ id }).get,
 		queryKey: keys.listings.one(id),

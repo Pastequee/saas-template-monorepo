@@ -1,4 +1,5 @@
 import type { Listing } from '@repo/db/types'
+import { coercePositiveInt } from '@repo/utils'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useCanGoBack, useRouter } from '@tanstack/react-router'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
@@ -10,7 +11,7 @@ import { getOneListingOptions } from '~/lib/queries/listings.queries'
 
 export const Route = createFileRoute('/_authenticated/listing/$id')({
 	component: RouteComponent,
-	params: z.object({ id: z.uuidv7() }),
+	params: z.object({ id: positiveIntParam('listing id') }),
 })
 
 function RouteComponent() {
@@ -82,4 +83,18 @@ function ListingDetails({ listing }: { listing: Listing }) {
 			</div>
 		</div>
 	)
+}
+
+function positiveIntParam(label: string) {
+	return z.string().transform((value, ctx) => {
+		try {
+			return coercePositiveInt(value, label)
+		} catch (error) {
+			ctx.addIssue({
+				code: 'custom',
+				message: error instanceof Error ? error.message : `Invalid ${label}: ${value}`,
+			})
+			return z.NEVER
+		}
+	})
 }

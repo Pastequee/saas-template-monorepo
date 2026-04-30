@@ -6,8 +6,6 @@ import { authRoles } from './schemas/auth'
 import type { accounts, sessions, users, verifications } from './schemas/auth'
 import { listingImages, listings } from './schemas/listings'
 
-const omits = { createdAt: true, id: true, updatedAt: true } as const
-
 // auth.ts
 export const AuthRole = [...authRoles.enumValues] as const
 export type AuthRole = (typeof AuthRole)[number]
@@ -48,7 +46,7 @@ export const listingSchema = createSelectSchema(listings)
 export const listingInsertSchema = createInsertSchema(listings, {
 	description: (s) => s.nonempty(),
 	title: (s) => s.nonempty(),
-}).omit({ ...omits, userId: true })
+}).omit({ createdAt: true, updatedAt: true, userId: true })
 export const listingUpdateSchema = listingInsertSchema.partial()
 
 export type ListingImage = typeof listingImages.$inferSelect

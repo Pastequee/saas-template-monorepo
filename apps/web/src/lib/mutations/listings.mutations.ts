@@ -2,13 +2,13 @@ import { keys } from '~/lib/queries/keys'
 import { eden } from '~/lib/server-fn/eden'
 import { edenMutationOption } from '~/lib/utils/eden-query'
 
-export const deleteListingOptions = (id: string) =>
+export const deleteListingOptions = (id: number) =>
 	edenMutationOption({
 		edenMutation: eden().listings({ id }).delete,
 		meta: { invalidate: [keys.listings.all] },
 	})
 
-export const updateListingOptions = (id: string) =>
+export const updateListingOptions = (id: number) =>
 	edenMutationOption({
 		edenMutation: eden().listings({ id }).patch,
 		meta: { invalidate: [keys.listings.all] },

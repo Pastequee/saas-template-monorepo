@@ -124,7 +124,7 @@ describe('Asset lifecycle', () => {
 	})
 
 	it('attaches a pending asset to a listing after upload verification', async () => {
-		const attachedImages: Record<string, string>[] = []
+		const attachedImages: { assetId: string; listingId: number }[] = []
 		const updatedAssets: string[] = []
 
 		const assetLifecycle = AssetLifecycle({
@@ -184,18 +184,18 @@ describe('Asset lifecycle', () => {
 
 		const asset = await assetLifecycle.attachListingImage({
 			assetKey: '1/upload-123.webp',
-			listingId: 'listing-1',
+			listingId: 1,
 			ownerId: 1,
 		})
 
 		expect(asset.status).toBe('active')
 		expect(updatedAssets).toEqual(['asset-1'])
-		expect(attachedImages).toEqual([{ assetId: 'asset-1', listingId: 'listing-1' }])
+		expect(attachedImages).toEqual([{ assetId: 'asset-1', listingId: 1 }])
 	})
 
 	it('replaces a listing image through one lifecycle action', async () => {
-		const attachedImages: Record<string, string>[] = []
-		const replacedImages: Record<string, string>[] = []
+		const attachedImages: { assetId: string; listingId: number }[] = []
+		const replacedImages: { assetId: string; listingId: number }[] = []
 		const retiredAssetIds: string[] = []
 		const updatedAssets: string[] = []
 
@@ -263,14 +263,14 @@ describe('Asset lifecycle', () => {
 
 		const asset = await assetLifecycle.replaceListingImage({
 			assetKey: '1/upload-456.webp',
-			listingId: 'listing-1',
+			listingId: 1,
 			ownerId: 1,
 		})
 
 		expect(asset.status).toBe('active')
 		expect(updatedAssets).toEqual(['asset-2'])
 		expect(attachedImages).toEqual([])
-		expect(replacedImages).toEqual([{ assetId: 'asset-2', listingId: 'listing-1' }])
+		expect(replacedImages).toEqual([{ assetId: 'asset-2', listingId: 1 }])
 		expect(retiredAssetIds).toEqual(['asset-1'])
 	})
 
@@ -336,7 +336,7 @@ describe('Asset lifecycle', () => {
 		try {
 			await assetLifecycle.attachListingImage({
 				assetKey: '2/upload-123.webp',
-				listingId: 'listing-1',
+				listingId: 1,
 				ownerId: 1,
 			})
 			throw new Error('Expected attachListingImage to reject')
@@ -397,7 +397,7 @@ describe('Asset lifecycle', () => {
 		try {
 			await assetLifecycle.replaceListingImage({
 				assetKey: '1/missing.webp',
-				listingId: 'listing-1',
+				listingId: 1,
 				ownerId: 1,
 			})
 			throw new Error('Expected replaceListingImage to reject')
@@ -414,7 +414,7 @@ describe('Asset lifecycle', () => {
 
 	it('retires listing media through the asset lifecycle seam', async () => {
 		const retiredAssetIds: string[] = []
-		const detachedListingIds: string[] = []
+		const detachedListingIds: number[] = []
 
 		const assetLifecycle = AssetLifecycle({
 			assets: {
@@ -455,10 +455,10 @@ describe('Asset lifecycle', () => {
 			},
 		})
 
-		const result = await assetLifecycle.retireListingMedia({ listingId: 'listing-1' })
+		const result = await assetLifecycle.retireListingMedia({ listingId: 1 })
 
 		expect(result.retiredAssetIds).toEqual(['asset-1'])
-		expect(detachedListingIds).toEqual(['listing-1'])
+		expect(detachedListingIds).toEqual([1])
 		expect(retiredAssetIds).toEqual(['asset-1'])
 	})
 

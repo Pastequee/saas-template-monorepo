@@ -1,7 +1,7 @@
 import type { DatabaseType, TransactionType } from '@repo/db'
 import { eq, inArray } from '@repo/db'
 import { assets, listingImages } from '@repo/db/schemas'
-import type { Asset, AssetInsert } from '@repo/db/types'
+import type { Asset, AssetInsert, Listing } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { randomUUIDv7 } from 'bun'
 import { subDays } from 'date-fns'
@@ -24,9 +24,9 @@ type AssetLifecycleAdapters = {
 		create: () => string
 	}
 	listingImages: {
-		attach: (image: { assetId: Asset['id']; listingId: string }) => Promise<void>
-		detach?: (listingId: string) => Promise<Asset['id'][]>
-		replace?: (image: { assetId: Asset['id']; listingId: string }) => Promise<Asset['id'][]>
+		attach: (image: { assetId: Asset['id']; listingId: Listing['id'] }) => Promise<void>
+		detach?: (listingId: Listing['id']) => Promise<Asset['id'][]>
+		replace?: (image: { assetId: Asset['id']; listingId: Listing['id'] }) => Promise<Asset['id'][]>
 	}
 	storage: {
 		delete: (key: Asset['key']) => Promise<void>
@@ -47,7 +47,7 @@ type ReserveUploadInput = {
 
 type AttachListingImageInput = {
 	assetKey: Asset['key']
-	listingId: string
+	listingId: Listing['id']
 	ownerId: Asset['ownerId']
 }
 
@@ -122,7 +122,7 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 		return { asset, url }
 	},
 
-	retireListingMedia: async ({ listingId }: { listingId: string }) => {
+	retireListingMedia: async ({ listingId }: { listingId: Listing['id'] }) => {
 		if (!adapters.listingImages.detach) {
 			throw new Error('Listing media retirement is not configured')
 		}
@@ -175,10 +175,10 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 		create: () => randomUUIDv7(),
 	},
 	listingImages: {
-		attach: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
+		attach: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: Listing['id'] }) => {
 			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
 		},
-		detach: async (listingId: string) => {
+		detach: async (listingId: Listing['id']) => {
 			const detachedImages = await db
 				.delete(listingImages)
 				.where(eq(listingImages.listingId, listingId))
@@ -186,7 +186,7 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 
 			return detachedImages.map((image) => image.assetId)
 		},
-		replace: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
+		replace: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: Listing['id'] }) => {
 			const replacedImages = await db
 				.delete(listingImages)
 				.where(eq(listingImages.listingId, listingId))
