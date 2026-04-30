@@ -12,6 +12,12 @@ describe('Files', () => {
 	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
 
+	const grantRole = (values: {
+		grantedById?: number | null
+		role: 'admin' | 'superadmin' | 'user'
+		userId: number
+	}) => db.insert(userRoles).values(values)
+
 	beforeEach(async () => {
 		await createTestUsers()
 		adminApi = (await createApiWithAuth(testUsers.admin)).api
@@ -123,13 +129,19 @@ describe('Files', () => {
 			expect(res.status).toBe(401)
 		})
 
-		it('returns 403 for non-superadmin', async () => {
-			const res = await userApi.files.cleanup.get()
-			expect([401, 403]).toContain(res.status)
+		it('returns 403 for authenticated users without the required numeric role assignment', async () => {
+			await grantRole({
+				grantedById: testUsers.admin.id,
+				role: 'admin',
+				userId: testUsers.admin.id,
+			})
+
+			const res = await adminApi.files.cleanup.get()
+			expect(res.status).toBe(403)
 		})
 
 		it('cleans up stale pending assets end to end for superadmins', async () => {
-			await db.insert(userRoles).values({
+			await grantRole({
 				grantedById: testUsers.admin.id,
 				role: 'superadmin',
 				userId: testUsers.admin.id,
