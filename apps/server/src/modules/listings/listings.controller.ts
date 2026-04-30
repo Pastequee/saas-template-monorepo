@@ -6,7 +6,11 @@ import { z } from 'zod'
 
 import { authMacro } from '#lib/auth.macros'
 
-import { ListingsService } from './listings.service'
+import {
+	ListingsService,
+	isListingForbiddenError,
+	isListingNotFoundError,
+} from './listings.service'
 
 export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] })
 	.use(authMacro)
@@ -31,14 +35,19 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 	.get(
 		'/listings/:id',
 		async ({ params, listingsService, statusError }) => {
-			const listing = await listingsService.getListing(params.id)
-			if (!listing) {
-				return statusError(404, { message: 'Listing not found' })
-			}
+			try {
+				const listing = await listingsService.getListingOrThrow(params.id)
 
-			return {
-				...listing,
-				image: getImageUrl(listing.image?.key),
+				return {
+					...listing,
+					image: getImageUrl(listing.image?.key),
+				}
+			} catch (error) {
+				if (isListingNotFoundError(error)) {
+					return statusError(404, { message: error.message })
+				}
+
+				throw error
 			}
 		},
 		{ auth: true, params: 'uuidParam' }
@@ -57,24 +66,23 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 	.patch(
 		'/listings/:id',
 		async ({ body, params, user, statusError, listingsService }) => {
-			const listing = await listingsService.getListing(params.id)
+			try {
+				return await listingsService.updateOwnedListing({
+					data: body,
+					id: params.id,
+					userId: user.id,
+				})
+			} catch (error) {
+				if (isListingNotFoundError(error)) {
+					return statusError(404, { message: error.message })
+				}
 
-			if (!listing) {
-				return statusError(404, { message: 'Listing not found' })
+				if (isListingForbiddenError(error)) {
+					return statusError(403, { message: error.message })
+				}
+
+				throw error
 			}
-
-			if (listing.userId !== user.id) {
-				return statusError(403, { message: 'This listing is not yours' })
-			}
-
-			const emptyBody = Object.keys(body).length === 0
-			if (emptyBody) {
-				return listing
-			}
-
-			const updatedListing = await listingsService.updateListing(params.id, body)
-
-			return updatedListing
 		},
 		{
 			auth: true,
@@ -86,19 +94,20 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 	.delete(
 		'/listings/:id',
 		async ({ params, status, user, statusError, listingsService }) => {
-			const listing = await listingsService.getListing(params.id)
+			try {
+				await listingsService.deleteOwnedListing({ id: params.id, userId: user.id })
+				return status('No Content')
+			} catch (error) {
+				if (isListingNotFoundError(error)) {
+					return statusError('Not Found', { message: error.message })
+				}
 
-			if (!listing) {
-				return statusError('Not Found', { message: 'Listing not found' })
+				if (isListingForbiddenError(error)) {
+					return statusError(403, { message: error.message })
+				}
+
+				throw error
 			}
-
-			if (listing.userId !== user.id) {
-				return statusError(403, { message: 'This listing is not yours' })
-			}
-
-			await listingsService.deleteListing(params.id)
-
-			return status('No Content')
 		},
 		{ auth: true, params: 'uuidParam' }
 	)

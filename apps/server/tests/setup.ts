@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach, mock } from 'bun:test'
+import { beforeAll, beforeEach, mock } from 'bun:test'
 
 import { createAuth } from '@repo/auth'
 import { createTestDb, truncateAllTables } from '@repo/db/test'
@@ -28,9 +28,4 @@ beforeEach(async () => {
 	// Reset state between tests for deterministic results.
 	await truncateAllTables(testDb)
 	fileStorageMock._cleanFiles()
-})
-
-afterAll(async () => {
-	// Close DB after all tests complete.
-	await testDb.$client.end()
 })

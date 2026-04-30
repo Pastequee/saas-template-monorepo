@@ -1,12 +1,12 @@
 // oxlint-disable unicorn/no-await-expression-member
-import { beforeAll, describe, expect, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
 
 describe('Global', () => {
 	const api = createApi()
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await createTestUsers()
 	})
 

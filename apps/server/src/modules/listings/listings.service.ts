@@ -1,63 +1,68 @@
 // oxlint-disable require-await
-import { eq, inArray, withTransaction } from '@repo/db'
+import { eq, withTransaction } from '@repo/db'
 import type { DatabaseType, TransactionType } from '@repo/db'
-import { assets, listingImages, listings } from '@repo/db/schemas'
-import type { Asset, Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
+import { listings } from '@repo/db/schemas'
+import type { Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
 
-import { FileService } from '#modules/files/file.service'
+import {
+	AssetLifecycle,
+	createAssetLifecycleAdapters,
+} from '#modules/asset-lifecycle/asset-lifecycle.service'
+
+const listingNotFoundError = () =>
+	Object.assign(new Error('Listing not found'), { name: 'ListingNotFoundError' })
+const listingForbiddenError = () =>
+	Object.assign(new Error('This listing is not yours'), { name: 'ListingForbiddenError' })
+
+export const isListingNotFoundError = (
+	error: unknown
+): error is Error & { name: 'ListingNotFoundError' } =>
+	error instanceof Error && error.name === 'ListingNotFoundError'
+
+export const isListingForbiddenError = (
+	error: unknown
+): error is Error & { name: 'ListingForbiddenError' } =>
+	error instanceof Error && error.name === 'ListingForbiddenError'
 
 export const ListingsService = (db: DatabaseType | TransactionType) => ({
-	addListingImage: async (listingId: Listing['id'], assetKey: Asset['key']) => {
-		await withTransaction(db, async (tx) => {
-			const asset = await FileService(tx).promotePendingAsset(assetKey)
-			await tx.insert(listingImages).values({ assetId: asset.id, listingId, sortOrder: 0 })
-		})
-	},
-
 	createListing: async (data: ListingInsert & { imageKey: string }) =>
 		withTransaction(db, async (tx) => {
+			const { imageKey, ...listingData } = data
 			const listing = await tx
 				.insert(listings)
-				.values(data)
+				.values(listingData)
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([l]) => l!)
 
-			await ListingsService(tx).addListingImage(listing.id, data.imageKey)
+			await AssetLifecycle(createAssetLifecycleAdapters(tx)).attachListingImage({
+				assetKey: imageKey,
+				listingId: listing.id,
+				ownerId: listing.userId,
+			})
 			return listing
 		}),
 
-	deleteListing: async (id: Listing['id']) => {
+	deleteOwnedListing: async ({ id, userId }: { id: Listing['id']; userId: User['id'] }) => {
 		await withTransaction(db, async (tx) => {
-			await ListingsService(tx).deleteListingImage(id)
+			await getOwnedListingRecordOrThrow(tx, id, userId)
+			await AssetLifecycle(createAssetLifecycleAdapters(tx)).retireListingMedia({ listingId: id })
 			await tx.delete(listings).where(eq(listings.id, id))
 		})
 	},
 
-	deleteListingImage: async (listingId: Listing['id']) => {
-		await withTransaction(db, async (tx) => {
-			const images = await tx
-				.delete(listingImages)
-				.where(eq(listingImages.listingId, listingId))
-				.returning()
-
-			await tx
-				.update(assets)
-				.set({ status: 'deleted' })
-				.where(
-					inArray(
-						assets.id,
-						images.map((image) => image.assetId)
-					)
-				)
-		})
-	},
-
-	getListing: async (id: Listing['id']) =>
-		db.query.listings.findFirst({
+	getListingOrThrow: async (id: Listing['id']) => {
+		const listing = await db.query.listings.findFirst({
 			where: { id },
 			with: { image: true, user: { columns: { id: true, name: true } } },
-		}),
+		})
+
+		if (!listing) {
+			throw listingNotFoundError()
+		}
+
+		return listing
+	},
 
 	getUserListings: async (userId: User['id']) =>
 		db.query.listings.findMany({
@@ -75,17 +80,35 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 			with: { image: true, user: { columns: { id: true, name: true } } },
 		}),
 
-	updateListing: async (id: Listing['id'], data: ListingUpdate & { imageKey?: string }) =>
+	updateOwnedListing: async ({
+		data,
+		id,
+		userId,
+	}: {
+		data: ListingUpdate & { imageKey?: string }
+		id: Listing['id']
+		userId: User['id']
+	}) =>
 		withTransaction(db, async (tx) => {
-			if (data.imageKey !== undefined) {
-				await ListingsService(tx).deleteListingImage(id)
-				await ListingsService(tx).addListingImage(id, data.imageKey)
+			const { imageKey, ...listingData } = data
+			const listing = await getOwnedListingRecordOrThrow(tx, id, userId)
+
+			if (imageKey !== undefined) {
+				await AssetLifecycle(createAssetLifecycleAdapters(tx)).replaceListingImage({
+					assetKey: imageKey,
+					listingId: id,
+					ownerId: listing.userId,
+				})
+			}
+
+			if (Object.keys(listingData).length === 0) {
+				return listing
 			}
 
 			return (
 				tx
 					.update(listings)
-					.set(data)
+					.set(listingData)
 					.where(eq(listings.id, id))
 					.returning()
 					// oxlint-disable-next-line typescript/no-non-null-assertion
@@ -93,3 +116,21 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 			)
 		}),
 })
+
+async function getOwnedListingRecordOrThrow(
+	db: DatabaseType | TransactionType,
+	id: Listing['id'],
+	userId: User['id']
+) {
+	const listing = await db.query.listings.findFirst({ where: { id } })
+
+	if (!listing) {
+		throw listingNotFoundError()
+	}
+
+	if (listing.userId !== userId) {
+		throw listingForbiddenError()
+	}
+
+	return listing
+}
