@@ -1,13 +1,25 @@
 type NumericId = number | string
 
 export const coercePositiveInt = (value: NumericId, label = 'value') => {
-	const normalized = typeof value === 'number' ? value : Number(value)
+	if (typeof value === 'string') {
+		if (!/^\d+$/.test(value)) {
+			throw new Error(`Invalid ${label}: ${value}`)
+		}
 
-	if (!Number.isSafeInteger(normalized) || normalized < 1) {
+		const normalized = Number(value)
+
+		if (!Number.isSafeInteger(normalized) || normalized < 1) {
+			throw new Error(`Invalid ${label}: ${value}`)
+		}
+
+		return normalized
+	}
+
+	if (!Number.isSafeInteger(value) || value < 1) {
 		throw new Error(`Invalid ${label}: ${value}`)
 	}
 
-	return normalized
+	return value
 }
 
 export const normalizeOptionalPositiveInt = (

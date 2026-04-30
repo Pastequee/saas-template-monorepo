@@ -102,6 +102,11 @@ describe('Listings', () => {
 			expect(res.status).toBe(422)
 		})
 
+		it('rejects non-decimal numeric route params at the boundary', async () => {
+			const res = await userApi.listings({ id: '1e2' }).get()
+			expect(res.status).toBe(422)
+		})
+
 		it('returns 404 for nonexistent id', async () => {
 			const res = await userApi.listings({ id: 999_999 }).get()
 			expect(res.status).toBe(404)
