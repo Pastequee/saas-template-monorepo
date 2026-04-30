@@ -155,7 +155,7 @@ function FieldSeparator({
 			{/* oxlint-disable-next-line typescript/strict-boolean-expressions */}
 			{children && (
 				<span
-					className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
+					className="bg-background text-muted-foreground relative mx-auto block w-fit px-2"
 					data-slot="field-separator-content"
 				>
 					{children}

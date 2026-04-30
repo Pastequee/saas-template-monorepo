@@ -58,12 +58,12 @@ function ListingDetails({ listing }: { listing: Listing }) {
 
 				<div>
 					<h4 className="font-semibold">Description</h4>
-					<p className="mt-2 font-light text-muted-foreground">{listing.description}</p>
+					<p className="text-muted-foreground mt-2 font-light">{listing.description}</p>
 				</div>
 
 				<Separator />
 
-				<div className="font-light text-muted-foreground *:flex *:items-center *:gap-1">
+				<div className="text-muted-foreground font-light *:flex *:items-center *:gap-1">
 					<p>
 						<User className="size-4" /> Vendeur: {listing.user?.name ?? 'Inconnu'}
 					</p>

@@ -24,7 +24,7 @@ export function ImageUploadField({ onImageChange }: { onImageChange: (key: strin
 
 	return (
 		<div className="flex flex-col gap-2">
-			<span className="font-medium text-sm">Image</span>
+			<span className="text-sm font-medium">Image</span>
 			{file ? (
 				<FilePreview file={file} onRemove={handleRemove} />
 			) : (
@@ -56,13 +56,13 @@ function FilePreview({ file, onRemove }: { file: UploadingFile; onRemove: () => 
 			<div className="flex flex-1 flex-col gap-1">
 				<span className="truncate text-sm">{file.file.name}</span>
 				{isUploading && (
-					<div className="flex items-center gap-2 text-muted-foreground text-xs">
+					<div className="text-muted-foreground flex items-center gap-2 text-xs">
 						<Loader2 className="size-3 animate-spin" />
 						{file.status === 'processing' ? 'Traitement...' : `${file.progress}%`}
 					</div>
 				)}
 				{file.status === 'complete' && (
-					<span className="text-green-600 text-xs">Upload terminé</span>
+					<span className="text-xs text-green-600">Upload terminé</span>
 				)}
 				{file.status === 'error' && <span className="text-destructive text-xs">{file.error}</span>}
 			</div>

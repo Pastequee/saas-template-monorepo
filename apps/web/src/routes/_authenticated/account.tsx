@@ -60,9 +60,9 @@ function AccountInfoItem({
 }) {
 	return (
 		<div className="flex gap-2">
-			<Icon className="mt-0.5 size-4 text-muted-foreground" />
+			<Icon className="text-muted-foreground mt-0.5 size-4" />
 			<div className="flex flex-col">
-				<span className="font-light text-muted-foreground text-xs">{label}</span>
+				<span className="text-muted-foreground text-xs font-light">{label}</span>
 				<span>{value}</span>
 			</div>
 		</div>

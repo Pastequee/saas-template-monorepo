@@ -113,8 +113,8 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 					</DialogHeader>
 
 					{user.banReason && (
-						<div className="rounded-md bg-muted p-3 text-sm">
-							<p className="font-medium text-muted-foreground">Current ban reason:</p>
+						<div className="bg-muted rounded-md p-3 text-sm">
+							<p className="text-muted-foreground font-medium">Current ban reason:</p>
 							<p>{user.banReason}</p>
 						</div>
 					)}

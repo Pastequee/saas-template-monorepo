@@ -45,7 +45,7 @@ const columns: ColumnDef<UserWithRole>[] = [
 						width={32}
 					/>
 				) : (
-					<div className="flex size-8 items-center justify-center rounded-full bg-muted">
+					<div className="bg-muted flex size-8 items-center justify-center rounded-full">
 						<Users className="size-4" />
 					</div>
 				)}
@@ -275,7 +275,7 @@ export function UsersTable() {
 
 	if (isError) {
 		return (
-			<div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
+			<div className="border-destructive bg-destructive/10 text-destructive rounded-lg border p-4">
 				Failed to load users: {error.message}
 			</div>
 		)
@@ -301,12 +301,12 @@ export function UsersTable() {
 			{/* Table */}
 			<div className="rounded-md border">
 				<table className="w-full">
-					<thead className="border-b bg-muted/50">
+					<thead className="bg-muted/50 border-b">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<tr key={headerGroup.id}>
 								{headerGroup.headers.map((header) => (
 									<th
-										className="px-4 py-3 text-left font-medium text-muted-foreground text-sm"
+										className="text-muted-foreground px-4 py-3 text-left text-sm font-medium"
 										key={header.id}
 									>
 										{header.isPlaceholder
@@ -320,7 +320,7 @@ export function UsersTable() {
 					<tbody>
 						{table.getRowModel().rows.length ? (
 							table.getRowModel().rows.map((row) => (
-								<tr className="border-b last:border-0 hover:bg-muted/50" key={row.id}>
+								<tr className="hover:bg-muted/50 border-b last:border-0" key={row.id}>
 									{row.getVisibleCells().map((cell) => (
 										<td className="px-4 py-3" key={cell.id}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -331,7 +331,7 @@ export function UsersTable() {
 						) : (
 							<tr>
 								<td
-									className="px-4 py-8 text-center text-muted-foreground"
+									className="text-muted-foreground px-4 py-8 text-center"
 									colSpan={columns.length}
 								>
 									No users found.

@@ -10,7 +10,7 @@ function ScrollArea({ className, children, ...props }: ScrollAreaPrimitive.Root.
 			{...props}
 		>
 			<ScrollAreaPrimitive.Viewport
-				className="size-full rounded-[inherit] outline-none transition-[color,box-shadow] focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+				className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
 				data-slot="scroll-area-viewport"
 			>
 				{children}
@@ -38,7 +38,7 @@ function ScrollBar({
 			{...props}
 		>
 			<ScrollAreaPrimitive.Thumb
-				className="relative flex-1 rounded-full bg-border"
+				className="bg-border relative flex-1 rounded-full"
 				data-slot="scroll-area-thumb"
 			/>
 		</ScrollAreaPrimitive.Scrollbar>

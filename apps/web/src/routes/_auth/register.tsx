@@ -18,9 +18,9 @@ function RegisterPage() {
 			<CardContent>
 				<RegisterForm />
 
-				<p className="mt-4 flex flex-wrap justify-center gap-1 text-muted-foreground text-sm">
+				<p className="text-muted-foreground mt-4 flex flex-wrap justify-center gap-1 text-sm">
 					Déjà un compte?{' '}
-					<Link className="flex items-center gap-1 text-primary" search to="/login">
+					<Link className="text-primary flex items-center gap-1" search to="/login">
 						Se connecter <ArrowRight size={14} />
 					</Link>
 				</p>

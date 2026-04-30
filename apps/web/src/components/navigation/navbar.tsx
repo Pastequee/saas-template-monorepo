@@ -12,9 +12,9 @@ export const Navbar = () => {
 	}
 
 	return (
-		<header className="sticky top-0 z-10 flex items-center justify-center gap-4 border-b bg-background p-4">
+		<header className="bg-background sticky top-0 z-10 flex items-center justify-center gap-4 border-b p-4">
 			<nav className="flex max-w-7xl flex-1 items-center justify-end gap-4">
-				<Link className="mr-auto font-bold text-2xl text-primary" to="/">
+				<Link className="text-primary mr-auto text-2xl font-bold" to="/">
 					BonnesAffaires
 				</Link>
 

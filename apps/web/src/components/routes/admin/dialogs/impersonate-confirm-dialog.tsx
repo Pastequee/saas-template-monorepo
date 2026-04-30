@@ -56,7 +56,7 @@ export function ImpersonateConfirmDialog({ user, open, onOpenChange }: Props) {
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-amber-800 text-sm dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+				<div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
 					<p className="font-medium">Warning</p>
 					<p className="mt-1">
 						While impersonating, you will see the application as this user sees it. Any actions you

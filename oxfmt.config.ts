@@ -18,10 +18,13 @@ export default defineConfig({
 	arrowParens: 'always',
 	endOfLine: 'lf',
 
-	experimentalSortPackageJson: true,
-	experimentalSortImports: {
+	sortTailwindcss: true,
+	sortImports: {
 		ignoreCase: true,
 		newlinesBetween: true,
 		order: 'asc',
 	},
+	sortPackageJson: true,
+
+	ignorePatterns: ['apps/web/src/routeTree.gen.ts'],
 })

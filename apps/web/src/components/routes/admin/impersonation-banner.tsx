@@ -46,7 +46,7 @@ export function ImpersonationBanner() {
 		<div className="sticky top-0 z-50 flex w-full items-center justify-center gap-4 bg-amber-500 px-4 py-2 text-amber-950">
 			<div className="flex items-center gap-2">
 				<UserCheck className="size-4" />
-				<span className="font-medium text-sm">
+				<span className="text-sm font-medium">
 					You are currently impersonating <span className="font-bold">{auth.user.name}</span>
 				</span>
 			</div>

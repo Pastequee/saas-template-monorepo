@@ -17,9 +17,9 @@ function LoginPageComponent() {
 			</CardHeader>
 			<CardContent>
 				<LoginForm />
-				<p className="mt-4 flex flex-wrap justify-center gap-1 text-muted-foreground text-sm">
+				<p className="text-muted-foreground mt-4 flex flex-wrap justify-center gap-1 text-sm">
 					Pas encore de compte?{' '}
-					<Link className="flex items-center gap-1 text-primary" search to="/register">
+					<Link className="text-primary flex items-center gap-1" search to="/register">
 						Créer un compte <ArrowRight size={14} />
 					</Link>
 				</p>
