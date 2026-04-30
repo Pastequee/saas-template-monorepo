@@ -1,5 +1,6 @@
 import { AuthRole } from '@repo/db/types'
 import type { AuthRole as AuthRoleType } from '@repo/db/types'
+import { coercePositiveInt, normalizeOptionalPositiveInt } from '@repo/utils'
 
 type AuthId = number | string
 
@@ -30,18 +31,10 @@ type NormalizedUser<TUser extends AuthUserLike> = Omit<TUser, 'id' | 'role'> & {
 
 const isAuthRole = (value: string): value is AuthRoleType => AuthRole.some((role) => role === value)
 
-export const normalizeAuthId = (value: AuthId) => {
-	const normalized = typeof value === 'number' ? value : Number(value)
-
-	if (!Number.isSafeInteger(normalized) || normalized < 1) {
-		throw new Error(`Invalid auth id: ${value}`)
-	}
-
-	return normalized
-}
+export const normalizeAuthId = (value: AuthId) => coercePositiveInt(value, 'auth id')
 
 export const normalizeOptionalAuthId = (value: AuthId | null | undefined) =>
-	value === null || value === undefined ? value : normalizeAuthId(value)
+	normalizeOptionalPositiveInt(value, 'auth id')
 
 export const normalizeAuthSession = <
 	TSession extends AuthSessionLike,

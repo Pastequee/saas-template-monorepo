@@ -92,6 +92,7 @@
         "@repo/db": "workspace:*",
         "@repo/email": "workspace:*",
         "@repo/env": "workspace:*",
+        "@repo/utils": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "^17.4.2",
       },
