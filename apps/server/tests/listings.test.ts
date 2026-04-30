@@ -2,6 +2,8 @@
 // oxlint-disable unicorn/no-await-expression-member
 import { beforeAll, describe, expect, it } from 'bun:test'
 
+import { db } from '@repo/db'
+import { listings } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 import { randomUUIDv7 } from 'bun'
 
@@ -182,6 +184,37 @@ describe('Listings', () => {
 
 			const getRes = await userApi.listings({ id }).get()
 			expect(getRes.status).toBe(404)
+		})
+
+		it('retires attached media when deleting a listing', async () => {
+			const imageKey = await presignImage(userApi)
+			const created = await userApi.listings.post({ ...validListing, imageKey })
+			const { id } = created.data!
+
+			const res = await userApi.listings({ id }).delete()
+
+			expect(res.status).toBe(204)
+			expect(await db.query.assets.findFirst({ where: { key: imageKey } })).toMatchObject({
+				key: imageKey,
+				status: 'deleted',
+			})
+		})
+
+		it('deletes a listing safely when no image is attached', async () => {
+			const [listing] = await db
+				.insert(listings)
+				.values({
+					description: validListing.description,
+					price: validListing.price,
+					title: `${validListing.title} without image`,
+					userId: testUsers.user.id,
+				})
+				.returning()
+
+			const res = await userApi.listings({ id: listing!.id }).delete()
+
+			expect(res.status).toBe(204)
+			expect(await db.query.listings.findFirst({ where: { id: listing!.id } })).toBeUndefined()
 		})
 
 		it('returns 403 when deleting another users listing', async () => {

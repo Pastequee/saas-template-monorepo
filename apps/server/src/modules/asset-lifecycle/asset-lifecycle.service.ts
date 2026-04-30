@@ -15,6 +15,7 @@ type AssetLifecycleAdapters = {
 		delete: (ids: Asset['id'][]) => Promise<void>
 		findPendingByKey: (key: Asset['key'], ownerId: Asset['ownerId']) => Promise<Asset | null>
 		findStalePending: (createdBefore: Date) => Promise<Asset[]>
+		retire?: (ids: Asset['id'][]) => Promise<void>
 	}
 	clock: {
 		now: () => Date
@@ -24,6 +25,8 @@ type AssetLifecycleAdapters = {
 	}
 	listingImages: {
 		attach: (image: { assetId: Asset['id']; listingId: string }) => Promise<void>
+		detach?: (listingId: string) => Promise<Asset['id'][]>
+		replace?: (image: { assetId: Asset['id']; listingId: string }) => Promise<Asset['id'][]>
 	}
 	storage: {
 		delete: (key: Asset['key']) => Promise<void>
@@ -50,19 +53,7 @@ type AttachListingImageInput = {
 
 export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 	attachListingImage: async ({ assetKey, listingId, ownerId }: AttachListingImageInput) => {
-		const asset = await adapters.assets.findPendingByKey(assetKey, ownerId)
-
-		if (!asset || asset.ownerId !== ownerId) {
-			throw new Error('Asset not found')
-		}
-
-		const fileExists = await adapters.storage.exists(asset.key)
-
-		if (!fileExists) {
-			throw new Error('Asset not found')
-		}
-
-		const activeAsset = await adapters.assets.activate(asset.id)
+		const activeAsset = await activateVerifiedPendingAsset(adapters, { assetKey, ownerId })
 		await adapters.listingImages.attach({ assetId: activeAsset.id, listingId })
 
 		return activeAsset
@@ -95,6 +86,21 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 		return { filesDeleted: cleanedAssetIds.length }
 	},
 
+	replaceListingImage: async ({ assetKey, listingId, ownerId }: AttachListingImageInput) => {
+		if (!adapters.listingImages.replace) {
+			throw new Error('Listing image replacement is not configured')
+		}
+
+		const activeAsset = await activateVerifiedPendingAsset(adapters, { assetKey, ownerId })
+		const retiredAssetIds = await adapters.listingImages.replace({
+			assetId: activeAsset.id,
+			listingId,
+		})
+		await retireAssets(adapters, retiredAssetIds)
+
+		return activeAsset
+	},
+
 	reserveUpload: async ({
 		contentType,
 		filename,
@@ -114,6 +120,17 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 		})
 
 		return { asset, url }
+	},
+
+	retireListingMedia: async ({ listingId }: { listingId: string }) => {
+		if (!adapters.listingImages.detach) {
+			throw new Error('Listing media retirement is not configured')
+		}
+
+		const retiredAssetIds = await adapters.listingImages.detach(listingId)
+		await retireAssets(adapters, retiredAssetIds)
+
+		return { retiredAssetIds }
 	},
 })
 
@@ -143,6 +160,13 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 			db.query.assets.findMany({
 				where: { createdAt: { lt: createdBefore }, status: 'pending' },
 			}),
+		retire: async (ids: Asset['id'][]) => {
+			if (ids.length === 0) {
+				return
+			}
+
+			await db.update(assets).set({ status: 'deleted' }).where(inArray(assets.id, ids))
+		},
 	},
 	clock: {
 		now: () => new Date(),
@@ -153,6 +177,25 @@ export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType)
 	listingImages: {
 		attach: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
 			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
+		},
+		detach: async (listingId: string) => {
+			const detachedImages = await db
+				.delete(listingImages)
+				.where(eq(listingImages.listingId, listingId))
+				.returning({ assetId: listingImages.assetId })
+
+			return detachedImages.map((image) => image.assetId)
+		},
+		replace: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
+			const replacedImages = await db
+				.delete(listingImages)
+				.where(eq(listingImages.listingId, listingId))
+				.returning({ assetId: listingImages.assetId })
+			const replacedAssetIds = replacedImages.map((image) => image.assetId)
+
+			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
+
+			return replacedAssetIds
 		},
 	},
 	storage: {
@@ -175,4 +218,35 @@ function createAssetKey(
 	const ext = filename.split('.').pop() ?? contentType.split('/').pop() ?? ''
 
 	return `${ownerId}/${id}.${ext}`
+}
+
+async function activateVerifiedPendingAsset(
+	adapters: AssetLifecycleAdapters,
+	{ assetKey, ownerId }: Pick<AttachListingImageInput, 'assetKey' | 'ownerId'>
+) {
+	const asset = await adapters.assets.findPendingByKey(assetKey, ownerId)
+
+	if (!asset || asset.ownerId !== ownerId) {
+		throw new Error('Asset not found')
+	}
+
+	const fileExists = await adapters.storage.exists(asset.key)
+
+	if (!fileExists) {
+		throw new Error('Asset not found')
+	}
+
+	return adapters.assets.activate(asset.id)
+}
+
+async function retireAssets(adapters: AssetLifecycleAdapters, ids: Asset['id'][]) {
+	if (ids.length === 0) {
+		return
+	}
+
+	if (!adapters.assets.retire) {
+		throw new Error('Asset retirement is not configured')
+	}
+
+	await adapters.assets.retire([...new Set(ids)])
 }

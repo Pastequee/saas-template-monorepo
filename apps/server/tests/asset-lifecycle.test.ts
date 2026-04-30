@@ -193,6 +193,87 @@ describe('Asset lifecycle', () => {
 		expect(attachedImages).toEqual([{ assetId: 'asset-1', listingId: 'listing-1' }])
 	})
 
+	it('replaces a listing image through one lifecycle action', async () => {
+		const attachedImages: Record<string, string>[] = []
+		const replacedImages: Record<string, string>[] = []
+		const retiredAssetIds: string[] = []
+		const updatedAssets: string[] = []
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async (id) => {
+					updatedAssets.push(id)
+					return {
+						contentType: 'image/webp',
+						createdAt: new Date(),
+						deletedAt: null,
+						filename: 'new-photo.webp',
+						id,
+						key: 'user-1/upload-456.webp',
+						ownerId: 'user-1',
+						size: 2048,
+						status: 'active',
+						updatedAt: new Date(),
+					}
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-created',
+					updatedAt: new Date(),
+				}),
+				delete: async () => {},
+				findPendingByKey: async () => ({
+					contentType: 'image/webp',
+					createdAt: new Date(),
+					deletedAt: null,
+					filename: 'new-photo.webp',
+					id: 'asset-2',
+					key: 'user-1/upload-456.webp',
+					ownerId: 'user-1',
+					size: 2048,
+					status: 'pending',
+					updatedAt: new Date(),
+				}),
+				findStalePending: async () => [],
+				retire: async (ids) => {
+					retiredAssetIds.push(...ids)
+				},
+			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async ({ assetId, listingId }) => {
+					attachedImages.push({ assetId, listingId })
+				},
+				replace: async ({ assetId, listingId }) => {
+					replacedImages.push({ assetId, listingId })
+					return ['asset-1']
+				},
+			},
+			storage: {
+				delete: async () => {},
+				exists: async () => true,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		const asset = await assetLifecycle.replaceListingImage({
+			assetKey: 'user-1/upload-456.webp',
+			listingId: 'listing-1',
+			ownerId: 'user-1',
+		})
+
+		expect(asset.status).toBe('active')
+		expect(updatedAssets).toEqual(['asset-2'])
+		expect(attachedImages).toEqual([])
+		expect(replacedImages).toEqual([{ assetId: 'asset-2', listingId: 'listing-1' }])
+		expect(retiredAssetIds).toEqual(['asset-1'])
+	})
+
 	it('rejects attaching an asset owned by another user', async () => {
 		let activated = false
 		let attached = false
@@ -268,6 +349,117 @@ describe('Asset lifecycle', () => {
 		}
 		expect(activated).toBeFalse()
 		expect(attached).toBeFalse()
+	})
+
+	it('rejects invalid replacements before retiring the current listing image', async () => {
+		let replaced = false
+		let retired = false
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async () => {
+					throw new Error('not used in invalid replacement test')
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-created',
+					updatedAt: new Date(),
+				}),
+				delete: async () => {},
+				findPendingByKey: async () => null,
+				findStalePending: async () => [],
+				retire: async () => {
+					retired = true
+				},
+			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async () => {
+					throw new Error('not used in invalid replacement test')
+				},
+				replace: async () => {
+					replaced = true
+					return ['asset-1']
+				},
+			},
+			storage: {
+				delete: async () => {},
+				exists: async () => true,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		try {
+			await assetLifecycle.replaceListingImage({
+				assetKey: 'user-1/missing.webp',
+				listingId: 'listing-1',
+				ownerId: 'user-1',
+			})
+			throw new Error('Expected replaceListingImage to reject')
+		} catch (error) {
+			expect(error).toBeInstanceOf(Error)
+			if (!(error instanceof Error)) {
+				throw error
+			}
+			expect(error.message).toBe('Asset not found')
+		}
+		expect(replaced).toBeFalse()
+		expect(retired).toBeFalse()
+	})
+
+	it('retires listing media through the asset lifecycle seam', async () => {
+		const retiredAssetIds: string[] = []
+		const detachedListingIds: string[] = []
+
+		const assetLifecycle = AssetLifecycle({
+			assets: {
+				activate: async () => {
+					throw new Error('not used in retire listing media test')
+				},
+				create: async (asset) => ({
+					...asset,
+					createdAt: new Date(),
+					deletedAt: null,
+					id: 'asset-1',
+					updatedAt: new Date(),
+				}),
+				delete: async () => {},
+				findPendingByKey: async () => null,
+				findStalePending: async () => [],
+				retire: async (ids) => {
+					retiredAssetIds.push(...ids)
+				},
+			},
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			ids: { create: () => 'upload-123' },
+			listingImages: {
+				attach: async () => {
+					throw new Error('not used in retire listing media test')
+				},
+				detach: async (listingId) => {
+					detachedListingIds.push(listingId)
+					return ['asset-1']
+				},
+			},
+			storage: {
+				delete: async () => {},
+				exists: async () => true,
+			},
+			uploadIntents: {
+				create: (key, options) => `https://upload.test/${key}?public=${String(options.public)}`,
+			},
+		})
+
+		const result = await assetLifecycle.retireListingMedia({ listingId: 'listing-1' })
+
+		expect(result.retiredAssetIds).toEqual(['asset-1'])
+		expect(detachedListingIds).toEqual(['listing-1'])
+		expect(retiredAssetIds).toEqual(['asset-1'])
 	})
 
 	it('cleans up stale pending assets through the asset lifecycle seam', async () => {

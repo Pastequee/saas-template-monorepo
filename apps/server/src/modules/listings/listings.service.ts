@@ -38,7 +38,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 
 	deleteListing: async (id: Listing['id']) => {
 		await withTransaction(db, async (tx) => {
-			await ListingsService(tx).deleteListingImage(id)
+			await AssetLifecycle(createAssetLifecycleAdapters(tx)).retireListingMedia({ listingId: id })
 			await tx.delete(listings).where(eq(listings.id, id))
 		})
 	},
