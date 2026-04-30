@@ -3,6 +3,10 @@
 	"private": true,
 	"type": "module",
 	"main": "./src/auth-config.ts",
+	"exports": {
+		".": "./src/auth-config.ts",
+		"./auth-session": "./src/auth-session.ts"
+	},
 	"scripts": {
 		"generate": "dotenv -e ../../apps/backend/.env.local -- bunx @better-auth/cli generate --config src/auth-config.ts --output ../db/src/schemas/tmp-auth.ts",
 		"typecheck": "tsgo --noEmit"

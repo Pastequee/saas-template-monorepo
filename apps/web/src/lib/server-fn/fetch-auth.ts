@@ -1,8 +1,9 @@
-import type { AuthRole } from '@repo/db/types'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
 import { authClient } from '~/lib/clients/auth-client'
+
+import { normalizeAuthSession } from '../../../../../packages/auth/src/auth-session'
 
 export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
 	const request = getRequest()
@@ -13,12 +14,5 @@ export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
 		return null
 	}
 
-	return {
-		session: data.session,
-		user: {
-			...data.user,
-			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-			role: (data.user.role ?? 'user') as AuthRole,
-		},
-	}
+	return normalizeAuthSession(data)
 })

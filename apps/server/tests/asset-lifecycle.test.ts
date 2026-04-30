@@ -44,21 +44,21 @@ describe('Asset lifecycle', () => {
 		const reservation = await assetLifecycle.reserveUpload({
 			contentType: 'image/webp',
 			filename: 'photo.webp',
-			ownerId: 'user-1',
+			ownerId: 1,
 			public: true,
 			size: 2048,
 		})
 
-		expect(reservation.url).toBe('https://upload.test/user-1/upload-123.webp?public=true')
-		expect(reservation.asset.ownerId).toBe('user-1')
-		expect(reservation.asset.key).toBe('user-1/upload-123.webp')
+		expect(reservation.url).toBe('https://upload.test/1/upload-123.webp?public=true')
+		expect(reservation.asset.ownerId).toBe(1)
+		expect(reservation.asset.key).toBe('1/upload-123.webp')
 		expect(reservation.asset.status).toBe('pending')
 		expect(createdAssets).toEqual([
 			{
 				contentType: 'image/webp',
 				filename: 'photo.webp',
-				key: 'user-1/upload-123.webp',
-				ownerId: 'user-1',
+				key: '1/upload-123.webp',
+				ownerId: 1,
 				size: 2048,
 				status: 'pending',
 			},
@@ -109,7 +109,7 @@ describe('Asset lifecycle', () => {
 			await assetLifecycle.reserveUpload({
 				contentType: 'image/webp',
 				filename: 'photo.webp',
-				ownerId: 'user-1',
+				ownerId: 1,
 				size: 2048,
 			})
 			throw new Error('Expected upload reservation to fail')
@@ -137,8 +137,8 @@ describe('Asset lifecycle', () => {
 						deletedAt: null,
 						filename: 'photo.webp',
 						id,
-						key: 'user-1/upload-123.webp',
-						ownerId: 'user-1',
+						key: '1/upload-123.webp',
+						ownerId: 1,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
@@ -158,8 +158,8 @@ describe('Asset lifecycle', () => {
 					deletedAt: null,
 					filename: 'photo.webp',
 					id: 'asset-1',
-					key: 'user-1/upload-123.webp',
-					ownerId: 'user-1',
+					key: '1/upload-123.webp',
+					ownerId: 1,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
@@ -183,9 +183,9 @@ describe('Asset lifecycle', () => {
 		})
 
 		const asset = await assetLifecycle.attachListingImage({
-			assetKey: 'user-1/upload-123.webp',
+			assetKey: '1/upload-123.webp',
 			listingId: 'listing-1',
-			ownerId: 'user-1',
+			ownerId: 1,
 		})
 
 		expect(asset.status).toBe('active')
@@ -209,8 +209,8 @@ describe('Asset lifecycle', () => {
 						deletedAt: null,
 						filename: 'new-photo.webp',
 						id,
-						key: 'user-1/upload-456.webp',
-						ownerId: 'user-1',
+						key: '1/upload-456.webp',
+						ownerId: 1,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
@@ -230,8 +230,8 @@ describe('Asset lifecycle', () => {
 					deletedAt: null,
 					filename: 'new-photo.webp',
 					id: 'asset-2',
-					key: 'user-1/upload-456.webp',
-					ownerId: 'user-1',
+					key: '1/upload-456.webp',
+					ownerId: 1,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
@@ -262,9 +262,9 @@ describe('Asset lifecycle', () => {
 		})
 
 		const asset = await assetLifecycle.replaceListingImage({
-			assetKey: 'user-1/upload-456.webp',
+			assetKey: '1/upload-456.webp',
 			listingId: 'listing-1',
-			ownerId: 'user-1',
+			ownerId: 1,
 		})
 
 		expect(asset.status).toBe('active')
@@ -288,8 +288,8 @@ describe('Asset lifecycle', () => {
 						deletedAt: null,
 						filename: 'photo.webp',
 						id: 'asset-1',
-						key: 'user-2/upload-123.webp',
-						ownerId: 'user-2',
+						key: '2/upload-123.webp',
+						ownerId: 2,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
@@ -309,8 +309,8 @@ describe('Asset lifecycle', () => {
 					deletedAt: null,
 					filename: 'photo.webp',
 					id: 'asset-1',
-					key: 'user-2/upload-123.webp',
-					ownerId: 'user-2',
+					key: '2/upload-123.webp',
+					ownerId: 2,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
@@ -335,9 +335,9 @@ describe('Asset lifecycle', () => {
 
 		try {
 			await assetLifecycle.attachListingImage({
-				assetKey: 'user-2/upload-123.webp',
+				assetKey: '2/upload-123.webp',
 				listingId: 'listing-1',
-				ownerId: 'user-1',
+				ownerId: 1,
 			})
 			throw new Error('Expected attachListingImage to reject')
 		} catch (error) {
@@ -396,9 +396,9 @@ describe('Asset lifecycle', () => {
 
 		try {
 			await assetLifecycle.replaceListingImage({
-				assetKey: 'user-1/missing.webp',
+				assetKey: '1/missing.webp',
 				listingId: 'listing-1',
-				ownerId: 'user-1',
+				ownerId: 1,
 			})
 			throw new Error('Expected replaceListingImage to reject')
 		} catch (error) {
@@ -489,8 +489,8 @@ describe('Asset lifecycle', () => {
 						deletedAt: null,
 						filename: 'photo.webp',
 						id: 'asset-1',
-						key: 'user-1/stale.webp',
-						ownerId: 'user-1',
+						key: '1/stale.webp',
+						ownerId: 1,
 						size: 2048,
 						status: 'pending',
 						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
@@ -520,7 +520,7 @@ describe('Asset lifecycle', () => {
 		const result = await assetLifecycle.cleanupStalePendingAssets()
 
 		expect(result.filesDeleted).toBe(1)
-		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
+		expect(deletedStorageKeys).toEqual(['1/stale.webp'])
 		expect(deletedAssetIds).toEqual(['asset-1'])
 	})
 
@@ -551,8 +551,8 @@ describe('Asset lifecycle', () => {
 						deletedAt: null,
 						filename: 'photo.webp',
 						id: 'asset-1',
-						key: 'user-1/missing.webp',
-						ownerId: 'user-1',
+						key: '1/missing.webp',
+						ownerId: 1,
 						size: 2048,
 						status: 'pending',
 						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
@@ -596,8 +596,8 @@ describe('Asset lifecycle', () => {
 				deletedAt: null,
 				filename: 'photo.webp',
 				id: 'asset-1',
-				key: 'user-1/stale.webp',
-				ownerId: 'user-1',
+				key: '1/stale.webp',
+				ownerId: 1,
 				size: 2048,
 				status: 'pending' as const,
 				updatedAt: new Date('2026-04-27T10:00:00.000Z'),
@@ -653,7 +653,7 @@ describe('Asset lifecycle', () => {
 
 		expect(firstRun.filesDeleted).toBe(1)
 		expect(secondRun.filesDeleted).toBe(0)
-		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
+		expect(deletedStorageKeys).toEqual(['1/stale.webp'])
 		expect(deletedAssetIds).toEqual(['asset-1'])
 	})
 })

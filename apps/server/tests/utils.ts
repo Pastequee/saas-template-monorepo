@@ -1,24 +1,25 @@
 import { treaty } from '@elysiajs/eden'
 import { auth } from '@repo/auth'
+import { normalizeAuthId } from '@repo/auth/auth-session'
 import { db } from '@repo/db'
 import type { AuthRole } from '@repo/db/types'
 import { typedObjectEntries } from '@repo/utils'
 
 import { app } from '../src/api'
 
-type TestUser = { id: string; email: string; name: string; role: AuthRole; password: string }
+type TestUser = { id: number; email: string; name: string; role: AuthRole; password: string }
 
 export const testUsers: Record<'admin' | 'user', TestUser> = {
 	admin: {
 		email: 'admin@test.com',
-		id: '1',
+		id: 1,
 		name: 'Admin',
 		password: 'test-admin-password',
 		role: 'admin',
 	},
 	user: {
 		email: 'user@test.com',
-		id: '2',
+		id: 2,
 		name: 'User',
 		password: 'test-user-password',
 		role: 'user',
@@ -49,15 +50,16 @@ export const createTestUsers = async () => {
 	const existingUsers = await db.query.users.findMany()
 
 	await Promise.all(
-		typedObjectEntries(testUsers).map(async ([_, value]) => {
+		typedObjectEntries(testUsers).map(async ([, value]) => {
 			const existingUser = existingUsers.find((u) => u.email === value.email)
 			if (existingUser) {
-				value.id = existingUser.id
+				value.id = normalizeAuthId(existingUser.id)
 			} else {
+				const { id: _, ...input } = value
 				const { user } = await auth.api.createUser({
-					body: value,
+					body: input,
 				})
-				value.id = user.id
+				value.id = normalizeAuthId(user.id)
 			}
 		})
 	)

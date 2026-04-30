@@ -1,4 +1,5 @@
 import { auth } from '@repo/auth'
+import { normalizeAuthSession } from '@repo/auth/auth-session'
 import { db } from '@repo/db'
 import { AuthRole } from '@repo/db/types'
 import type { Role } from '@repo/db/types'
@@ -24,15 +25,18 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 	.use(logger)
 	.macro('auth', {
 		resolve: async function authMiddleware({ request: { headers }, log, statusError }) {
-			const session = await auth.api.getSession({ headers })
+			const rawSession = await auth.api.getSession({ headers })
 
-			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
+			if (!rawSession || !AuthService.isValidAuthRole(rawSession.user.role)) {
 				return statusError(401, { message: 'You are not authenticated' })
 			}
 
+			const accountAgeDays = daysSince(rawSession.user.createdAt)
+			const session = normalizeAuthSession(rawSession)
+
 			log.set({
 				user: {
-					accountAgeDays: daysSince(session.user.createdAt),
+					accountAgeDays,
 					authRole: session.user.role,
 					id: session.user.id,
 				},
@@ -52,15 +56,18 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 
 	.macro('maybeAuth', {
 		resolve: async function maybeAuthMiddleware({ request: { headers }, log }) {
-			const session = await auth.api.getSession({ headers })
+			const rawSession = await auth.api.getSession({ headers })
 
-			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
+			if (!rawSession || !AuthService.isValidAuthRole(rawSession.user.role)) {
 				return
 			}
 
+			const accountAgeDays = daysSince(rawSession.user.createdAt)
+			const session = normalizeAuthSession(rawSession)
+
 			log.set({
 				user: {
-					accountAgeDays: daysSince(session.user.createdAt),
+					accountAgeDays,
 					authRole: session.user.role,
 					id: session.user.id,
 				},
@@ -78,15 +85,18 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 
 	.macro('authAdmin', {
 		resolve: async function authAdminMiddleware({ request: { headers }, log, statusError }) {
-			const session = await auth.api.getSession({ headers })
+			const rawSession = await auth.api.getSession({ headers })
 
-			if (!session || !AuthService.isValidAuthRole(session.user.role)) {
+			if (!rawSession || !AuthService.isValidAuthRole(rawSession.user.role)) {
 				return statusError(401, { message: 'You are not authenticated' })
 			}
 
+			const accountAgeDays = daysSince(rawSession.user.createdAt)
+			const session = normalizeAuthSession(rawSession)
+
 			log.set({
 				user: {
-					accountAgeDays: daysSince(session.user.createdAt),
+					accountAgeDays,
 					authRole: session.user.role,
 					id: session.user.id,
 				},
@@ -104,17 +114,20 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 		'role',
 		(asked: Role | [Omit<Role, 'superadmin'> | [Omit<Role, 'superadmin'>], ...Role[]]) => ({
 			resolve: async function roleMiddleware({ request: { headers }, log, statusError }) {
-				const session = await auth.api.getSession({ headers })
+				const rawSession = await auth.api.getSession({ headers })
 
-				if (!session || !AuthService.isValidAuthRole(session.user.role)) {
+				if (!rawSession || !AuthService.isValidAuthRole(rawSession.user.role)) {
 					return statusError(401, { message: 'You are not authenticated' })
 				}
+
+				const accountAgeDays = daysSince(rawSession.user.createdAt)
+				const session = normalizeAuthSession(rawSession)
 
 				const userRoles = await db.query.userRoles.findMany({ where: { userId: session.user.id } })
 
 				log.set({
 					user: {
-						accountAgeDays: daysSince(session.user.createdAt),
+						accountAgeDays,
 						authRole: session.user.role,
 						id: session.user.id,
 						roles: userRoles.map((userRole) => userRole.role),

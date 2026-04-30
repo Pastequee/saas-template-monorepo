@@ -41,11 +41,17 @@ describe('Global', () => {
 
 		expect(adminMeResponse.status).toBe(200)
 		expect(adminMeResponse.data?.user?.id).toBe(testUsers.admin.id)
+		expect(typeof adminMeResponse.data?.user?.id).toBe('number')
+		expect(typeof adminMeResponse.data?.session.id).toBe('number')
+		expect(typeof adminMeResponse.data?.session.userId).toBe('number')
 
 		const normalApi = (await createApiWithAuth(testUsers.user)).api
 		const normalMeResponse = await normalApi.me.get()
 
 		expect(normalMeResponse.status).toBe(200)
 		expect(normalMeResponse.data?.user?.id).toBe(testUsers.user.id)
+		expect(typeof normalMeResponse.data?.user?.id).toBe('number')
+		expect(typeof normalMeResponse.data?.session.id).toBe('number')
+		expect(typeof normalMeResponse.data?.session.userId).toBe('number')
 	})
 })
