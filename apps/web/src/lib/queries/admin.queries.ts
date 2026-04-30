@@ -1,10 +1,11 @@
-import type { AuthRole } from '@repo/db/types'
 import type { Prettify } from '@repo/utils'
 import { queryOptions } from '@tanstack/react-query'
 import type { UserWithRole as BetterAuthUserWithRole } from 'better-auth/plugins'
 
 import { authClient } from '~/lib/clients/auth-client'
 
+import { normalizeAdminUserList } from '../../../../../packages/auth/src/admin-users'
+import type { NormalizedAdminUser } from '../../../../../packages/auth/src/admin-users'
 import { keys } from './keys'
 
 export const adminUsersOptions = () =>
@@ -16,14 +17,9 @@ export const adminUsersOptions = () =>
 				throw new Error(error.message ?? 'Failed to fetch users')
 			}
 
-			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-			return data.users as unknown as UserWithRole[]
+			return normalizeAdminUserList(data.users)
 		},
 		queryKey: keys.admin.users.list(),
 	})
 
-export type UserWithRole = Prettify<
-	BetterAuthUserWithRole & {
-		role: AuthRole
-	}
->
+export type UserWithRole = Prettify<NormalizedAdminUser<BetterAuthUserWithRole>>

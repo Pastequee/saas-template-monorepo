@@ -13,13 +13,11 @@ import {
 } from '~/components/ui/dialog'
 import { authClient } from '~/lib/clients/auth-client'
 import { useAppForm } from '~/lib/hooks/form-hook'
+import type { UserWithRole } from '~/lib/queries/admin.queries'
 
-// User type matching the admin API response
-type AdminUser = {
-	id: string
-	name: string
-	email: string
-}
+import { stringifyAuthId } from '../../../../../../../packages/auth/src/admin-users'
+
+type AdminUser = Pick<UserWithRole, 'email' | 'id' | 'name'>
 
 type Props = {
 	user: AdminUser
@@ -48,7 +46,7 @@ export function ChangePasswordDialog({ user, open, onOpenChange, onSuccess }: Pr
 
 			const result = await authClient.admin.setUserPassword({
 				newPassword: value.newPassword,
-				userId: user.id,
+				userId: stringifyAuthId(user.id),
 			})
 
 			setIsSubmitting(false)

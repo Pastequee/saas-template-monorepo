@@ -22,6 +22,8 @@ import {
 import { authClient } from '~/lib/clients/auth-client'
 import type { UserWithRole } from '~/lib/queries/admin.queries'
 
+import { stringifyAuthId } from '../../../../../../../packages/auth/src/admin-users'
+
 // Ban duration options in seconds
 const BAN_DURATIONS = [
 	{ label: '1 Hour', value: 60 * 60 },
@@ -58,7 +60,7 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 			// 0 = permanent ban (no expiry)
 			banExpiresIn: banDuration === 0 ? undefined : banDuration,
 			banReason: banReason || undefined,
-			userId: user.id,
+			userId: stringifyAuthId(user.id),
 		})
 
 		setIsSubmitting(false)
@@ -78,7 +80,7 @@ export function BanUserDialog({ user, open, onOpenChange, onSuccess }: Props) {
 		setIsSubmitting(true)
 
 		const result = await authClient.admin.unbanUser({
-			userId: user.id,
+			userId: stringifyAuthId(user.id),
 		})
 
 		setIsSubmitting(false)

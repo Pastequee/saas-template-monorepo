@@ -14,6 +14,8 @@ import {
 import { authClient } from '~/lib/clients/auth-client'
 import type { UserWithRole } from '~/lib/queries/admin.queries'
 
+import { stringifyAuthId } from '../../../../../../../packages/auth/src/admin-users'
+
 type Props = {
 	user: UserWithRole
 	open: boolean
@@ -27,7 +29,7 @@ export function ImpersonateConfirmDialog({ user, open, onOpenChange }: Props) {
 		setIsSubmitting(true)
 
 		const result = await authClient.admin.impersonateUser({
-			userId: user.id,
+			userId: stringifyAuthId(user.id),
 		})
 
 		setIsSubmitting(false)

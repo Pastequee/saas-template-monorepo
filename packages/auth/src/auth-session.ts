@@ -33,6 +33,8 @@ const isAuthRole = (value: string): value is AuthRoleType => AuthRole.some((role
 
 export const normalizeAuthId = (value: AuthId) => coercePositiveInt(value, 'auth id')
 
+export const stringifyAuthId = (value: AuthId) => String(normalizeAuthId(value))
+
 export const normalizeOptionalAuthId = (value: AuthId | null | undefined) =>
 	normalizeOptionalPositiveInt(value, 'auth id')
 

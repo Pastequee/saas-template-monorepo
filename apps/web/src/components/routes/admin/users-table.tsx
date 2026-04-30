@@ -33,6 +33,21 @@ import { ImpersonateConfirmDialog } from './dialogs/impersonate-confirm-dialog'
 
 const columns: ColumnDef<UserWithRole>[] = [
 	{
+		accessorKey: 'id',
+		cell: ({ row }) => <span className="font-mono text-sm">{row.original.id}</span>,
+		header: ({ column }) => (
+			<Button
+				onClick={() => {
+					column.toggleSorting(column.getIsSorted() === 'asc')
+				}}
+				variant="ghost"
+			>
+				ID
+				<ArrowUpDown className="ml-2 size-4" />
+			</Button>
+		),
+	},
+	{
 		accessorKey: 'name',
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">

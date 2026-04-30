@@ -5,6 +5,7 @@
 	"main": "./src/auth-config.ts",
 	"exports": {
 		".": "./src/auth-config.ts",
+		"./admin-users": "./src/admin-users.ts",
 		"./auth-session": "./src/auth-session.ts"
 	},
 	"scripts": {
