@@ -8,7 +8,8 @@ describe('numeric id helpers', () => {
 		expect(coercePositiveInt(4)).toBe(4)
 		expect(normalizeOptionalPositiveInt('3')).toBe(3)
 		expect(normalizeOptionalPositiveInt(null)).toBeNull()
-		expect(normalizeOptionalPositiveInt()).toBeUndefined()
+		// oxlint-disable-next-line unicorn/no-useless-undefined
+		expect(normalizeOptionalPositiveInt(undefined)).toBeUndefined()
 	})
 
 	it('rejects non-positive and non-integer values', () => {
