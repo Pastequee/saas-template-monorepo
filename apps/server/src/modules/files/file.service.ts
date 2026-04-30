@@ -1,21 +1,11 @@
 import { eq, inArray } from '@repo/db'
 import type { DatabaseType, TransactionType } from '@repo/db'
 import { assets } from '@repo/db/schemas'
-import type { Asset, AssetInsert, AssetUpdate } from '@repo/db/types'
+import type { Asset, AssetUpdate } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { subDays } from 'date-fns'
 
 export const FileService = (db: DatabaseType | TransactionType) => ({
-	createAsset: async (data: AssetInsert) => {
-		const asset = await db
-			.insert(assets)
-			.values(data)
-			.returning()
-			// oxlint-disable-next-line typescript/no-non-null-assertion
-			.then(([a]) => a!)
-		return asset
-	},
-
 	deleteAssets: async (ids: Asset['id'][]) => db.delete(assets).where(inArray(assets.id, ids)),
 
 	getPendingAssets: async () => {
