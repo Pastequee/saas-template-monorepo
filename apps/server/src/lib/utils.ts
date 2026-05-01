@@ -7,6 +7,10 @@ import { authMacro } from './auth.macros'
 
 export const utilsLifecycles = new Elysia({ name: 'utils-lifecycles' })
 	.onError(({ status, code }) => {
+		if (env.APP_ENV !== 'production') {
+			return
+		}
+
 		// Obfuscate unpredictable errors
 		if (
 			code === 'INTERNAL_SERVER_ERROR' ||

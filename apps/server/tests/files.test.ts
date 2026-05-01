@@ -1,23 +1,12 @@
-// oxlint-disable unicorn/no-await-expression-member
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
 import { files, userRoles } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
-import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
+import { adminApi, testAuth, unauthApi, userApi } from './setup'
 
-describe('Files', () => {
-	const unauthApi = createApi()
-	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
-	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
-
-	beforeEach(async () => {
-		await createTestUsers()
-		adminApi = (await createApiWithAuth(testUsers.admin)).api
-		userApi = (await createApiWithAuth(testUsers.user)).api
-	})
-
+describe('Files', async () => {
 	// ── POST /files/presign ─────────────────────────────────────
 
 	describe('POST /files/presign', () => {
@@ -52,7 +41,7 @@ describe('Files', () => {
 				size: 512,
 			})
 
-			expect(res.data?.file?.ownerId).toBe(testUsers.user.id)
+			expect(res.data?.file?.ownerId).toBe(testAuth.users.user.id)
 		})
 
 		it('generates key with user id prefix', async () => {
@@ -61,7 +50,7 @@ describe('Files', () => {
 				filename: 'test.webp',
 				size: 512,
 			})
-			expect(res.data?.file.key).toStartWith(`${testUsers.user.id}/`)
+			expect(res.data?.file.key).toStartWith(`${testAuth.users.user.id}/`)
 			expect(res.data?.file.key).toEndWith('.webp')
 		})
 
@@ -130,12 +119,12 @@ describe('Files', () => {
 
 		it('cleans up stale pending assets end to end for superadmins', async () => {
 			await db.insert(userRoles).values({
-				grantedById: testUsers.admin.id,
+				grantedById: testAuth.users.admin.id,
 				role: 'superadmin',
-				userId: testUsers.admin.id,
+				userId: testAuth.users.admin.id,
 			})
 
-			const staleKey = `${testUsers.user.id}/stale-cleanup.webp`
+			const staleKey = `${testAuth.users.user.id}/stale-cleanup.webp`
 			fileStorageMock._setFile(staleKey, `https://upload.test/${staleKey}`)
 
 			await db.insert(files).values({
@@ -143,7 +132,7 @@ describe('Files', () => {
 				createdAt: new Date('2026-04-27T10:00:00.000Z'),
 				filename: 'stale-cleanup.webp',
 				key: staleKey,
-				ownerId: testUsers.user.id,
+				ownerId: testAuth.users.user.id,
 				size: 2048,
 				status: 'pending',
 				updatedAt: new Date('2026-04-27T10:00:00.000Z'),

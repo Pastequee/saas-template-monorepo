@@ -15,14 +15,14 @@ import {
 export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] })
 	.use(authMacro)
 
-	.model('idParam', z.object({ id: z.number() }))
+	.model('idParam', z.object({ id: z.coerce.number() }))
 
-	.decorate('listingsService', ListingsService(db))
+	.decorate('listingsService', () => ListingsService(db))
 
 	.get(
 		'/listings',
-		async ({ user, listingsService }) => {
-			const listings = await listingsService.getUserListings(user.id)
+		async ({ user }) => {
+			const listings = await ListingsService(db).getUserListings(user.id)
 			const listingsWithImages = listings.map((listing) => ({
 				...listing,
 				image: getImageUrl(listing.image?.key),
@@ -34,9 +34,9 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 	.get(
 		'/listings/:id',
-		async ({ params, listingsService, statusError }) => {
+		async ({ params, statusError }) => {
 			try {
-				const listing = await listingsService.getListingOrThrow(params.id)
+				const listing = await ListingsService(db).getListingOrThrow(params.id)
 
 				return {
 					...listing,
@@ -55,8 +55,8 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 	.post(
 		'/listings',
-		async ({ body, status, user, listingsService }) => {
-			const createdListing = await listingsService.createListing({ userId: user.id, ...body })
+		async ({ body, status, user }) => {
+			const createdListing = await ListingsService(db).createListing({ userId: user.id, ...body })
 
 			return status('Created', createdListing)
 		},
@@ -65,9 +65,9 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 	.patch(
 		'/listings/:id',
-		async ({ body, params, user, statusError, listingsService }) => {
+		async ({ body, params, user, statusError }) => {
 			try {
-				return await listingsService.updateOwnedListing({
+				return await ListingsService(db).updateOwnedListing({
 					data: body,
 					id: params.id,
 					userId: user.id,
@@ -93,9 +93,9 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 	.delete(
 		'/listings/:id',
-		async ({ params, status, user, statusError, listingsService }) => {
+		async ({ params, status, user, statusError }) => {
 			try {
-				await listingsService.deleteOwnedListing({ id: params.id, userId: user.id })
+				await ListingsService(db).deleteOwnedListing({ id: params.id, userId: user.id })
 				return status('No Content')
 			} catch (error) {
 				if (isListingNotFoundError(error)) {
@@ -114,8 +114,8 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 
 	.get(
 		'/listings/search',
-		async ({ query, listingsService }) => {
-			const listings = await listingsService.searchListings(query.q)
+		async ({ query }) => {
+			const listings = await ListingsService(db).searchListings(query.q)
 			const listingsWithImages = listings.map((listing) => ({
 				...listing,
 				image: getImageUrl(listing.image?.key),

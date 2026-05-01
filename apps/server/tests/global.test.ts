@@ -1,24 +1,17 @@
-// oxlint-disable unicorn/no-await-expression-member
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 
-import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
+import { adminApi, testAuth, unauthApi, userApi } from './setup'
 
-describe('Global', () => {
-	const api = createApi()
-
-	beforeEach(async () => {
-		await createTestUsers()
-	})
-
+describe('Global', async () => {
 	it('Root endpoint works', async () => {
-		const rootResponse = await api.get()
+		const rootResponse = await unauthApi.get()
 
 		expect(rootResponse.status).toBe(200)
 		expect(rootResponse.data).toBe('Application API')
 	})
 
 	it('Health endpoint works', async () => {
-		const healthResponse = await api.health.get()
+		const healthResponse = await unauthApi.health.get()
 
 		expect(healthResponse.status).toBe(200)
 		expect(healthResponse.data?.database).toBe('healthy')
@@ -29,23 +22,21 @@ describe('Global', () => {
 	it('404 endpoint works', async () => {
 		// @ts-expect-error - This is a test of an unknown endpoint
 		// oxlint-disable-next-line no-unsafe-assignment no-unsafe-member-access no-unsafe-call
-		const notFoundResponse = await api.notFound.get()
+		const notFoundResponse = await unauthApi.notFound.get()
 
 		// oxlint-disable-next-line no-unsafe-member-access
 		expect(notFoundResponse.status).toBe(404)
 	})
 
 	it('Mock auth setup works', async () => {
-		const adminApi = (await createApiWithAuth(testUsers.admin)).api
 		const adminMeResponse = await adminApi.me.get()
 
 		expect(adminMeResponse.status).toBe(200)
-		expect(adminMeResponse.data?.user?.id).toBe(testUsers.admin.id)
+		expect(adminMeResponse.data?.user?.id).toBe(testAuth.users.admin.id)
 
-		const normalApi = (await createApiWithAuth(testUsers.user)).api
-		const normalMeResponse = await normalApi.me.get()
+		const normalMeResponse = await userApi.me.get()
 
 		expect(normalMeResponse.status).toBe(200)
-		expect(normalMeResponse.data?.user?.id).toBe(testUsers.user.id)
+		expect(normalMeResponse.data?.user?.id).toBe(testAuth.users.user.id)
 	})
 })

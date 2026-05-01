@@ -24,6 +24,7 @@
 		"zod": "^4.4.1"
 	},
 	"devDependencies": {
+		"@electric-sql/pglite": "^0.4.5",
 		"@repo/tsconfig": "workspace:*",
 		"@types/bun": "^1.3.13",
 		"@types/pg": "^8.20.0",

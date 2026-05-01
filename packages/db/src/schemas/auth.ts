@@ -40,7 +40,7 @@ export const sessions = authSchema.table(
 			.type('user_id')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
-		impersonatedBy: id.type('impersonated_by'),
+		impersonatedBy: text('impersonated_by'),
 	},
 	(table) => [index('sessions_userId_idx').on(table.userId)]
 )

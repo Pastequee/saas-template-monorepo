@@ -3,7 +3,7 @@ import { mail } from '@repo/email'
 import { env } from '@repo/env/server'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
-import { admin, lastLoginMethod } from 'better-auth/plugins'
+import { admin, lastLoginMethod, testUtils } from 'better-auth/plugins'
 
 export const createAuth = () =>
 	betterAuth({
@@ -31,7 +31,7 @@ export const createAuth = () =>
 			joins: false,
 		},
 
-		plugins: [admin(), lastLoginMethod()],
+		plugins: [admin(), lastLoginMethod(), testUtils()],
 
 		secret: env.BETTER_AUTH_SECRET,
 
@@ -39,5 +39,9 @@ export const createAuth = () =>
 	})
 
 export const auth = createAuth()
+
+export type { TestHelpers } from 'better-auth/plugins'
+
+export type Auth = ReturnType<typeof createAuth>
 
 export default auth

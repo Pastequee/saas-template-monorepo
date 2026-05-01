@@ -1,16 +1,14 @@
-// oxlint-disable typescript/no-non-null-assertion
-// oxlint-disable unicorn/no-await-expression-member
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
-import { randomUUIDv7 } from 'bun'
 
-import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
+import type { TestApi } from './setup'
+import { adminApi, testAuth, unauthApi, userApi } from './setup'
 
 /** Presign a test image and simulate S3 upload. Returns the asset key. */
-async function presignImage(api: Awaited<ReturnType<typeof createApiWithAuth>>['api']) {
+async function presignImage(api: TestApi) {
 	const res = await api.files.presign.post({
 		contentType: 'image/webp',
 		filename: 'test.webp',
@@ -33,17 +31,7 @@ const validListing = {
 	title: 'Test Listing',
 } as const
 
-describe('Listings', () => {
-	const unauthApi = createApi()
-	let userApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
-	let adminApi: Awaited<ReturnType<typeof createApiWithAuth>>['api']
-
-	beforeEach(async () => {
-		await createTestUsers()
-		userApi = (await createApiWithAuth(testUsers.user)).api
-		adminApi = (await createApiWithAuth(testUsers.admin)).api
-	})
-
+describe('Listings', async () => {
 	// ── Auth guard ──────────────────────────────────────────────
 
 	describe('auth guard', () => {
@@ -63,6 +51,7 @@ describe('Listings', () => {
 	describe('GET /listings', () => {
 		it('returns empty array when no listings', async () => {
 			const res = await userApi.listings.get()
+
 			expect(res.status).toBe(200)
 			expect(res.data).toEqual([])
 		})
@@ -103,7 +92,7 @@ describe('Listings', () => {
 		})
 
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).get()
+			const res = await userApi.listings({ id: 12_485_129 }).get()
 			expect(res.status).toBe(404)
 		})
 	})
@@ -160,7 +149,7 @@ describe('Listings', () => {
 		})
 
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).patch({ title: 'Nope' })
+			const res = await userApi.listings({ id: 124_421_421 }).patch({ title: 'Nope' })
 			expect(res.status).toBe(404)
 		})
 
@@ -211,7 +200,7 @@ describe('Listings', () => {
 					description: validListing.description,
 					price: validListing.price,
 					title: `${validListing.title} without image`,
-					userId: testUsers.user.id,
+					userId: testAuth.users.user.id,
 				})
 				.returning()
 
@@ -231,7 +220,7 @@ describe('Listings', () => {
 		})
 
 		it('returns 404 for nonexistent id', async () => {
-			const res = await userApi.listings({ id: randomUUIDv7() }).delete()
+			const res = await userApi.listings({ id: 124_421_421 }).delete()
 			expect(res.status).toBe(404)
 		})
 	})
@@ -251,6 +240,7 @@ describe('Listings', () => {
 
 		it('finds listings by description match', async () => {
 			const imageKey = await presignImage(userApi)
+
 			await userApi.listings.post({
 				...validListing,
 				description: 'Rare collectible item',

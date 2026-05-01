@@ -13,7 +13,7 @@
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
 		"typecheck": "tsgo --noEmit",
-		"test": "bun test --max-concurrency=1"
+		"test": "bun test"
 	},
 	"dependencies": {
 		"@elysiajs/cors": "^1.4.2",

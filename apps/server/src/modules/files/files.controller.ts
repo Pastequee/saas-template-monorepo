@@ -12,15 +12,21 @@ const authorizedMimeTypes = ['image/webp'] as const
 
 export const filesRouter = new Elysia({ name: 'files', tags: ['File'] })
 	.use(authMacro)
-	.decorate('fileLifecycle', FileLifecycle(createFileLifecycleAdapters(db)))
 
 	.post(
 		'/files/presign',
-		async ({ body, user, fileLifecycle }) =>
-			fileLifecycle.reserveUpload({
-				...body,
-				ownerId: user.id,
-			}),
+		async ({ body, user }) => {
+			try {
+				const result = await FileLifecycle(createFileLifecycleAdapters(db)).reserveUpload({
+					...body,
+					ownerId: user.id,
+				})
+				return result
+			} catch (error) {
+				console.error(error)
+				throw new Error('Failed to reserve upload', { cause: error })
+			}
+		},
 		{
 			auth: true,
 			body: z.object({
@@ -34,8 +40,8 @@ export const filesRouter = new Elysia({ name: 'files', tags: ['File'] })
 
 	.get(
 		'/files/cleanup',
-		async ({ fileLifecycle }) => {
-			const result = await fileLifecycle.cleanupStalePendingFiles()
+		async () => {
+			const result = await FileLifecycle(createFileLifecycleAdapters(db)).cleanupStalePendingFiles()
 			return { ...result, message: 'Cleanup complete' }
 		},
 		{ role: 'superadmin' }

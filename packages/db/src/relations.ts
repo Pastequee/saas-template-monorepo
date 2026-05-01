@@ -36,7 +36,7 @@ export const relations = defineRelations(schema, (r) => ({
 		}),
 	},
 
-	assets: {
+	files: {
 		owner: r.one.users({
 			from: r.files.ownerId,
 			to: r.users.id,
@@ -59,7 +59,7 @@ export const relations = defineRelations(schema, (r) => ({
 			from: r.listingImages.listingId,
 			to: r.listings.id,
 		}),
-		asset: r.one.files({
+		file: r.one.files({
 			from: r.listingImages.fileId,
 			to: r.files.id,
 		}),

@@ -15,6 +15,14 @@ export default defineConfig({
 				'eslint/sort-keys': 'off',
 			},
 		},
+		{
+			files: ['*.test.ts'],
+			rules: {
+				'typescript/no-misused-promises': 'off',
+				'typescript/no-non-null-assertion': 'off',
+				'typescript/strict-void-return': 'off',
+			},
+		},
 	],
 	rules: {
 		'eslint/func-style': 'off',
