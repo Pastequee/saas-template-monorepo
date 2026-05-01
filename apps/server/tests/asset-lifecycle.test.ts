@@ -1,23 +1,25 @@
 import { describe, expect, it } from 'bun:test'
 
-import { AssetLifecycle } from '../src/modules/asset-lifecycle/asset-lifecycle.service'
+import { FileLifecycle } from '../src/modules/asset-lifecycle/asset-lifecycle.service'
+import { testUsers } from './utils'
 
 describe('Asset lifecycle', () => {
 	it('reserves an upload with a pending asset and upload intent', async () => {
-		const createdAssets: Record<string, unknown>[] = []
+		const createdFiles: Record<string, unknown>[] = []
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async () => {
 					throw new Error('not used in reserve upload test')
 				},
-				create: async (asset) => {
-					createdAssets.push(asset)
+				create: async (file) => {
+					createdFiles.push(file)
 					return {
-						...asset,
+						...file,
 						createdAt: new Date(),
 						deletedAt: null,
-						id: 'asset-1',
+						id: 1,
 						updatedAt: new Date(),
 					}
 				},
@@ -25,7 +27,6 @@ describe('Asset lifecycle', () => {
 				findPendingByKey: async () => null,
 				findStalePending: async () => [],
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -44,16 +45,16 @@ describe('Asset lifecycle', () => {
 		const reservation = await assetLifecycle.reserveUpload({
 			contentType: 'image/webp',
 			filename: 'photo.webp',
-			ownerId: 'user-1',
+			ownerId: testUsers.user.id,
 			public: true,
 			size: 2048,
 		})
 
 		expect(reservation.url).toBe('https://upload.test/user-1/upload-123.webp?public=true')
-		expect(reservation.asset.ownerId).toBe('user-1')
-		expect(reservation.asset.key).toBe('user-1/upload-123.webp')
-		expect(reservation.asset.status).toBe('pending')
-		expect(createdAssets).toEqual([
+		expect(reservation.file.ownerId).toBe(testUsers.user.id)
+		expect(reservation.file.key).toBe('user-1/upload-123.webp')
+		expect(reservation.file.status).toBe('pending')
+		expect(createdFiles).toEqual([
 			{
 				contentType: 'image/webp',
 				filename: 'photo.webp',
@@ -66,20 +67,21 @@ describe('Asset lifecycle', () => {
 	})
 
 	it('does not create an asset when upload intent creation fails', async () => {
-		let createdAssets = 0
+		let createdFiles = 0
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async () => {
 					throw new Error('not used in reserve upload test')
 				},
-				create: async (asset) => {
-					createdAssets += 1
+				create: async (file) => {
+					createdFiles += 1
 					return {
-						...asset,
+						...file,
 						createdAt: new Date(),
 						deletedAt: null,
-						id: 'asset-1',
+						id: 1,
 						updatedAt: new Date(),
 					}
 				},
@@ -87,7 +89,6 @@ describe('Asset lifecycle', () => {
 				findPendingByKey: async () => null,
 				findStalePending: async () => [],
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -109,7 +110,7 @@ describe('Asset lifecycle', () => {
 			await assetLifecycle.reserveUpload({
 				contentType: 'image/webp',
 				filename: 'photo.webp',
-				ownerId: 'user-1',
+				ownerId: testUsers.user.id,
 				size: 2048,
 			})
 			throw new Error('Expected upload reservation to fail')
@@ -120,17 +121,18 @@ describe('Asset lifecycle', () => {
 			}
 			expect(error.message).toBe('Upload intent unavailable')
 		}
-		expect(createdAssets).toBe(0)
+		expect(createdFiles).toBe(0)
 	})
 
 	it('attaches a pending asset to a listing after upload verification', async () => {
-		const attachedImages: Record<string, string>[] = []
-		const updatedAssets: string[] = []
+		const attachedImages: Record<string, number>[] = []
+		const updatedFiles: number[] = []
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async (id) => {
-					updatedAssets.push(id)
+					updatedFiles.push(id)
 					return {
 						contentType: 'image/webp',
 						createdAt: new Date(),
@@ -138,17 +140,17 @@ describe('Asset lifecycle', () => {
 						filename: 'photo.webp',
 						id,
 						key: 'user-1/upload-123.webp',
-						ownerId: 'user-1',
+						ownerId: testUsers.user.id,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
 					}
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -157,20 +159,19 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'photo.webp',
-					id: 'asset-1',
+					id: 1,
 					key: 'user-1/upload-123.webp',
-					ownerId: 'user-1',
+					ownerId: testUsers.user.id,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
 				}),
 				findStalePending: async () => [],
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
-				attach: async ({ assetId, listingId }) => {
-					attachedImages.push({ assetId, listingId })
+				attach: async ({ fileId, listingId }) => {
+					attachedImages.push({ fileId, listingId })
 				},
 			},
 			storage: {
@@ -183,26 +184,27 @@ describe('Asset lifecycle', () => {
 		})
 
 		const asset = await assetLifecycle.attachListingImage({
-			assetKey: 'user-1/upload-123.webp',
-			listingId: 'listing-1',
-			ownerId: 'user-1',
+			fileKey: 'user-1/upload-123.webp',
+			listingId: 1,
+			ownerId: testUsers.user.id,
 		})
 
 		expect(asset.status).toBe('active')
-		expect(updatedAssets).toEqual(['asset-1'])
-		expect(attachedImages).toEqual([{ assetId: 'asset-1', listingId: 'listing-1' }])
+		expect(updatedFiles).toEqual([1])
+		expect(attachedImages).toEqual([{ fileId: 1, listingId: 1 }])
 	})
 
 	it('replaces a listing image through one lifecycle action', async () => {
-		const attachedImages: Record<string, string>[] = []
-		const replacedImages: Record<string, string>[] = []
-		const retiredAssetIds: string[] = []
-		const updatedAssets: string[] = []
+		const attachedImages: Record<string, number>[] = []
+		const replacedImages: Record<string, number>[] = []
+		const retiredFileIds: number[] = []
+		const updatedFiles: number[] = []
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async (id) => {
-					updatedAssets.push(id)
+					updatedFiles.push(id)
 					return {
 						contentType: 'image/webp',
 						createdAt: new Date(),
@@ -210,17 +212,17 @@ describe('Asset lifecycle', () => {
 						filename: 'new-photo.webp',
 						id,
 						key: 'user-1/upload-456.webp',
-						ownerId: 'user-1',
+						ownerId: testUsers.user.id,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
 					}
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-created',
+					id: 2,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -229,27 +231,26 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'new-photo.webp',
-					id: 'asset-2',
+					id: 2,
 					key: 'user-1/upload-456.webp',
-					ownerId: 'user-1',
+					ownerId: testUsers.user.id,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
 				}),
 				findStalePending: async () => [],
 				retire: async (ids) => {
-					retiredAssetIds.push(...ids)
+					retiredFileIds.push(...ids)
 				},
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
-				attach: async ({ assetId, listingId }) => {
-					attachedImages.push({ assetId, listingId })
+				attach: async ({ fileId, listingId }) => {
+					attachedImages.push({ fileId, listingId })
 				},
-				replace: async ({ assetId, listingId }) => {
-					replacedImages.push({ assetId, listingId })
-					return ['asset-1']
+				replace: async ({ fileId, listingId }) => {
+					replacedImages.push({ fileId, listingId })
+					return [2]
 				},
 			},
 			storage: {
@@ -262,24 +263,25 @@ describe('Asset lifecycle', () => {
 		})
 
 		const asset = await assetLifecycle.replaceListingImage({
-			assetKey: 'user-1/upload-456.webp',
-			listingId: 'listing-1',
-			ownerId: 'user-1',
+			fileKey: 'user-1/upload-456.webp',
+			listingId: 1,
+			ownerId: testUsers.user.id,
 		})
 
 		expect(asset.status).toBe('active')
-		expect(updatedAssets).toEqual(['asset-2'])
+		expect(updatedFiles).toEqual([2])
 		expect(attachedImages).toEqual([])
-		expect(replacedImages).toEqual([{ assetId: 'asset-2', listingId: 'listing-1' }])
-		expect(retiredAssetIds).toEqual(['asset-1'])
+		expect(replacedImages).toEqual([{ fileId: 2, listingId: 1 }])
+		expect(retiredFileIds).toEqual([1])
 	})
 
 	it('rejects attaching an asset owned by another user', async () => {
 		let activated = false
 		let attached = false
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async () => {
 					activated = true
 					return {
@@ -287,19 +289,19 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date(),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: 'user-2/upload-123.webp',
-						ownerId: 'user-2',
+						ownerId: testUsers.user.id,
 						size: 2048,
 						status: 'active',
 						updatedAt: new Date(),
 					}
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -308,16 +310,15 @@ describe('Asset lifecycle', () => {
 					createdAt: new Date(),
 					deletedAt: null,
 					filename: 'photo.webp',
-					id: 'asset-1',
+					id: 1,
 					key: 'user-2/upload-123.webp',
-					ownerId: 'user-2',
+					ownerId: testUsers.user.id,
 					size: 2048,
 					status: 'pending',
 					updatedAt: new Date(),
 				}),
 				findStalePending: async () => [],
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -335,9 +336,9 @@ describe('Asset lifecycle', () => {
 
 		try {
 			await assetLifecycle.attachListingImage({
-				assetKey: 'user-2/upload-123.webp',
-				listingId: 'listing-1',
-				ownerId: 'user-1',
+				fileKey: 'user-2/upload-123.webp',
+				listingId: 1,
+				ownerId: testUsers.user.id,
 			})
 			throw new Error('Expected attachListingImage to reject')
 		} catch (error) {
@@ -355,16 +356,17 @@ describe('Asset lifecycle', () => {
 		let replaced = false
 		let retired = false
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async () => {
 					throw new Error('not used in invalid replacement test')
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-created',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
@@ -374,7 +376,6 @@ describe('Asset lifecycle', () => {
 					retired = true
 				},
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -382,7 +383,7 @@ describe('Asset lifecycle', () => {
 				},
 				replace: async () => {
 					replaced = true
-					return ['asset-1']
+					return [1]
 				},
 			},
 			storage: {
@@ -396,9 +397,9 @@ describe('Asset lifecycle', () => {
 
 		try {
 			await assetLifecycle.replaceListingImage({
-				assetKey: 'user-1/missing.webp',
-				listingId: 'listing-1',
-				ownerId: 'user-1',
+				fileKey: 'user-1/missing.webp',
+				listingId: 1,
+				ownerId: testUsers.user.id,
 			})
 			throw new Error('Expected replaceListingImage to reject')
 		} catch (error) {
@@ -413,29 +414,29 @@ describe('Asset lifecycle', () => {
 	})
 
 	it('retires listing media through the asset lifecycle seam', async () => {
-		const retiredAssetIds: string[] = []
-		const detachedListingIds: string[] = []
+		const retiredFileIds: number[] = []
+		const detachedListingIds: number[] = []
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
+			files: {
 				activate: async () => {
 					throw new Error('not used in retire listing media test')
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
 				delete: async () => {},
 				findPendingByKey: async () => null,
 				findStalePending: async () => [],
 				retire: async (ids) => {
-					retiredAssetIds.push(...ids)
+					retiredFileIds.push(...ids)
 				},
 			},
-			clock: { now: () => new Date('2026-04-30T12:00:00.000Z') },
 			ids: { create: () => 'upload-123' },
 			listingImages: {
 				attach: async () => {
@@ -443,7 +444,7 @@ describe('Asset lifecycle', () => {
 				},
 				detach: async (listingId) => {
 					detachedListingIds.push(listingId)
-					return ['asset-1']
+					return [1]
 				},
 			},
 			storage: {
@@ -455,31 +456,34 @@ describe('Asset lifecycle', () => {
 			},
 		})
 
-		const result = await assetLifecycle.retireListingMedia({ listingId: 'listing-1' })
+		const result = await assetLifecycle.retireListingMedia({ listingId: 1 })
 
-		expect(result.retiredAssetIds).toEqual(['asset-1'])
-		expect(detachedListingIds).toEqual(['listing-1'])
-		expect(retiredAssetIds).toEqual(['asset-1'])
+		expect(result.retiredFileIds).toEqual([1])
+		expect(detachedListingIds).toEqual([1])
+		expect(retiredFileIds).toEqual([1])
 	})
 
 	it('cleans up stale pending assets through the asset lifecycle seam', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedFileIds: number[] = []
 		const deletedStorageKeys: string[] = []
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			files: {
 				activate: async () => {
 					throw new Error('not used in cleanup test')
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
-					deletedAssetIds.push(...ids)
+				delete: async (ids) => {
+					deletedFileIds.push(...ids)
 				},
 				findPendingByKey: async () => null,
 				findStalePending: async () => [
@@ -488,17 +492,14 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date('2026-04-27T10:00:00.000Z'),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: 'user-1/stale.webp',
-						ownerId: 'user-1',
+						ownerId: testUsers.user.id,
 						size: 2048,
 						status: 'pending',
 						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
 					},
 				],
-			},
-			clock: {
-				now: () => new Date('2026-04-30T12:00:00.000Z'),
 			},
 			ids: { create: () => 'upload-123' },
 			listingImages: {
@@ -517,31 +518,34 @@ describe('Asset lifecycle', () => {
 			},
 		})
 
-		const result = await assetLifecycle.cleanupStalePendingAssets()
+		const result = await assetLifecycle.cleanupStalePendingFiles()
 
 		expect(result.filesDeleted).toBe(1)
 		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedFileIds).toEqual([1])
 	})
 
 	it('removes stale pending assets even when the blob is already missing', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedFileIds: number[] = []
 		let storageDeleteCalls = 0
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			files: {
 				activate: async () => {
 					throw new Error('not used in cleanup test')
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
-					deletedAssetIds.push(...ids)
+				delete: async (ids) => {
+					deletedFileIds.push(...ids)
 				},
 				findPendingByKey: async () => null,
 				findStalePending: async () => [
@@ -550,17 +554,14 @@ describe('Asset lifecycle', () => {
 						createdAt: new Date('2026-04-27T10:00:00.000Z'),
 						deletedAt: null,
 						filename: 'photo.webp',
-						id: 'asset-1',
+						id: 1,
 						key: 'user-1/missing.webp',
-						ownerId: 'user-1',
+						ownerId: testUsers.user.id,
 						size: 2048,
 						status: 'pending',
 						updatedAt: new Date('2026-04-27T10:00:00.000Z'),
 					},
 				],
-			},
-			clock: {
-				now: () => new Date('2026-04-30T12:00:00.000Z'),
 			},
 			ids: { create: () => 'upload-123' },
 			listingImages: {
@@ -579,57 +580,57 @@ describe('Asset lifecycle', () => {
 			},
 		})
 
-		const result = await assetLifecycle.cleanupStalePendingAssets()
+		const result = await assetLifecycle.cleanupStalePendingFiles()
 
 		expect(result.filesDeleted).toBe(1)
 		expect(storageDeleteCalls).toBe(0)
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedFileIds).toEqual([1])
 	})
 
 	it('is idempotent across repeated stale cleanup runs', async () => {
-		const deletedAssetIds: string[] = []
+		const deletedFileIds: number[] = []
 		const deletedStorageKeys: string[] = []
-		const staleAssets = [
+		const staleFiles = [
 			{
 				contentType: 'image/webp',
 				createdAt: new Date('2026-04-27T10:00:00.000Z'),
 				deletedAt: null,
 				filename: 'photo.webp',
-				id: 'asset-1',
+				id: 1,
 				key: 'user-1/stale.webp',
-				ownerId: 'user-1',
+				ownerId: testUsers.user.id,
 				size: 2048,
 				status: 'pending' as const,
 				updatedAt: new Date('2026-04-27T10:00:00.000Z'),
 			},
 		]
 
-		const assetLifecycle = AssetLifecycle({
-			assets: {
+		const assetLifecycle = FileLifecycle({
+			clock: {
+				now: () => new Date('2026-04-30T12:00:00.000Z'),
+			},
+			files: {
 				activate: async () => {
 					throw new Error('not used in cleanup test')
 				},
-				create: async (asset) => ({
-					...asset,
+				create: async (file) => ({
+					...file,
 					createdAt: new Date(),
 					deletedAt: null,
-					id: 'asset-1',
+					id: 1,
 					updatedAt: new Date(),
 				}),
-				delete: async (ids: string[]) => {
-					deletedAssetIds.push(...ids)
+				delete: async (ids) => {
+					deletedFileIds.push(...ids)
 					for (const id of ids) {
-						const index = staleAssets.findIndex((asset) => asset.id === id)
+						const index = staleFiles.findIndex((file) => file.id === id)
 						if (index !== -1) {
-							staleAssets.splice(index, 1)
+							staleFiles.splice(index, 1)
 						}
 					}
 				},
 				findPendingByKey: async () => null,
-				findStalePending: async () => staleAssets,
-			},
-			clock: {
-				now: () => new Date('2026-04-30T12:00:00.000Z'),
+				findStalePending: async () => staleFiles,
 			},
 			ids: { create: () => 'upload-123' },
 			listingImages: {
@@ -648,12 +649,12 @@ describe('Asset lifecycle', () => {
 			},
 		})
 
-		const firstRun = await assetLifecycle.cleanupStalePendingAssets()
-		const secondRun = await assetLifecycle.cleanupStalePendingAssets()
+		const firstRun = await assetLifecycle.cleanupStalePendingFiles()
+		const secondRun = await assetLifecycle.cleanupStalePendingFiles()
 
 		expect(firstRun.filesDeleted).toBe(1)
 		expect(secondRun.filesDeleted).toBe(0)
 		expect(deletedStorageKeys).toEqual(['user-1/stale.webp'])
-		expect(deletedAssetIds).toEqual(['asset-1'])
+		expect(deletedFileIds).toEqual([1])
 	})
 })

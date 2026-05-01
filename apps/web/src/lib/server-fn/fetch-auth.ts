@@ -1,4 +1,4 @@
-import type { AuthRole } from '@repo/db/types'
+import { formatAuthSession } from '@repo/auth/utils'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
@@ -13,12 +13,5 @@ export const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
 		return null
 	}
 
-	return {
-		session: data.session,
-		user: {
-			...data.user,
-			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-			role: (data.user.role ?? 'user') as AuthRole,
-		},
-	}
+	return formatAuthSession(data)
 })

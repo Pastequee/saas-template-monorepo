@@ -14,7 +14,7 @@ export const createAuth = () =>
 			},
 
 			database: {
-				generateId: 'uuid',
+				generateId: 'serial',
 			},
 		},
 

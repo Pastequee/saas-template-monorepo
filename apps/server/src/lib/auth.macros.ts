@@ -1,4 +1,5 @@
-import { auth } from '@repo/auth'
+import { auth } from '@repo/auth/config'
+import { formatAuthSession, formatAuthUserId } from '@repo/auth/utils'
 import { db } from '@repo/db'
 import { AuthRole } from '@repo/db/types'
 import type { Role } from '@repo/db/types'
@@ -38,15 +39,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				},
 			})
 
-			return {
-				session: session.session,
-				user: {
-					...session.user,
-
-					// Need to help type inference here
-					role: session.user.role,
-				},
-			}
+			return formatAuthSession(session)
 		},
 	})
 
@@ -66,13 +59,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				},
 			})
 
-			return {
-				session: session.session,
-				user: {
-					...session.user,
-					role: session.user.role,
-				},
-			}
+			return formatAuthSession(session)
 		},
 	})
 
@@ -96,7 +83,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				return statusError(403, { message: 'You are not authorized to access this resource' })
 			}
 
-			return { session: session.session, user: { ...session.user, role: session.user.role } }
+			return formatAuthSession(session)
 		},
 	})
 
@@ -110,7 +97,9 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 					return statusError(401, { message: 'You are not authenticated' })
 				}
 
-				const userRoles = await db.query.userRoles.findMany({ where: { userId: session.user.id } })
+				const userRoles = await db.query.userRoles.findMany({
+					where: { userId: formatAuthUserId(session.user.id) },
+				})
 
 				log.set({
 					user: {
@@ -129,7 +118,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				// Superadmin bypasses all role checks and: has all permissions
 				const isSuperadmin = userRoles.some((userRole) => userRole.role === 'superadmin')
 				if (isSuperadmin) {
-					return { session: session.session, user: { ...session.user, role: session.user.role } }
+					return formatAuthSession(session)
 				}
 
 				const askedRoles = Array.isArray(asked) ? asked : [asked]
@@ -141,7 +130,7 @@ export const authMacro = new Elysia({ name: 'auth-macro' })
 				}
 
 				// If the user has at least one of the asked roles, return the user and session
-				return { session: session.session, user: { ...session.user, role: session.user.role } }
+				return formatAuthSession(session)
 			},
 		})
 	)

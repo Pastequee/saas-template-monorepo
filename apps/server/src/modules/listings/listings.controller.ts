@@ -15,7 +15,7 @@ import {
 export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] })
 	.use(authMacro)
 
-	.model('uuidParam', z.object({ id: z.uuid() }))
+	.model('idParam', z.object({ id: z.number() }))
 
 	.decorate('listingsService', ListingsService(db))
 
@@ -50,7 +50,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 				throw error
 			}
 		},
-		{ auth: true, params: 'uuidParam' }
+		{ auth: true, params: 'idParam' }
 	)
 
 	.post(
@@ -87,7 +87,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 		{
 			auth: true,
 			body: listingUpdateSchema.extend({ imageKey: z.string().optional() }),
-			params: 'uuidParam',
+			params: 'idParam',
 		}
 	)
 
@@ -109,7 +109,7 @@ export const listingsRouter = new Elysia({ name: 'listings', tags: ['Listing'] }
 				throw error
 			}
 		},
-		{ auth: true, params: 'uuidParam' }
+		{ auth: true, params: 'idParam' }
 	)
 
 	.get(

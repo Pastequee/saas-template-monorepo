@@ -4,20 +4,20 @@ import { z } from 'zod'
 
 import { authMacro } from '#lib/auth.macros'
 import {
-	AssetLifecycle,
-	createAssetLifecycleAdapters,
+	FileLifecycle,
+	createFileLifecycleAdapters,
 } from '#modules/asset-lifecycle/asset-lifecycle.service'
 
 const authorizedMimeTypes = ['image/webp'] as const
 
 export const filesRouter = new Elysia({ name: 'files', tags: ['File'] })
 	.use(authMacro)
-	.decorate('assetLifecycle', AssetLifecycle(createAssetLifecycleAdapters(db)))
+	.decorate('fileLifecycle', FileLifecycle(createFileLifecycleAdapters(db)))
 
 	.post(
 		'/files/presign',
-		async ({ body, user, assetLifecycle }) =>
-			assetLifecycle.reserveUpload({
+		async ({ body, user, fileLifecycle }) =>
+			fileLifecycle.reserveUpload({
 				...body,
 				ownerId: user.id,
 			}),
@@ -34,8 +34,8 @@ export const filesRouter = new Elysia({ name: 'files', tags: ['File'] })
 
 	.get(
 		'/files/cleanup',
-		async ({ assetLifecycle }) => {
-			const result = await assetLifecycle.cleanupStalePendingAssets()
+		async ({ fileLifecycle }) => {
+			const result = await fileLifecycle.cleanupStalePendingFiles()
 			return { ...result, message: 'Cleanup complete' }
 		},
 		{ role: 'superadmin' }

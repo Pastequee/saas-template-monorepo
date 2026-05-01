@@ -1,21 +1,21 @@
 import type { DatabaseType, TransactionType } from '@repo/db'
 import { eq, inArray } from '@repo/db'
-import { assets, listingImages } from '@repo/db/schemas'
-import type { Asset, AssetInsert } from '@repo/db/types'
+import { files, listingImages } from '@repo/db/schemas'
+import type { File, FileInsert, Listing } from '@repo/db/types'
 import { fileStorage } from '@repo/file-storage'
 import { randomUUIDv7 } from 'bun'
 import { subDays } from 'date-fns'
 
 type UploadIntentOptions = { public?: boolean }
 
-type AssetLifecycleAdapters = {
-	assets: {
-		activate: (id: Asset['id']) => Promise<Asset>
-		create: (asset: AssetInsert) => Promise<Asset>
-		delete: (ids: Asset['id'][]) => Promise<void>
-		findPendingByKey: (key: Asset['key'], ownerId: Asset['ownerId']) => Promise<Asset | null>
-		findStalePending: (createdBefore: Date) => Promise<Asset[]>
-		retire?: (ids: Asset['id'][]) => Promise<void>
+type FileLifecycleAdapters = {
+	files: {
+		activate: (id: File['id']) => Promise<File>
+		create: (file: FileInsert) => Promise<File>
+		delete: (ids: File['id'][]) => Promise<void>
+		findPendingByKey: (key: File['key'], ownerId: File['ownerId']) => Promise<File | null>
+		findStalePending: (createdBefore: Date) => Promise<File[]>
+		retire?: (ids: File['id'][]) => Promise<void>
 	}
 	clock: {
 		now: () => Date
@@ -24,13 +24,13 @@ type AssetLifecycleAdapters = {
 		create: () => string
 	}
 	listingImages: {
-		attach: (image: { assetId: Asset['id']; listingId: string }) => Promise<void>
-		detach?: (listingId: string) => Promise<Asset['id'][]>
-		replace?: (image: { assetId: Asset['id']; listingId: string }) => Promise<Asset['id'][]>
+		attach: (image: { fileId: File['id']; listingId: Listing['id'] }) => Promise<void>
+		detach?: (listingId: Listing['id']) => Promise<File['id'][]>
+		replace?: (image: { fileId: File['id']; listingId: Listing['id'] }) => Promise<File['id'][]>
 	}
 	storage: {
-		delete: (key: Asset['key']) => Promise<void>
-		exists: (key: Asset['key']) => Promise<boolean>
+		delete: (key: File['key']) => Promise<void>
+		exists: (key: File['key']) => Promise<boolean>
 	}
 	uploadIntents: {
 		create: (key: string, options: UploadIntentOptions) => string
@@ -38,67 +38,67 @@ type AssetLifecycleAdapters = {
 }
 
 type ReserveUploadInput = {
-	contentType: AssetInsert['contentType']
-	filename: AssetInsert['filename']
-	ownerId: AssetInsert['ownerId']
+	contentType: FileInsert['contentType']
+	filename: FileInsert['filename']
+	ownerId: FileInsert['ownerId']
 	public?: boolean
-	size: AssetInsert['size']
+	size: FileInsert['size']
 }
 
 type AttachListingImageInput = {
-	assetKey: Asset['key']
-	listingId: string
-	ownerId: Asset['ownerId']
+	fileKey: File['key']
+	listingId: Listing['id']
+	ownerId: File['ownerId']
 }
 
-export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
-	attachListingImage: async ({ assetKey, listingId, ownerId }: AttachListingImageInput) => {
-		const activeAsset = await activateVerifiedPendingAsset(adapters, { assetKey, ownerId })
-		await adapters.listingImages.attach({ assetId: activeAsset.id, listingId })
+export const FileLifecycle = (adapters: FileLifecycleAdapters) => ({
+	attachListingImage: async ({ fileKey, listingId, ownerId }: AttachListingImageInput) => {
+		const activeFile = await activateVerifiedPendingFile(adapters, { fileKey, ownerId })
+		await adapters.listingImages.attach({ fileId: activeFile.id, listingId })
 
-		return activeAsset
+		return activeFile
 	},
 
-	cleanupStalePendingAssets: async () => {
-		const staleAssets = await adapters.assets.findStalePending(subDays(adapters.clock.now(), 2))
-		const cleanedAssetIds: Asset['id'][] = []
+	cleanupStalePendingFiles: async () => {
+		const staleFiles = await adapters.files.findStalePending(subDays(adapters.clock.now(), 2))
+		const cleanedFileIds: File['id'][] = []
 
-		for (const asset of staleAssets) {
-			const fileExists = await adapters.storage.exists(asset.key)
+		for (const file of staleFiles) {
+			const fileExists = await adapters.storage.exists(file.key)
 
 			if (!fileExists) {
-				cleanedAssetIds.push(asset.id)
+				cleanedFileIds.push(file.id)
 				continue
 			}
 
 			try {
-				await adapters.storage.delete(asset.key)
-				cleanedAssetIds.push(asset.id)
+				await adapters.storage.delete(file.key)
+				cleanedFileIds.push(file.id)
 			} catch {
 				continue
 			}
 		}
 
-		if (cleanedAssetIds.length > 0) {
-			await adapters.assets.delete(cleanedAssetIds)
+		if (cleanedFileIds.length > 0) {
+			await adapters.files.delete(cleanedFileIds)
 		}
 
-		return { filesDeleted: cleanedAssetIds.length }
+		return { filesDeleted: cleanedFileIds.length }
 	},
 
-	replaceListingImage: async ({ assetKey, listingId, ownerId }: AttachListingImageInput) => {
+	replaceListingImage: async ({ fileKey, listingId, ownerId }: AttachListingImageInput) => {
 		if (!adapters.listingImages.replace) {
 			throw new Error('Listing image replacement is not configured')
 		}
 
-		const activeAsset = await activateVerifiedPendingAsset(adapters, { assetKey, ownerId })
-		const retiredAssetIds = await adapters.listingImages.replace({
-			assetId: activeAsset.id,
+		const activeFile = await activateVerifiedPendingFile(adapters, { fileKey, ownerId })
+		const retiredFileIds = await adapters.listingImages.replace({
+			fileId: activeFile.id,
 			listingId,
 		})
-		await retireAssets(adapters, retiredAssetIds)
+		await retireFiles(adapters, retiredFileIds)
 
-		return activeAsset
+		return activeFile
 	},
 
 	reserveUpload: async ({
@@ -108,9 +108,9 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 		public: isPublic,
 		size,
 	}: ReserveUploadInput) => {
-		const key = createAssetKey({ contentType, filename, ownerId }, adapters.ids.create())
+		const key = createFileKey({ contentType, filename, ownerId }, adapters.ids.create())
 		const url = adapters.uploadIntents.create(key, { public: isPublic })
-		const asset = await adapters.assets.create({
+		const file = await adapters.files.create({
 			contentType,
 			filename,
 			key,
@@ -119,95 +119,95 @@ export const AssetLifecycle = (adapters: AssetLifecycleAdapters) => ({
 			status: 'pending',
 		})
 
-		return { asset, url }
+		return { file, url }
 	},
 
-	retireListingMedia: async ({ listingId }: { listingId: string }) => {
+	retireListingMedia: async ({ listingId }: { listingId: Listing['id'] }) => {
 		if (!adapters.listingImages.detach) {
 			throw new Error('Listing media retirement is not configured')
 		}
 
-		const retiredAssetIds = await adapters.listingImages.detach(listingId)
-		await retireAssets(adapters, retiredAssetIds)
+		const retiredFileIds = await adapters.listingImages.detach(listingId)
+		await retireFiles(adapters, retiredFileIds)
 
-		return { retiredAssetIds }
+		return { retiredFileIds }
 	},
 })
 
-export const createAssetLifecycleAdapters = (db: DatabaseType | TransactionType) => ({
-	assets: {
-		activate: async (id: Asset['id']) =>
+export const createFileLifecycleAdapters = (db: DatabaseType | TransactionType) => ({
+	clock: {
+		now: () => new Date(),
+	},
+	files: {
+		activate: async (id: File['id']) =>
 			db
-				.update(assets)
+				.update(files)
 				.set({ status: 'active' })
-				.where(eq(assets.id, id))
+				.where(eq(files.id, id))
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
-				.then(([asset]) => asset!),
-		create: async (asset: AssetInsert) =>
+				.then(([file]) => file!),
+		create: async (file: FileInsert) =>
 			db
-				.insert(assets)
-				.values(asset)
+				.insert(files)
+				.values(file)
 				.returning()
 				// oxlint-disable-next-line typescript/no-non-null-assertion
-				.then(([createdAsset]) => createdAsset!),
-		delete: async (ids: Asset['id'][]) => {
-			await db.delete(assets).where(inArray(assets.id, ids))
+				.then(([createdFile]) => createdFile!),
+		delete: async (ids: File['id'][]) => {
+			await db.delete(files).where(inArray(files.id, ids))
 		},
-		findPendingByKey: async (key: Asset['key'], ownerId: Asset['ownerId']) =>
-			(await db.query.assets.findFirst({ where: { key, ownerId, status: 'pending' } })) ?? null,
+		findPendingByKey: async (key: File['key'], ownerId: File['ownerId']) =>
+			(await db.query.files.findFirst({ where: { key, ownerId, status: 'pending' } })) ?? null,
 		findStalePending: async (createdBefore: Date) =>
-			db.query.assets.findMany({
+			db.query.files.findMany({
 				where: { createdAt: { lt: createdBefore }, status: 'pending' },
 			}),
-		retire: async (ids: Asset['id'][]) => {
+		retire: async (ids: File['id'][]) => {
 			if (ids.length === 0) {
 				return
 			}
 
-			await db.update(assets).set({ status: 'deleted' }).where(inArray(assets.id, ids))
+			await db.update(files).set({ status: 'deleted' }).where(inArray(files.id, ids))
 		},
-	},
-	clock: {
-		now: () => new Date(),
 	},
 	ids: {
 		create: () => randomUUIDv7(),
 	},
 	listingImages: {
-		attach: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
-			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
+		attach: async ({ fileId, listingId }: { fileId: File['id']; listingId: Listing['id'] }) => {
+			await db.insert(listingImages).values({ fileId, listingId, sortOrder: 0 })
 		},
-		detach: async (listingId: string) => {
+		detach: async (listingId: Listing['id']) => {
 			const detachedImages = await db
 				.delete(listingImages)
 				.where(eq(listingImages.listingId, listingId))
-				.returning({ assetId: listingImages.assetId })
+				.returning({ fileId: listingImages.fileId })
 
-			return detachedImages.map((image) => image.assetId)
+			return detachedImages.map((image) => image.fileId)
 		},
-		replace: async ({ assetId, listingId }: { assetId: Asset['id']; listingId: string }) => {
+		replace: async ({ fileId, listingId }: { fileId: File['id']; listingId: Listing['id'] }) => {
 			const replacedImages = await db
 				.delete(listingImages)
 				.where(eq(listingImages.listingId, listingId))
-				.returning({ assetId: listingImages.assetId })
-			const replacedAssetIds = replacedImages.map((image) => image.assetId)
+				.returning({ fileId: listingImages.fileId })
+			const replacedFileIds = replacedImages.map((image) => image.fileId)
 
-			await db.insert(listingImages).values({ assetId, listingId, sortOrder: 0 })
+			await db.insert(listingImages).values({ fileId, listingId, sortOrder: 0 })
 
-			return replacedAssetIds
+			return replacedFileIds
 		},
 	},
 	storage: {
-		delete: async (key: Asset['key']) => fileStorage.delete(key),
-		exists: async (key: Asset['key']) => fileStorage.exists(key),
+		delete: async (key: File['key']) => fileStorage.delete(key),
+		exists: async (key: File['key']) => fileStorage.exists(key),
 	},
 	uploadIntents: {
 		create: (key: string, options: UploadIntentOptions) => fileStorage.getUploadUrl(key, options),
 	},
 })
 
-function createAssetKey(
+function createFileKey(
 	{
 		contentType,
 		filename,
@@ -220,33 +220,33 @@ function createAssetKey(
 	return `${ownerId}/${id}.${ext}`
 }
 
-async function activateVerifiedPendingAsset(
-	adapters: AssetLifecycleAdapters,
-	{ assetKey, ownerId }: Pick<AttachListingImageInput, 'assetKey' | 'ownerId'>
+async function activateVerifiedPendingFile(
+	adapters: FileLifecycleAdapters,
+	{ fileKey, ownerId }: Pick<AttachListingImageInput, 'fileKey' | 'ownerId'>
 ) {
-	const asset = await adapters.assets.findPendingByKey(assetKey, ownerId)
+	const file = await adapters.files.findPendingByKey(fileKey, ownerId)
 
-	if (!asset || asset.ownerId !== ownerId) {
-		throw new Error('Asset not found')
+	if (!file || file.ownerId !== ownerId) {
+		throw new Error('File not found')
 	}
 
-	const fileExists = await adapters.storage.exists(asset.key)
+	const fileExists = await adapters.storage.exists(file.key)
 
 	if (!fileExists) {
-		throw new Error('Asset not found')
+		throw new Error('File not found')
 	}
 
-	return adapters.assets.activate(asset.id)
+	return adapters.files.activate(file.id)
 }
 
-async function retireAssets(adapters: AssetLifecycleAdapters, ids: Asset['id'][]) {
+async function retireFiles(adapters: FileLifecycleAdapters, ids: File['id'][]) {
 	if (ids.length === 0) {
 		return
 	}
 
-	if (!adapters.assets.retire) {
-		throw new Error('Asset retirement is not configured')
+	if (!adapters.files.retire) {
+		throw new Error('File retirement is not configured')
 	}
 
-	await adapters.assets.retire([...new Set(ids)])
+	await adapters.files.retire([...new Set(ids)])
 }

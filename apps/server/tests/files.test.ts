@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { db } from '@repo/db'
-import { assets, userRoles } from '@repo/db/schemas'
+import { files, userRoles } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
 import { createApi, createApiWithAuth, createTestUsers, testUsers } from './utils'
@@ -38,11 +38,11 @@ describe('Files', () => {
 			})
 			expect(res.status).toBe(200)
 			expect(res.data?.url).toBeString()
-			expect(res.data?.asset).toBeDefined()
-			expect(res.data?.asset.filename).toBe('photo.webp')
-			expect(res.data?.asset.contentType).toBe('image/webp')
-			expect(res.data?.asset.size).toBe(2048)
-			expect(res.data?.asset.status).toBe('pending')
+			expect(res.data?.file).toBeDefined()
+			expect(res.data?.file.filename).toBe('photo.webp')
+			expect(res.data?.file.contentType).toBe('image/webp')
+			expect(res.data?.file.size).toBe(2048)
+			expect(res.data?.file.status).toBe('pending')
 		})
 
 		it('creates asset with correct owner', async () => {
@@ -52,7 +52,7 @@ describe('Files', () => {
 				size: 512,
 			})
 
-			expect(res.data?.asset?.ownerId).toBe(testUsers.user.id)
+			expect(res.data?.file?.ownerId).toBe(testUsers.user.id)
 		})
 
 		it('generates key with user id prefix', async () => {
@@ -61,8 +61,8 @@ describe('Files', () => {
 				filename: 'test.webp',
 				size: 512,
 			})
-			expect(res.data?.asset.key).toStartWith(`${testUsers.user.id}/`)
-			expect(res.data?.asset.key).toEndWith('.webp')
+			expect(res.data?.file.key).toStartWith(`${testUsers.user.id}/`)
+			expect(res.data?.file.key).toEndWith('.webp')
 		})
 
 		it('defaults public to false', async () => {
@@ -138,7 +138,7 @@ describe('Files', () => {
 			const staleKey = `${testUsers.user.id}/stale-cleanup.webp`
 			fileStorageMock._setFile(staleKey, `https://upload.test/${staleKey}`)
 
-			await db.insert(assets).values({
+			await db.insert(files).values({
 				contentType: 'image/webp',
 				createdAt: new Date('2026-04-27T10:00:00.000Z'),
 				filename: 'stale-cleanup.webp',
@@ -154,7 +154,7 @@ describe('Files', () => {
 			expect(res.status).toBe(200)
 			expect(res.data).toEqual({ filesDeleted: 1, message: 'Cleanup complete' })
 			expect(await fileStorageMock.exists(staleKey)).toBeFalse()
-			expect(await db.query.assets.findFirst({ where: { key: staleKey } })).toBeUndefined()
+			expect(await db.query.files.findFirst({ where: { key: staleKey } })).toBeUndefined()
 		})
 	})
 })

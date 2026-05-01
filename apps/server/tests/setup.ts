@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, mock } from 'bun:test'
 
-import { createAuth } from '@repo/auth'
+import { createAuth } from '@repo/auth/config'
 import { createTestDb, truncateAllTables } from '@repo/db/test'
 import { fileStorageMock } from '@repo/file-storage/test'
 
@@ -21,7 +21,7 @@ beforeAll(async () => {
 
 	const testAuth = createAuth()
 
-	await mock.module('@repo/auth', () => ({ auth: testAuth, default: testAuth }))
+	await mock.module('@repo/auth/config', () => ({ auth: testAuth, default: testAuth }))
 })
 
 beforeEach(async () => {

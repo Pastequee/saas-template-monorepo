@@ -1,12 +1,10 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 
 import { roles, userRoles } from './schemas'
-import type { assets } from './schemas/assets'
 import { authRoles } from './schemas/auth'
 import type { accounts, sessions, users, verifications } from './schemas/auth'
+import type { files } from './schemas/files'
 import { listingImages, listings } from './schemas/listings'
-
-const omits = { createdAt: true, id: true, updatedAt: true } as const
 
 // auth.ts
 export const AuthRole = [...authRoles.enumValues] as const
@@ -48,7 +46,7 @@ export const listingSchema = createSelectSchema(listings)
 export const listingInsertSchema = createInsertSchema(listings, {
 	description: (s) => s.nonempty(),
 	title: (s) => s.nonempty(),
-}).omit({ ...omits, userId: true })
+}).omit({ createdAt: true, updatedAt: true, userId: true })
 export const listingUpdateSchema = listingInsertSchema.partial()
 
 export type ListingImage = typeof listingImages.$inferSelect
@@ -58,7 +56,7 @@ export const listingImageSchema = createSelectSchema(listingImages)
 export const listingImageInsertSchema = createInsertSchema(listingImages).omit({ listingId: true })
 export const listingImageUpdateSchema = listingImageInsertSchema.partial()
 
-// assets.ts
-export type Asset = typeof assets.$inferSelect
-export type AssetInsert = typeof assets.$inferInsert
-export type AssetUpdate = Partial<AssetInsert>
+// files.ts
+export type File = typeof files.$inferSelect
+export type FileInsert = typeof files.$inferInsert
+export type FileUpdate = Partial<FileInsert>

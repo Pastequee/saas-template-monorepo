@@ -44,6 +44,7 @@
         "@base-ui/react": "^1.4.1",
         "@elysiajs/eden": "^1.4.9",
         "@fontsource/raleway": "^5.2.8",
+        "@repo/auth": "workspace:*",
         "@repo/db": "workspace:*",
         "@repo/env": "workspace:*",
         "@repo/server": "workspace:*",

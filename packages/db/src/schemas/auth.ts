@@ -1,14 +1,14 @@
 // oxlint-disable no-inline-comments
-import { boolean, index, pgSchema, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, index, pgSchema, text, timestamp } from 'drizzle-orm/pg-core'
 
-import { common } from '../schema-utils'
+import { id } from '../schema-utils'
 
 export const authSchema = pgSchema('auth')
 
 export const authRoles = authSchema.enum('roles', ['admin', 'user'])
 
 export const users = authSchema.table('users', {
-	id: common.id,
+	id: id.primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('email_verified').default(false).notNull(),
@@ -27,7 +27,7 @@ export const users = authSchema.table('users', {
 export const sessions = authSchema.table(
 	'sessions',
 	{
-		id: common.id,
+		id: id.primaryKey(),
 		expiresAt: timestamp('expires_at').notNull(),
 		token: text('token').notNull().unique(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -36,10 +36,11 @@ export const sessions = authSchema.table(
 			.notNull(),
 		ipAddress: text('ip_address'),
 		userAgent: text('user_agent'),
-		userId: uuid('user_id')
+		userId: id
+			.type('user_id')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
-		impersonatedBy: text('impersonated_by'),
+		impersonatedBy: id.type('impersonated_by'),
 	},
 	(table) => [index('sessions_userId_idx').on(table.userId)]
 )
@@ -47,10 +48,11 @@ export const sessions = authSchema.table(
 export const accounts = authSchema.table(
 	'accounts',
 	{
-		id: common.id,
+		id: id.primaryKey(),
 		accountId: text('account_id').notNull(),
 		providerId: text('provider_id').notNull(),
-		userId: uuid('user_id')
+		userId: id
+			.type('user_id')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		accessToken: text('access_token'),
@@ -71,7 +73,7 @@ export const accounts = authSchema.table(
 export const verifications = authSchema.table(
 	'verifications',
 	{
-		id: common.id,
+		id: id.primaryKey(),
 		identifier: text('identifier').notNull(),
 		value: text('value').notNull(),
 		expiresAt: timestamp('expires_at').notNull(),

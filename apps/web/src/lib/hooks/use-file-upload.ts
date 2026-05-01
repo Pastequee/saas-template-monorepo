@@ -13,7 +13,7 @@ export type UploadingFile = {
 	preview?: string
 	status: UploadStatus
 	progress: number
-	assetKey?: string
+	fileKey?: string
 	error?: string
 }
 
@@ -218,8 +218,8 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 			await uploadPromise
 
 			// 4. Complete
-			updateFile(entry.id, { assetKey: data.asset.key, progress: 100, status: 'complete' })
-			onFileUploaded?.({ ...entry, assetKey: data.asset.key, progress: 100, status: 'complete' })
+			updateFile(entry.id, { fileKey: data.file.key, progress: 100, status: 'complete' })
+			onFileUploaded?.({ ...entry, fileKey: data.file.key, progress: 100, status: 'complete' })
 			xhrMapRef.current.delete(entry.id)
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Échec de l'upload"

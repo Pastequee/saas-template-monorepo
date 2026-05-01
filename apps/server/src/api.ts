@@ -1,5 +1,5 @@
 import { cors } from '@elysiajs/cors'
-import { auth } from '@repo/auth'
+import { auth } from '@repo/auth/config'
 import { env } from '@repo/env/server'
 import { Elysia } from 'elysia'
 

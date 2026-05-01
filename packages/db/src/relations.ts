@@ -38,7 +38,7 @@ export const relations = defineRelations(schema, (r) => ({
 
 	assets: {
 		owner: r.one.users({
-			from: r.assets.ownerId,
+			from: r.files.ownerId,
 			to: r.users.id,
 		}),
 	},
@@ -48,9 +48,9 @@ export const relations = defineRelations(schema, (r) => ({
 			from: r.listings.userId,
 			to: r.users.id,
 		}),
-		image: r.one.assets({
+		image: r.one.files({
 			from: r.listings.id.through(r.listingImages.listingId),
-			to: r.assets.id.through(r.listingImages.assetId),
+			to: r.files.id.through(r.listingImages.fileId),
 		}),
 	},
 
@@ -59,9 +59,9 @@ export const relations = defineRelations(schema, (r) => ({
 			from: r.listingImages.listingId,
 			to: r.listings.id,
 		}),
-		asset: r.one.assets({
-			from: r.listingImages.assetId,
-			to: r.assets.id,
+		asset: r.one.files({
+			from: r.listingImages.fileId,
+			to: r.files.id,
 		}),
 	},
 }))

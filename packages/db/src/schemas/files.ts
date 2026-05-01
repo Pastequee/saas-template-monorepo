@@ -1,21 +1,22 @@
 // oxlint-disable no-inline-comments
-import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
-import { common } from '../schema-utils'
+import { id, timestamps } from '../schema-utils'
 import { users } from './auth'
 
-export const assetStatus = pgEnum('asset_status', [
+export const fileStatus = pgEnum('file_status', [
 	'pending', // presigned URL issued, upload not confirmed
 	'active',
 	'archived',
 	'deleted', // solt-deleted, pending S3 cleanup
 ])
 
-export const assets = pgTable('assets', {
-	...common,
+export const files = pgTable('files', {
+	id: id.primaryKey(),
 
 	// Ownership
-	ownerId: uuid()
+	ownerId: id
+		.type()
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
 
@@ -28,8 +29,9 @@ export const assets = pgTable('assets', {
 	size: integer().notNull(), // in bytes
 
 	// Classification
-	status: assetStatus().notNull(),
+	status: fileStatus().notNull(),
 
 	// Timestamps
+	...timestamps(),
 	deletedAt: timestamp({ withTimezone: true }),
 })

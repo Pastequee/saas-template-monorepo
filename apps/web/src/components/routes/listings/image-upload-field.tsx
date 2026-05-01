@@ -7,8 +7,8 @@ import { useFileUpload } from '~/lib/hooks/use-file-upload'
 export function ImageUploadField({ onImageChange }: { onImageChange: (key: string) => void }) {
 	const [state, actions] = useFileUpload({
 		onFileUploaded: (file) => {
-			if (file.assetKey) {
-				onImageChange(file.assetKey)
+			if (file.fileKey) {
+				onImageChange(file.fileKey)
 			}
 		},
 	})

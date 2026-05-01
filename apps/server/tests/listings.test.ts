@@ -22,12 +22,16 @@ async function presignImage(api: Awaited<ReturnType<typeof createApiWithAuth>>['
 		console.error('presign failed:', res.status, res.error)
 		throw new Error(`presign failed: ${res.status}`)
 	}
-	const { key } = res.data.asset
+	const { key } = res.data.file
 	fileStorageMock._setFile(key, res.data.url)
 	return key
 }
 
-const validListing = { description: 'A test description', price: 100, title: 'Test Listing' }
+const validListing = {
+	description: 'A test description',
+	price: 100,
+	title: 'Test Listing',
+} as const
 
 describe('Listings', () => {
 	const unauthApi = createApi()
@@ -194,7 +198,7 @@ describe('Listings', () => {
 			const res = await userApi.listings({ id }).delete()
 
 			expect(res.status).toBe(204)
-			expect(await db.query.assets.findFirst({ where: { key: imageKey } })).toMatchObject({
+			expect(await db.query.files.findFirst({ where: { key: imageKey } })).toMatchObject({
 				key: imageKey,
 				status: 'deleted',
 			})
