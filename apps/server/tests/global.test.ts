@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 
-import { adminApi, testAuth, unauthApi, userApi } from './setup'
+import { adminApi, testAuth, unauthApi, userApi } from './utils'
 
 describe('Global', async () => {
 	it('Root endpoint works', async () => {

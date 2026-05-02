@@ -4,7 +4,7 @@ import { db } from '@repo/db'
 import { files, userRoles } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
-import { adminApi, testAuth, unauthApi, userApi } from './setup'
+import { adminApi, testAuth, unauthApi, userApi } from './utils'
 
 describe('Files', async () => {
 	// ── POST /files/presign ─────────────────────────────────────

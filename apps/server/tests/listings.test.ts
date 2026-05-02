@@ -4,8 +4,8 @@ import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
-import type { TestApi } from './setup'
-import { adminApi, testAuth, unauthApi, userApi } from './setup'
+import type { TestApi } from './utils'
+import { adminApi, testAuth, unauthApi, userApi } from './utils'
 
 /** Presign a test image and simulate S3 upload. Returns the asset key. */
 async function presignImage(api: TestApi) {
