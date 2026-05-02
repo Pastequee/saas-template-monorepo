@@ -2,9 +2,8 @@ import { env } from '@repo/env/server'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
 import { relations } from './relations'
-import * as schema from './schemas'
 
-export const db = drizzle(env.DATABASE_URL, { casing: 'snake_case', relations, schema })
+export const db = drizzle({ connection: env.DATABASE_URL, relations })
 
 export type DatabaseType = typeof db
 export type TransactionType = Parameters<Parameters<DatabaseType['transaction']>[0]>[0]

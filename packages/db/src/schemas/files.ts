@@ -1,17 +1,17 @@
 // oxlint-disable no-inline-comments
-import { integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import * as d from 'drizzle-orm/pg-core'
 
 import { id, timestamps } from '../schema-utils'
 import { users } from './auth'
 
-export const fileStatus = pgEnum('file_status', [
+export const fileStatus = d.pgEnum('file_status', [
 	'pending', // presigned URL issued, upload not confirmed
 	'active',
 	'archived',
 	'deleted', // solt-deleted, pending S3 cleanup
 ])
 
-export const files = pgTable('files', {
+export const files = d.snakeCase.table('files', {
 	id: id.primaryKey(),
 
 	// Ownership
@@ -21,17 +21,17 @@ export const files = pgTable('files', {
 		.notNull(),
 
 	// S3 reference
-	key: text().notNull().unique(),
+	key: d.text().notNull().unique(),
 
 	// File metadata
-	filename: text().notNull(),
-	contentType: text().notNull(),
-	size: integer().notNull(), // in bytes
+	filename: d.text().notNull(),
+	contentType: d.text().notNull(),
+	size: d.integer().notNull(), // in bytes
 
 	// Classification
 	status: fileStatus().notNull(),
 
 	// Timestamps
 	...timestamps(),
-	deletedAt: timestamp({ withTimezone: true }),
+	deletedAt: d.timestamp({ withTimezone: true }),
 })

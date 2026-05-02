@@ -1,4 +1,5 @@
 import { db } from '@repo/db'
+import * as schema from '@repo/db/schemas'
 import { mail } from '@repo/email'
 import { env } from '@repo/env/server'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
@@ -19,7 +20,7 @@ export const createAuth = () =>
 		},
 
 		baseURL: env.SERVER_URL,
-		database: drizzleAdapter(db, { provider: 'pg', usePlural: true }),
+		database: drizzleAdapter(db, { provider: 'pg', schema, usePlural: true }),
 		emailAndPassword: {
 			enabled: true,
 			sendResetPassword: async ({ url, user }) => {

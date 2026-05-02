@@ -6,13 +6,12 @@ import { drizzle } from 'drizzle-orm/pglite'
 import { relations } from './relations'
 import * as schema from './schemas'
 
-export type TestDb = ReturnType<typeof drizzle<typeof schema>>
+export type TestDb = ReturnType<typeof drizzle<typeof relations>>
 
 export const createTestDb = async () => {
 	const pglite = new PGlite()
-	const testDb = drizzle({ client: pglite, relations, schema })
-	// oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unsafe-type-assertion, typescript/no-unsafe-argument
-	const { apply } = await pushSchema(schema, testDb as any)
+	const testDb = drizzle({ client: pglite, relations })
+	const { apply } = await pushSchema(schema, testDb)
 	await apply()
 	/* Somehow `pushSchema` is setting the exit code to 99
 	 * which causes `bun test` to propagate the error and fail the test.

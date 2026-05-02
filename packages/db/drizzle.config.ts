@@ -9,7 +9,6 @@ if (DATABASE_URL === undefined || DATABASE_URL === '') {
 }
 
 export default defineConfig({
-	casing: 'snake_case',
 	dbCredentials: { url: DATABASE_URL },
 
 	dialect: 'postgresql',

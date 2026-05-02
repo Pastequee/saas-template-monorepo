@@ -1,13 +1,15 @@
-import { bigint, timestamp } from 'drizzle-orm/pg-core'
+import * as d from 'drizzle-orm/pg-core'
 
 export const id = {
 	primaryKey: (name?: string) => id.type(name).generatedAlwaysAsIdentity().primaryKey(),
-	type: (name?: string) => (name ? bigint(name, { mode: 'number' }) : bigint({ mode: 'number' })),
+	type: (name?: string) =>
+		name ? d.bigint(name, { mode: 'number' }) : d.bigint({ mode: 'number' }),
 }
 
 export const timestamps = () => ({
-	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp({ withTimezone: true })
+	createdAt: d.timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: d
+		.timestamp({ withTimezone: true })
 		.notNull()
 		.defaultNow()
 		.$onUpdate(() => new Date()),
