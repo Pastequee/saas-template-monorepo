@@ -4,6 +4,7 @@ import { Rpc, RpcGroup, RpcSerialization, RpcServer } from '@effect/rpc'
 import { Effect, Layer, Schema } from 'effect'
 
 import { filesRpcLayer, FilesRpcs } from './files.rpc'
+import { listingsRpcLayer, ListingsRpcs } from './listings.rpc'
 import { usersRpcLayer, UsersRpcs } from './users.rpc'
 
 const HostInfo = Schema.Struct({
@@ -17,7 +18,7 @@ export class HostRpcs extends RpcGroup.make(
 	})
 ) {}
 
-const serverRpcs = HostRpcs.merge(UsersRpcs).merge(FilesRpcs)
+const serverRpcs = HostRpcs.merge(UsersRpcs).merge(FilesRpcs).merge(ListingsRpcs)
 
 const hostRpcHandlers = HostRpcs.toLayer({
 	GetHostInfo: () =>
@@ -38,6 +39,7 @@ export const hostRpcWebHandler = RpcServer.toWebHandler(serverRpcs, {
 	layer: Layer.mergeAll(
 		hostRpcHandlers,
 		filesRpcLayer,
+		listingsRpcLayer,
 		usersRpcLayer,
 		RpcSerialization.layerJsonRpc(),
 		hostRpcDefaultServices
