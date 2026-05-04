@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 
+import { db } from '@repo/db'
+import { files, userRoles } from '@repo/db/schemas'
+import { fileStorageMock } from '@repo/file-storage/test'
 import { Effect } from 'effect'
 import { z } from 'zod'
 
@@ -34,6 +37,32 @@ const currentUserResponseSchema = z.array(
 	})
 )
 
+const filePresignResponseSchema = z.array(
+	z.object({
+		result: z.object({
+			file: z.object({
+				contentType: z.literal('image/webp'),
+				filename: z.string(),
+				id: z.number(),
+				key: z.string(),
+				ownerId: z.number(),
+				size: z.number(),
+				status: z.literal('pending'),
+			}),
+			url: z.url(),
+		}),
+	})
+)
+
+const fileCleanupResponseSchema = z.array(
+	z.object({
+		result: z.object({
+			filesDeleted: z.number(),
+			message: z.literal('Cleanup complete'),
+		}),
+	})
+)
+
 const rpcErrorResponseSchema = z.array(
 	z.object({
 		error: z.object({
@@ -54,6 +83,18 @@ const rpcResponseSchema = z.array(
 		result: z.object({
 			host: z.literal('hono'),
 			rpc: z.literal('effect'),
+		}),
+	})
+)
+
+const rpcValidationErrorResponseSchema = z.array(
+	z.object({
+		error: z.object({
+			_tag: z.literal('Cause'),
+			data: z.object({
+				_tag: z.literal('Die'),
+				defect: z.string(),
+			}),
 		}),
 	})
 )
@@ -120,6 +161,91 @@ describe('Host', () => {
 		expect(data.at(0)?.result.user.email).toBe(testAuth.users.user.email)
 		expect(data.at(0)?.result.user.role).toBe(testAuth.users.user.role)
 		expect(data.at(0)?.result.session.userId).toBe(testAuth.users.user.id.toString())
+	})
+
+	it('serves the authenticated file presign rpc', async () => {
+		const headers = await testAuth.testUtils.getAuthHeaders({
+			userId: testAuth.users.user.id.toString(),
+		})
+		const response = await rpcRequest('files.PresignUpload', headers, {
+			contentType: 'image/webp',
+			filename: 'rpc-photo.webp',
+			size: 2048,
+		})
+		const data = filePresignResponseSchema.parse(await response.json())
+
+		expect(response.status).toBe(200)
+		expect(data.at(0)?.result.file.filename).toBe('rpc-photo.webp')
+		expect(data.at(0)?.result.file.contentType).toBe('image/webp')
+		expect(data.at(0)?.result.file.ownerId).toBe(testAuth.users.user.id)
+		expect(data.at(0)?.result.file.size).toBe(2048)
+		expect(data.at(0)?.result.file.status).toBe('pending')
+		expect(data.at(0)?.result.file.key).toStartWith(`${testAuth.users.user.id}/`)
+		expect(data.at(0)?.result.url).toBeString()
+	})
+
+	it('serves the superadmin file cleanup rpc', async () => {
+		await db.insert(userRoles).values({
+			grantedById: testAuth.users.admin.id,
+			role: 'superadmin',
+			userId: testAuth.users.admin.id,
+		})
+
+		const staleKey = `${testAuth.users.user.id}/stale-cleanup-rpc.webp`
+		fileStorageMock._setFile(staleKey, `https://upload.test/${staleKey}`)
+
+		await db.insert(files).values({
+			contentType: 'image/webp',
+			createdAt: new Date('2026-04-27T10:00:00.000Z'),
+			filename: 'stale-cleanup-rpc.webp',
+			key: staleKey,
+			ownerId: testAuth.users.user.id,
+			size: 2048,
+			status: 'pending',
+			updatedAt: new Date('2026-04-27T10:00:00.000Z'),
+		})
+
+		const headers = await testAuth.testUtils.getAuthHeaders({
+			userId: testAuth.users.admin.id.toString(),
+		})
+		const response = await rpcRequest('files.CleanupStalePending', headers)
+		const data = fileCleanupResponseSchema.parse(await response.json())
+
+		expect(response.status).toBe(200)
+		expect(data.at(0)?.result).toEqual({ filesDeleted: 1, message: 'Cleanup complete' })
+		expect(await fileStorageMock.exists(staleKey)).toBeFalse()
+		expect(await db.query.files.findFirst({ where: { key: staleKey } })).toBeUndefined()
+	})
+
+	it('rejects non-superadmin file cleanup rpc requests', async () => {
+		const headers = await testAuth.testUtils.getAuthHeaders({
+			userId: testAuth.users.user.id.toString(),
+		})
+		const response = await rpcRequest('files.CleanupStalePending', headers)
+		const data = rpcErrorResponseSchema.parse(await response.json())
+
+		expect(response.status).toBe(200)
+		expect(data.at(0)?.error._tag).toBe('Cause')
+		expect(data.at(0)?.error.data.error._tag).toBe('UnauthorizedRpcError')
+		expect(data.at(0)?.error.data.error.message).toBe(
+			'You are not authorized to access this resource'
+		)
+	})
+
+	it('rejects invalid file presign payloads at the rpc boundary', async () => {
+		const headers = await testAuth.testUtils.getAuthHeaders({
+			userId: testAuth.users.user.id.toString(),
+		})
+		const response = await rpcRequest('files.PresignUpload', headers, {
+			contentType: 'image/png',
+			filename: 'invalid.png',
+			size: 1024,
+		})
+		const data = rpcValidationErrorResponseSchema.parse(await response.json())
+
+		expect(response.status).toBe(200)
+		expect(data.at(0)?.error._tag).toBe('Cause')
+		expect(data.at(0)?.error.data.defect).toContain('Expected "image/webp"')
 	})
 
 	it('rejects unauthenticated current-user rpc requests', async () => {

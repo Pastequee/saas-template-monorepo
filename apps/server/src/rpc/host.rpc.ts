@@ -3,6 +3,7 @@ import { BunFileSystem, BunHttpPlatform, BunPath } from '@effect/platform-bun'
 import { Rpc, RpcGroup, RpcSerialization, RpcServer } from '@effect/rpc'
 import { Effect, Layer, Schema } from 'effect'
 
+import { filesRpcLayer, FilesRpcs } from './files.rpc'
 import { usersRpcLayer, UsersRpcs } from './users.rpc'
 
 const HostInfo = Schema.Struct({
@@ -16,7 +17,7 @@ export class HostRpcs extends RpcGroup.make(
 	})
 ) {}
 
-const serverRpcs = HostRpcs.merge(UsersRpcs)
+const serverRpcs = HostRpcs.merge(UsersRpcs).merge(FilesRpcs)
 
 const hostRpcHandlers = HostRpcs.toLayer({
 	GetHostInfo: () =>
@@ -36,6 +37,7 @@ const hostRpcDefaultServices = Layer.mergeAll(
 export const hostRpcWebHandler = RpcServer.toWebHandler(serverRpcs, {
 	layer: Layer.mergeAll(
 		hostRpcHandlers,
+		filesRpcLayer,
 		usersRpcLayer,
 		RpcSerialization.layerJsonRpc(),
 		hostRpcDefaultServices

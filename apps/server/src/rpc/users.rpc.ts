@@ -1,8 +1,9 @@
 import { Rpc, RpcGroup } from '@effect/rpc'
 import { Effect, Schema } from 'effect'
 
-import { CurrentRequestAuth } from '#lib/request-auth'
 import type { RequestAuth } from '#lib/request-auth'
+
+import { getCurrentRequestAuth, UnauthorizedRpcError } from './request-auth.rpc'
 
 const CurrentSession = Schema.Struct({
 	createdAt: Schema.Date,
@@ -59,22 +60,6 @@ const formatCurrentUserResponse = (requestAuth: NonNullable<RequestAuth>) => ({
 		updatedAt: requestAuth.user.updatedAt,
 	},
 })
-
-const isRequestAuth = (value: unknown): value is NonNullable<RequestAuth> =>
-	typeof value === 'object' && value !== null && 'session' in value && 'user' in value
-
-const getCurrentRequestAuth: Effect.Effect<RequestAuth> = Effect.withFiberRuntime((fiber) => {
-	const value: unknown = fiber.currentContext.unsafeMap.get(CurrentRequestAuth.key)
-
-	return Effect.succeed(isRequestAuth(value) ? value : null)
-})
-
-export class UnauthorizedRpcError extends Schema.TaggedError<UnauthorizedRpcError>()(
-	'UnauthorizedRpcError',
-	{
-		message: Schema.String,
-	}
-) {}
 
 export const UsersRpcs = RpcGroup.make(
 	Rpc.make('GetCurrentUser', {
