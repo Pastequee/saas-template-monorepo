@@ -16,6 +16,9 @@
 		"test": "bun test"
 	},
 	"dependencies": {
+		"@effect/platform": "^0.96.1",
+		"@effect/platform-bun": "^0.89.0",
+		"@effect/rpc": "^0.75.1",
 		"@elysiajs/cors": "^1.4.2",
 		"@repo/auth": "workspace:*",
 		"@repo/db": "workspace:*",
@@ -23,8 +26,10 @@
 		"@repo/file-storage": "workspace:*",
 		"@repo/utils": "workspace:*",
 		"date-fns": "catalog:",
+		"effect": "^3.21.2",
 		"elysia": "catalog:",
 		"evlog": "^2.14.1",
+		"hono": "^4.12.16",
 		"nanoid": "^5.1.9",
 		"picocolors": "^1.1.1",
 		"zod": "catalog:"

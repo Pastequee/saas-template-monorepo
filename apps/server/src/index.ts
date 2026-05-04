@@ -1,21 +1,24 @@
 import { env } from '@repo/env/server'
 
-import { app } from './api'
+import type { app as legacyApp } from './api'
+import { app } from './app'
 
-app.listen(env.PORT, ({ url }) => {
-	console.info(`Server is running on ${url}`)
-
-	process.on('SIGTERM', () => {
-		void app.stop().finally(() => {
-			process.exit(0)
-		})
-	})
-
-	process.on('SIGINT', () => {
-		void app.stop().finally(() => {
-			process.exit(0)
-		})
-	})
+const server = Bun.serve({
+	fetch: app.fetch,
+	port: env.PORT,
 })
 
-export type App = typeof app
+console.info(`Server is running on ${server.url}`)
+
+process.on('SIGTERM', () => {
+	void server.stop()
+	process.exit(0)
+})
+
+process.on('SIGINT', () => {
+	void server.stop()
+	process.exit(0)
+})
+
+export type App = typeof legacyApp
+export type HostApp = typeof app
