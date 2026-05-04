@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import type { ChangeEvent, InputHTMLAttributes } from 'react'
 
-import { eden } from '~/lib/server-fn/eden'
+import { presignUpload } from '~/lib/api/rpc-client'
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -185,16 +185,12 @@ export function useFileUpload(options: FileUploadOptions = {}) {
 
 			// 2. Presign
 			const webpFilename = entry.file.name.replace(/\.[^.]+$/, '.webp')
-			const { data, error } = await eden().files.presign.post({
+			const data = await presignUpload({
 				contentType: 'image/webp',
 				filename: webpFilename,
 				public: isPublic,
 				size: blob.size,
 			})
-
-			if (error || data === undefined) {
-				throw new Error("Impossible d'obtenir l'URL signée")
-			}
 
 			// 3. Upload to S3
 			updateFile(entry.id, { progress: 0, status: 'uploading' })

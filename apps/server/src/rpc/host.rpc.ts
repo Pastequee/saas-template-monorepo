@@ -1,24 +1,12 @@
 import { Etag } from '@effect/platform'
 import { BunFileSystem, BunHttpPlatform, BunPath } from '@effect/platform-bun'
-import { Rpc, RpcGroup, RpcSerialization, RpcServer } from '@effect/rpc'
-import { Effect, Layer, Schema } from 'effect'
+import { RpcSerialization, RpcServer } from '@effect/rpc'
+import { Effect, Layer } from 'effect'
 
-import { filesRpcLayer, FilesRpcs } from './files.rpc'
-import { listingsRpcLayer, ListingsRpcs } from './listings.rpc'
-import { usersRpcLayer, UsersRpcs } from './users.rpc'
-
-const HostInfo = Schema.Struct({
-	host: Schema.String,
-	rpc: Schema.String,
-})
-
-export class HostRpcs extends RpcGroup.make(
-	Rpc.make('GetHostInfo', {
-		success: HostInfo,
-	})
-) {}
-
-const serverRpcs = HostRpcs.merge(UsersRpcs).merge(FilesRpcs).merge(ListingsRpcs)
+import { filesRpcLayer } from './files.rpc'
+import { listingsRpcLayer } from './listings.rpc'
+import { HostRpcs, ServerRpcs } from './server.rpcs'
+import { usersRpcLayer } from './users.rpc'
 
 const hostRpcHandlers = HostRpcs.toLayer({
 	GetHostInfo: () =>
@@ -35,7 +23,7 @@ const hostRpcDefaultServices = Layer.mergeAll(
 	BunHttpPlatform.layer
 )
 
-export const hostRpcWebHandler = RpcServer.toWebHandler(serverRpcs, {
+export const hostRpcWebHandler = RpcServer.toWebHandler(ServerRpcs, {
 	layer: Layer.mergeAll(
 		hostRpcHandlers,
 		filesRpcLayer,

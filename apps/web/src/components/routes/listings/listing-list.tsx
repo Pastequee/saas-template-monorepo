@@ -2,7 +2,7 @@ import type { Listing } from '@repo/db/types'
 
 import { ListingCard } from './listing-card'
 
-export function ListingList({ listings }: { listings: Listing[] }) {
+export function ListingList({ listings }: { listings: readonly Listing[] }) {
 	return (
 		<div className="grid grid-cols-4 gap-4">
 			{listings.map((listing) => (

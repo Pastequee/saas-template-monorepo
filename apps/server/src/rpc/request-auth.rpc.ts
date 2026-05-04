@@ -1,4 +1,4 @@
-import { Effect, Schema } from 'effect'
+import { Effect } from 'effect'
 
 import { CurrentRequestAuth } from '#lib/request-auth'
 import type { RequestAuth } from '#lib/request-auth'
@@ -13,10 +13,3 @@ export const getCurrentRequestAuth: Effect.Effect<RequestAuth> = Effect.withFibe
 		return Effect.succeed(isRequestAuth(value) ? value : null)
 	}
 )
-
-export class UnauthorizedRpcError extends Schema.TaggedError<UnauthorizedRpcError>()(
-	'UnauthorizedRpcError',
-	{
-		message: Schema.String,
-	}
-) {}

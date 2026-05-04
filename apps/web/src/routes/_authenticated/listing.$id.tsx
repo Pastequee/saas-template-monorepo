@@ -10,7 +10,7 @@ import { getOneListingOptions } from '~/lib/queries/listings.queries'
 
 export const Route = createFileRoute('/_authenticated/listing/$id')({
 	component: RouteComponent,
-	params: z.object({ id: z.uuidv7() }),
+	params: z.object({ id: z.coerce.number().int().positive() }),
 })
 
 function RouteComponent() {

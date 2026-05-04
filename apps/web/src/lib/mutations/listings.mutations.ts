@@ -1,21 +1,29 @@
-import { keys } from '~/lib/queries/keys'
-import { eden } from '~/lib/server-fn/eden'
-import { edenMutationOption } from '~/lib/utils/eden-query'
+import { mutationOptions } from '@tanstack/react-query'
 
-export const deleteListingOptions = (id: string) =>
-	edenMutationOption({
-		edenMutation: eden().listings({ id }).delete,
+import { createListing, deleteOwnedListing, updateOwnedListing } from '~/lib/api/rpc-client'
+import { keys } from '~/lib/queries/keys'
+
+export const deleteListingOptions = (id: number) =>
+	mutationOptions({
 		meta: { invalidate: [keys.listings.all] },
+		mutationFn: async () => deleteOwnedListing(id),
 	})
 
-export const updateListingOptions = (id: string) =>
-	edenMutationOption({
-		edenMutation: eden().listings({ id }).patch,
+export const updateListingOptions = (id: number) =>
+	mutationOptions({
 		meta: { invalidate: [keys.listings.all] },
+		mutationFn: async (
+			data: Partial<{
+				description: string
+				imageKey: string
+				price: number
+				title: string
+			}>
+		) => updateOwnedListing(id, data),
 	})
 
 export const createListingOptions = () =>
-	edenMutationOption({
-		edenMutation: eden().listings.post,
+	mutationOptions({
 		meta: { invalidate: [keys.listings.all] },
+		mutationFn: createListing,
 	})

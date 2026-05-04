@@ -45,7 +45,14 @@ function NewListingForm({ onClose }: { onClose: () => void }) {
 		onSubmit: ({ value }) => {
 			createListing(value, {
 				onError: (error) => {
-					toast.error(error.value.message ?? 'Failed to create listing')
+					toast.error(
+						typeof error === 'object' &&
+							error !== null &&
+							'message' in error &&
+							typeof error.message === 'string'
+							? error.message
+							: 'Failed to create listing'
+					)
 				},
 				onSuccess: () => {
 					toast.success('Annonce créée avec succès')

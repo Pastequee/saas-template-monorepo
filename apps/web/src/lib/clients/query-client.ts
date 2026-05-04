@@ -1,6 +1,7 @@
 import { MutationCache, QueryClient } from '@tanstack/react-query'
 import type { QueryKey } from '@tanstack/react-query'
 
+import { isAuthenticationRpcError } from '~/lib/api/rpc-errors'
 import { getRouter } from '~/router'
 
 import { authClient } from './auth-client'
@@ -19,11 +20,12 @@ export const queryClient = new QueryClient({
 	mutationCache: new MutationCache({
 		onError: async (error: unknown) => {
 			if (
-				typeof error === 'object' &&
-				error !== null &&
-				'status' in error &&
-				typeof error.status === 'number' &&
-				error.status === 401
+				(typeof error === 'object' &&
+					error !== null &&
+					'status' in error &&
+					typeof error.status === 'number' &&
+					error.status === 401) ||
+				isAuthenticationRpcError(error)
 			) {
 				await authClient.signOut()
 				const router = getRouter()
