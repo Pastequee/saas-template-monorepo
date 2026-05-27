@@ -4,10 +4,7 @@ import type { DatabaseType, TransactionType } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import type { Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
 
-import {
-	FileLifecycle,
-	createFileLifecycleAdapters,
-} from '#modules/asset-lifecycle/asset-lifecycle.service'
+import { FileService } from '#modules/files/file.service'
 
 const listingNotFoundError = () =>
 	Object.assign(new Error('Listing not found'), { name: 'ListingNotFoundError' })
@@ -35,7 +32,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([l]) => l!)
 
-			await FileLifecycle(createFileLifecycleAdapters(tx)).attachListingImage({
+			await FileService(tx).attachListingImage({
 				fileKey: imageKey,
 				listingId: listing.id,
 				ownerId: listing.userId,
@@ -46,7 +43,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 	deleteOwnedListing: async ({ id, userId }: { id: Listing['id']; userId: User['id'] }) => {
 		await withTransaction(db, async (tx) => {
 			await getOwnedListingRecordOrThrow(tx, id, userId)
-			await FileLifecycle(createFileLifecycleAdapters(tx)).retireListingMedia({ listingId: id })
+			await FileService(tx).retireListingMedia({ listingId: id })
 			await tx.delete(listings).where(eq(listings.id, id))
 		})
 	},
@@ -94,7 +91,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 			const listing = await getOwnedListingRecordOrThrow(tx, id, userId)
 
 			if (imageKey !== undefined) {
-				await FileLifecycle(createFileLifecycleAdapters(tx)).replaceListingImage({
+				await FileService(tx).replaceListingImage({
 					fileKey: imageKey,
 					listingId: id,
 					ownerId: listing.userId,
