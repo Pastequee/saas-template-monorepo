@@ -4,6 +4,7 @@
 	"type": "module",
 	"main": "./src/index.ts",
 	"imports": {
+		"#deps": "./src/deps.ts",
 		"#/*": "./src/*.ts",
 		"#modules/*": "./src/modules/*.ts",
 		"#lib/*": "./src/lib/*.ts",

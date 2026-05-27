@@ -1,10 +1,12 @@
-import type { DatabaseType, TransactionType } from '@repo/db'
 import { eq, inArray } from '@repo/db'
 import { files, listingImages } from '@repo/db/schemas'
 import type { File, FileInsert, Listing } from '@repo/db/types'
-import { fileStorage } from '@repo/file-storage'
 import { randomUUIDv7 } from 'bun'
 import { subDays } from 'date-fns'
+
+import type { AppDeps } from '#deps'
+
+type FileServiceDeps = Pick<AppDeps, 'db' | 'fileStorage'>
 
 type ReserveUploadInput = {
 	contentType: FileInsert['contentType']
@@ -20,22 +22,22 @@ type AttachListingImageInput = {
 	ownerId: File['ownerId']
 }
 
-export const FileService = (db: DatabaseType | TransactionType) => ({
+export const FileService = (deps: FileServiceDeps) => ({
 	attachListingImage: async ({ fileKey, listingId, ownerId }: AttachListingImageInput) => {
-		const activeFile = await activateVerifiedPendingFile(db, { fileKey, ownerId })
-		await db.insert(listingImages).values({ fileId: activeFile.id, listingId, sortOrder: 0 })
+		const activeFile = await activateVerifiedPendingFile(deps, { fileKey, ownerId })
+		await deps.db.insert(listingImages).values({ fileId: activeFile.id, listingId, sortOrder: 0 })
 
 		return activeFile
 	},
 
 	cleanupStalePendingFiles: async () => {
-		const staleFiles = await db.query.files.findMany({
+		const staleFiles = await deps.db.query.files.findMany({
 			where: { createdAt: { lt: subDays(new Date(), 2) }, status: 'pending' },
 		})
 		const cleanedFileIds: File['id'][] = []
 
 		for (const file of staleFiles) {
-			const fileExists = await fileStorage.exists(file.key)
+			const fileExists = await deps.fileStorage.exists(file.key)
 
 			if (!fileExists) {
 				cleanedFileIds.push(file.id)
@@ -43,7 +45,7 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 			}
 
 			try {
-				await fileStorage.delete(file.key)
+				await deps.fileStorage.delete(file.key)
 				cleanedFileIds.push(file.id)
 			} catch {
 				continue
@@ -51,22 +53,22 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 		}
 
 		if (cleanedFileIds.length > 0) {
-			await db.delete(files).where(inArray(files.id, cleanedFileIds))
+			await deps.db.delete(files).where(inArray(files.id, cleanedFileIds))
 		}
 
 		return { filesDeleted: cleanedFileIds.length }
 	},
 
 	replaceListingImage: async ({ fileKey, listingId, ownerId }: AttachListingImageInput) => {
-		const activeFile = await activateVerifiedPendingFile(db, { fileKey, ownerId })
-		const replacedImages = await db
+		const activeFile = await activateVerifiedPendingFile(deps, { fileKey, ownerId })
+		const replacedImages = await deps.db
 			.delete(listingImages)
 			.where(eq(listingImages.listingId, listingId))
-			.returning({ fileId: listingImages.fileId })
+			.returning()
 		const replacedFileIds = replacedImages.map((image) => image.fileId)
 
-		await db.insert(listingImages).values({ fileId: activeFile.id, listingId, sortOrder: 0 })
-		await retireFiles(db, replacedFileIds)
+		await deps.db.insert(listingImages).values({ fileId: activeFile.id, listingId, sortOrder: 0 })
+		await retireFiles(deps, replacedFileIds)
 
 		return activeFile
 	},
@@ -79,8 +81,8 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 		size,
 	}: ReserveUploadInput) => {
 		const key = createFileKey({ contentType, filename, ownerId }, randomUUIDv7())
-		const url = fileStorage.getUploadUrl(key, { public: isPublic })
-		const file = await db
+		const url = deps.fileStorage.getUploadUrl(key, { public: isPublic })
+		const file = await deps.db
 			.insert(files)
 			.values({
 				contentType,
@@ -98,13 +100,13 @@ export const FileService = (db: DatabaseType | TransactionType) => ({
 	},
 
 	retireListingMedia: async ({ listingId }: { listingId: Listing['id'] }) => {
-		const detachedImages = await db
+		const detachedImages = await deps.db
 			.delete(listingImages)
 			.where(eq(listingImages.listingId, listingId))
-			.returning({ fileId: listingImages.fileId })
+			.returning()
 		const retiredFileIds = detachedImages.map((image) => image.fileId)
 
-		await retireFiles(db, retiredFileIds)
+		await retireFiles(deps, retiredFileIds)
 
 		return { retiredFileIds }
 	},
@@ -124,34 +126,41 @@ function createFileKey(
 }
 
 async function activateVerifiedPendingFile(
-	db: DatabaseType | TransactionType,
+	deps: FileServiceDeps,
 	{ fileKey, ownerId }: Pick<AttachListingImageInput, 'fileKey' | 'ownerId'>
 ) {
-	const file = await db.query.files.findFirst({ where: { key: fileKey, ownerId, status: 'pending' } })
+	const file = await deps.db.query.files.findFirst({
+		where: { key: fileKey, ownerId, status: 'pending' },
+	})
 
 	if (!file || file.ownerId !== ownerId) {
 		throw new Error('File not found')
 	}
 
-	const fileExists = await fileStorage.exists(file.key)
+	const fileExists = await deps.fileStorage.exists(file.key)
 
 	if (!fileExists) {
 		throw new Error('File not found')
 	}
 
-	return db
-		.update(files)
-		.set({ status: 'active' })
-		.where(eq(files.id, file.id))
-		.returning()
-		// oxlint-disable-next-line typescript/no-non-null-assertion
-		.then(([activeFile]) => activeFile!)
+	return (
+		deps.db
+			.update(files)
+			.set({ status: 'active' })
+			.where(eq(files.id, file.id))
+			.returning()
+			// oxlint-disable-next-line typescript/no-non-null-assertion
+			.then(([activeFile]) => activeFile!)
+	)
 }
 
-async function retireFiles(db: DatabaseType | TransactionType, ids: File['id'][]) {
+async function retireFiles(deps: FileServiceDeps, ids: File['id'][]) {
 	if (ids.length === 0) {
 		return
 	}
 
-	await db.update(files).set({ status: 'deleted' }).where(inArray(files.id, [...new Set(ids)]))
+	await deps.db
+		.update(files)
+		.set({ status: 'deleted' })
+		.where(inArray(files.id, [...new Set(ids)]))
 }

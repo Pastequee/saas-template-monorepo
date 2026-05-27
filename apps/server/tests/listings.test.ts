@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 
-import { db } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
 import type { TestApi } from './utils'
-import { adminApi, testAuth, unauthApi, userApi } from './utils'
+import { adminApi, testAuth, testDb, unauthApi, userApi } from './utils'
 
 /** Presign a test image and simulate S3 upload. Returns the asset key. */
 async function presignImage(api: TestApi) {
@@ -187,14 +186,14 @@ describe('Listings', async () => {
 			const res = await userApi.listings({ id }).delete()
 
 			expect(res.status).toBe(204)
-			expect(await db.query.files.findFirst({ where: { key: imageKey } })).toMatchObject({
+			expect(await testDb.query.files.findFirst({ where: { key: imageKey } })).toMatchObject({
 				key: imageKey,
 				status: 'deleted',
 			})
 		})
 
 		it('deletes a listing safely when no image is attached', async () => {
-			const [listing] = await db
+			const [listing] = await testDb
 				.insert(listings)
 				.values({
 					description: validListing.description,
@@ -207,7 +206,7 @@ describe('Listings', async () => {
 			const res = await userApi.listings({ id: listing!.id }).delete()
 
 			expect(res.status).toBe(204)
-			expect(await db.query.listings.findFirst({ where: { id: listing!.id } })).toBeUndefined()
+			expect(await testDb.query.listings.findFirst({ where: { id: listing!.id } })).toBeUndefined()
 		})
 
 		it('returns 403 when deleting another users listing', async () => {

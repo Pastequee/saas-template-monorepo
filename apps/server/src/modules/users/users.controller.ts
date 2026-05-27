@@ -1,7 +1,9 @@
 import { Elysia } from 'elysia'
 
-import { authMacro } from '#lib/auth.macros'
+import type { AppDeps } from '#deps'
+import { createAuthMacro } from '#lib/auth.macros'
 
-export const userRouter = new Elysia({ name: 'user', tags: ['User'] })
-	.use(authMacro)
-	.get('/me', ({ user, session }) => ({ session, user }), { auth: true })
+export const createUserRouter = (deps: AppDeps) =>
+	new Elysia({ name: 'user', tags: ['User'] })
+		.use(createAuthMacro(deps))
+		.get('/me', ({ user, session }) => ({ session, user }), { auth: true })

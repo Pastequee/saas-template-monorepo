@@ -1,10 +1,13 @@
 // oxlint-disable require-await
 import { eq, withTransaction } from '@repo/db'
-import type { DatabaseType, TransactionType } from '@repo/db'
 import { listings } from '@repo/db/schemas'
 import type { Listing, ListingInsert, ListingUpdate, User } from '@repo/db/types'
 
+import type { AppDb, AppDeps } from '#deps'
+import { withDb } from '#deps'
 import { FileService } from '#modules/files/file.service'
+
+type ListingsDeps = Pick<AppDeps, 'db' | 'fileStorage'>
 
 const listingNotFoundError = () =>
 	Object.assign(new Error('Listing not found'), { name: 'ListingNotFoundError' })
@@ -21,9 +24,9 @@ export const isListingForbiddenError = (
 ): error is Error & { name: 'ListingForbiddenError' } =>
 	error instanceof Error && error.name === 'ListingForbiddenError'
 
-export const ListingsService = (db: DatabaseType | TransactionType) => ({
+export const ListingsService = (deps: ListingsDeps) => ({
 	createListing: async (data: ListingInsert & { imageKey: string }) =>
-		withTransaction(db, async (tx) => {
+		withTransaction(deps.db, async (tx) => {
 			const { imageKey, ...listingData } = data
 			const listing = await tx
 				.insert(listings)
@@ -32,7 +35,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 				// oxlint-disable-next-line typescript/no-non-null-assertion
 				.then(([l]) => l!)
 
-			await FileService(tx).attachListingImage({
+			await FileService(withDb(deps, tx)).attachListingImage({
 				fileKey: imageKey,
 				listingId: listing.id,
 				ownerId: listing.userId,
@@ -41,15 +44,15 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 		}),
 
 	deleteOwnedListing: async ({ id, userId }: { id: Listing['id']; userId: User['id'] }) => {
-		await withTransaction(db, async (tx) => {
+		await withTransaction(deps.db, async (tx) => {
 			await getOwnedListingRecordOrThrow(tx, id, userId)
-			await FileService(tx).retireListingMedia({ listingId: id })
+			await FileService(withDb(deps, tx)).retireListingMedia({ listingId: id })
 			await tx.delete(listings).where(eq(listings.id, id))
 		})
 	},
 
 	getListingOrThrow: async (id: Listing['id']) => {
-		const listing = await db.query.listings.findFirst({
+		const listing = await deps.db.query.listings.findFirst({
 			where: { id },
 			with: { image: true, user: { columns: { id: true, name: true } } },
 		})
@@ -62,14 +65,14 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 	},
 
 	getUserListings: async (userId: User['id']) =>
-		db.query.listings.findMany({
+		deps.db.query.listings.findMany({
 			orderBy: { createdAt: 'desc' },
 			where: { userId },
 			with: { image: true },
 		}),
 
 	searchListings: async (query: string) =>
-		db.query.listings.findMany({
+		deps.db.query.listings.findMany({
 			orderBy: { createdAt: 'desc' },
 			where: {
 				OR: [{ title: { ilike: `%${query}%` } }, { description: { ilike: `%${query}%` } }],
@@ -86,12 +89,12 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 		id: Listing['id']
 		userId: User['id']
 	}) =>
-		withTransaction(db, async (tx) => {
+		withTransaction(deps.db, async (tx) => {
 			const { imageKey, ...listingData } = data
 			const listing = await getOwnedListingRecordOrThrow(tx, id, userId)
 
 			if (imageKey !== undefined) {
-				await FileService(tx).replaceListingImage({
+				await FileService(withDb(deps, tx)).replaceListingImage({
 					fileKey: imageKey,
 					listingId: id,
 					ownerId: listing.userId,
@@ -114,11 +117,7 @@ export const ListingsService = (db: DatabaseType | TransactionType) => ({
 		}),
 })
 
-async function getOwnedListingRecordOrThrow(
-	db: DatabaseType | TransactionType,
-	id: Listing['id'],
-	userId: User['id']
-) {
+async function getOwnedListingRecordOrThrow(db: AppDb, id: Listing['id'], userId: User['id']) {
 	const listing = await db.query.listings.findFirst({ where: { id } })
 
 	if (!listing) {

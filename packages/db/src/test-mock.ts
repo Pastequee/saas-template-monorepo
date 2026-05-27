@@ -7,6 +7,7 @@ import { relations } from './relations'
 import * as schema from './schemas'
 
 export type TestDb = ReturnType<typeof drizzle<typeof relations>>
+export type TestTransactionType = Parameters<Parameters<TestDb['transaction']>[0]>[0]
 
 export const createTestDb = async () => {
 	const pglite = new PGlite()

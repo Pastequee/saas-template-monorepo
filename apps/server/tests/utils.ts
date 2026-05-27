@@ -1,17 +1,16 @@
 // oxlint-disable unicorn/no-await-expression-member
 // oxlint-disable import/no-mutable-exports
-import { mock } from 'bun:test'
-
 import { treaty } from '@elysiajs/eden'
 import { createAuth } from '@repo/auth/config'
 import type { TestHelpers } from '@repo/auth/config'
-import { db } from '@repo/db'
 import type { TestDb } from '@repo/db/test'
 import { createTestDb, truncateAllTables } from '@repo/db/test'
 import type { AuthRole } from '@repo/db/types'
+import { env } from '@repo/env/server'
 import { fileStorageMock } from '@repo/file-storage/test'
 
-import { app } from '../src/api'
+import { createApp } from '../src/api'
+import type { AppDeps } from '../src/deps'
 
 export let testDb: TestDb
 export let testAuth: TestAuth
@@ -19,23 +18,22 @@ export let adminApi: TestApi
 export let userApi: TestApi
 export let unauthApi: TestApi
 
-const mockDb = async () => {
-	const { testDb: newTestDb } = await createTestDb()
-
-	await mock.module('@repo/db', () => ({
-		db: newTestDb,
-	}))
-
-	return newTestDb
+const mailMock = {
+	send: async () => {
+		await Promise.resolve()
+	},
+	sendTemplate: async () => {
+		await Promise.resolve()
+	},
 }
 
-const createApi = () => {
-	const { api } = treaty(app)
+const createApi = (deps: AppDeps) => {
+	const { api } = treaty(createApp(deps))
 
 	return api
 }
 
-const createTestUser = async (testUtils: TestHelpers, role: AuthRole) => {
+const createTestUser = async (db: TestDb, testUtils: TestHelpers, role: AuthRole) => {
 	const user = testUtils.createUser({
 		email: `${role.toLowerCase()}@test.com`,
 		password: 'test-password',
@@ -61,20 +59,38 @@ const createTestUser = async (testUtils: TestHelpers, role: AuthRole) => {
 	return { ...user, id: dbUser.id, role }
 }
 
-const mockAuth = async () => {
-	const newTestAuth = createAuth()
-
-	await mock.module('@repo/auth/config', () => ({ auth: newTestAuth, default: newTestAuth }))
+const createTestDeps = async () => {
+	const { testDb: newTestDb } = await createTestDb()
+	const newTestAuth = createAuth({
+		db: newTestDb,
+		env,
+		mail: mailMock,
+	})
 
 	const ctx = await newTestAuth.$context
 
-	const admin = await createTestUser(ctx.test, 'admin')
-	const user = await createTestUser(ctx.test, 'user')
+	const admin = await createTestUser(newTestDb, ctx.test, 'admin')
+	const user = await createTestUser(newTestDb, ctx.test, 'user')
 
-	return { client: newTestAuth, testUtils: ctx.test, users: { admin, user } }
+	const deps = {
+		auth: newTestAuth,
+		db: newTestDb,
+		env,
+		fileStorage: fileStorageMock,
+	} satisfies AppDeps
+
+	return {
+		deps,
+		testAuth: { client: newTestAuth, testUtils: ctx.test, users: { admin, user } },
+		testDb: newTestDb,
+	}
 }
 
-const createApiWithAuth = async (testUtils: TestHelpers, userId: number) => {
+const createApiWithAuth = async (
+	app: ReturnType<typeof createApp>,
+	testUtils: TestHelpers,
+	userId: number
+) => {
 	const headers = await testUtils.getAuthHeaders({ userId: userId.toString() })
 
 	const api = treaty(app, { headers })
@@ -83,20 +99,17 @@ const createApiWithAuth = async (testUtils: TestHelpers, userId: number) => {
 	return api
 }
 
-const mockFileStorage = async () => {
-	await mock.module('@repo/file-storage', () => ({
-		fileStorage: fileStorageMock,
-	}))
-}
-
 export const setupTestEnvironment = async () => {
-	testDb = await mockDb()
-	testAuth = await mockAuth()
-	await mockFileStorage()
+	const testDeps = await createTestDeps()
+	const { testAuth: newTestAuth, testDb: newTestDb } = testDeps
+	const app = createApp(testDeps.deps)
 
-	adminApi = (await createApiWithAuth(testAuth.testUtils, testAuth.users.admin.id)).api
-	userApi = (await createApiWithAuth(testAuth.testUtils, testAuth.users.user.id)).api
-	unauthApi = createApi()
+	testDb = newTestDb
+	testAuth = newTestAuth
+
+	adminApi = (await createApiWithAuth(app, testAuth.testUtils, testAuth.users.admin.id)).api
+	userApi = (await createApiWithAuth(app, testAuth.testUtils, testAuth.users.user.id)).api
+	unauthApi = treaty(app).api
 
 	return { adminApi, testAuth, testDb, unauthApi, userApi }
 }
@@ -106,5 +119,5 @@ export const cleanupTestEnvironment = async () => {
 	await truncateAllTables(testDb)
 }
 
-export type TestApi = Awaited<ReturnType<typeof createApiWithAuth>>['api']
-export type TestAuth = Awaited<ReturnType<typeof mockAuth>>
+export type TestApi = ReturnType<typeof createApi>
+export type TestAuth = Awaited<ReturnType<typeof createTestDeps>>['testAuth']

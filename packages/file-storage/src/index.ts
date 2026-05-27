@@ -4,6 +4,8 @@ import { S3Client } from 'bun'
 
 import type { FileStorage } from './types'
 
+export type { FileStorage } from './types'
+
 const bucketConfig = {
 	accessKey: env.S3_ACCESS_KEY,
 	endpoint: env.S3_ENDPOINT,

@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 
-import { db } from '@repo/db'
 import { files, userRoles } from '@repo/db/schemas'
 import { fileStorageMock } from '@repo/file-storage/test'
 
-import { adminApi, testAuth, unauthApi, userApi } from './utils'
+import { adminApi, testAuth, testDb, unauthApi, userApi } from './utils'
 
 describe('Files', async () => {
 	// ── POST /files/presign ─────────────────────────────────────
@@ -118,7 +117,7 @@ describe('Files', async () => {
 		})
 
 		it('cleans up stale pending assets end to end for superadmins', async () => {
-			await db.insert(userRoles).values({
+			await testDb.insert(userRoles).values({
 				grantedById: testAuth.users.admin.id,
 				role: 'superadmin',
 				userId: testAuth.users.admin.id,
@@ -127,7 +126,7 @@ describe('Files', async () => {
 			const staleKey = `${testAuth.users.user.id}/stale-cleanup.webp`
 			fileStorageMock._setFile(staleKey, `https://upload.test/${staleKey}`)
 
-			await db.insert(files).values({
+			await testDb.insert(files).values({
 				contentType: 'image/webp',
 				createdAt: new Date('2026-04-27T10:00:00.000Z'),
 				filename: 'stale-cleanup.webp',
@@ -143,7 +142,7 @@ describe('Files', async () => {
 			expect(res.status).toBe(200)
 			expect(res.data).toEqual({ filesDeleted: 1, message: 'Cleanup complete' })
 			expect(await fileStorageMock.exists(staleKey)).toBeFalse()
-			expect(await db.query.files.findFirst({ where: { key: staleKey } })).toBeUndefined()
+			expect(await testDb.query.files.findFirst({ where: { key: staleKey } })).toBeUndefined()
 		})
 	})
 })

@@ -6,7 +6,17 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth/minimal'
 import { admin, lastLoginMethod, testUtils } from 'better-auth/plugins'
 
-export const createAuth = () =>
+type AuthDb = Parameters<typeof drizzleAdapter>[0]
+
+type AuthDeps = {
+	db: AuthDb
+	env: typeof env
+	mail: typeof mail
+}
+
+const productionDeps = { db, env, mail } satisfies AuthDeps
+
+export const createAuth = (deps: AuthDeps = productionDeps) =>
 	betterAuth({
 		advanced: {
 			crossSubDomainCookies: {
@@ -19,12 +29,12 @@ export const createAuth = () =>
 			},
 		},
 
-		baseURL: env.SERVER_URL,
-		database: drizzleAdapter(db, { provider: 'pg', schema, usePlural: true }),
+		baseURL: deps.env.SERVER_URL,
+		database: drizzleAdapter(deps.db, { provider: 'pg', schema, usePlural: true }),
 		emailAndPassword: {
 			enabled: true,
 			sendResetPassword: async ({ url, user }) => {
-				await mail.sendTemplate('reset-password', user.email, { URL: url })
+				await deps.mail.sendTemplate('reset-password', user.email, { URL: url })
 			},
 		},
 
@@ -34,9 +44,9 @@ export const createAuth = () =>
 
 		plugins: [admin(), lastLoginMethod(), testUtils()],
 
-		secret: env.BETTER_AUTH_SECRET,
+		secret: deps.env.BETTER_AUTH_SECRET,
 
-		trustedOrigins: [env.WEB_URL],
+		trustedOrigins: [deps.env.WEB_URL],
 	})
 
 export const auth = createAuth()
